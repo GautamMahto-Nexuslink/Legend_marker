@@ -770,35 +770,23 @@ def match_icons_to_text(
     texts: List[OcrText],
     config: PipelineConfig,
 ) -> Dict[int, Optional[OcrText]]:
-    """Assign the SINGLE-LINE legend label on the icon's own row.
+    """Assign the SINGLE-LINE legend label on the icon's own row (column-aware).
 
-    Legends list one icon per row with its label to the right.  For each icon we:
+    Legends are frequently laid out in MULTIPLE columns (icon | label |
+    icon | label | ...).  For each icon we therefore take the text that is:
 
-      1. Give each icon a vertical *band* bounded by the midpoints to the icons
-         above and below it, so a neighbouring row can never be matched.
-      2. Collect text tokens to the RIGHT of the icon (within the horizontal
-         gap gate) that are vertically aligned with the icon's own row.
-      3. Keep ONLY the tokens on that single line (via ``_same_line_tokens``),
-         then merge them left-to-right.  Wrapped lines above/below and the
-         "LEGEND" header are excluded — we take just the one line beside the icon.
+      1. Vertically aligned with the icon's own row (tight vertical gate).
+      2. To the RIGHT of the icon, within the horizontal gap gate.
+      3. BEFORE the next icon on the same row — i.e. we never reach across into
+         the next column's label.  This is the key to multi-column legends:
+         each icon owns only the text between itself and the next icon.
 
-    Text outside the gates is ignored.  Returns icon-index -> merged OcrText|None.
+    The kept tokens are reduced to the icon's own line and merged left-to-right.
+    Returns icon-index -> merged OcrText | None.
     """
     matches: Dict[int, Optional[OcrText]] = {}
     if not icons:
         return matches
-
-    # Order icons top-to-bottom to derive per-icon vertical bands.
-    order = sorted(range(len(icons)), key=lambda i: icons[i].center[1])
-    band: Dict[int, Tuple[float, float]] = {}
-    for pos, idx in enumerate(order):
-        icy = icons[idx].center[1]
-        top = 0.0 if pos == 0 else (icons[order[pos - 1]].center[1] + icy) / 2.0
-        bottom = (
-            float("inf") if pos == len(order) - 1
-            else (icy + icons[order[pos + 1]].center[1]) / 2.0
-        )
-        band[idx] = (top, bottom)
 
     for idx, icon in enumerate(icons):
         ix1, _iy1, ix2, _iy2 = icon.bbox
@@ -806,16 +794,24 @@ def match_icons_to_text(
         max_h_gap = config.text_max_horizontal_gap_factor * max(icon.width, 1)
         # Tight vertical gate: the label must be roughly on the icon's own row.
         max_v_off = config.text_max_vertical_offset_factor * max(icon.height, 1)
-        band_top, band_bottom = band[idx]
+
+        # Column boundary: the left edge of the nearest OTHER icon that is on
+        # this row and to the right.  Text at/after this x belongs to the next
+        # column, so it is excluded.
+        x_limit = float("inf")
+        for j, other in enumerate(icons):
+            if j == idx:
+                continue
+            ojx1, _o1, _o2, _o3 = other.bbox
+            if abs(other.center[1] - icy) <= max_v_off and ojx1 >= ix2:
+                x_limit = min(x_limit, float(ojx1))
 
         candidates: List[OcrText] = []
         for text in texts:
             tx1, _ty1, tx2, _ty2 = text.bbox
             _tcx, tcy = text.center
 
-            # Vertical gates: inside this icon's band AND aligned to its row.
-            if not (band_top <= tcy < band_bottom):
-                continue
+            # Vertical gate: aligned to the icon's row.
             if abs(tcy - icy) > max_v_off:
                 continue
 
@@ -830,6 +826,9 @@ def match_icons_to_text(
                 continue                         # to the left but right-only mode.
 
             if h_gap > max_h_gap:
+                continue
+            # Column gate: the label must START before the next column's icon.
+            if tx1 >= x_limit:
                 continue
             candidates.append(text)
 
