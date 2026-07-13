@@ -1,0 +1,26 @@
+Legend icon 12: Softball Field
+==============================
+Bounding box (x1,y1,x2,y2): [52, 1570, 104, 1622]
+Detection confidence      : 0.4164
+pHash (hex)               : 9bae6992e669386cb990c66deb84b39bb1959a31cc31ce62c44671c7b4476c6c
+Hash size                 : 16x16 = 256 bits (max possible Hamming distance = 256)
+
+Hamming distance to each legend icon (nearest first):
+  legend name                         hamming  hash_sim  weighted
+  ---------------------------------------------------------------
+  Steps                                    94     0.633     0.683
+  Aquarium                                112     0.562     0.654
+  Playground                              128     0.500     0.643
+  Amphitheater                            114     0.555     0.634
+  Fishing                                 116     0.547     0.632
+  RIC Air Field                           128     0.500     0.629
+  Park Office                             118     0.539     0.628
+  Parking Area P                          124     0.516     0.618
+  Picnic Area                             128     0.500     0.609
+  Discovery                               122     0.523     0.591
+  Park Police                             120     0.531     0.581
+  Public Restroom                         134     0.477     0.513
+  Souvenir Store                          128     0.500     0.386
+
+This legend icon : 'Softball Field'
+Note: distances are to OTHER legend icons (a nearest-neighbour of 0 would mean a duplicate icon).

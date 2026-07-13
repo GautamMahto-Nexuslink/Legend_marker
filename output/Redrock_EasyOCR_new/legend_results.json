@@ -1,0 +1,550 @@
+[
+  {
+    "index": 0,
+    "name": "Cutdcor",
+    "detected_class": "amphitheater",
+    "confidence": 0.9817,
+    "bbox": [
+      10,
+      64,
+      29,
+      83
+    ],
+    "polygon": [
+      [
+        10.0,
+        63.0
+      ],
+      [
+        9.0,
+        64.0
+      ],
+      [
+        9.0,
+        82.0
+      ],
+      [
+        10.0,
+        83.0
+      ],
+      [
+        27.0,
+        83.0
+      ],
+      [
+        27.0,
+        63.0
+      ]
+    ],
+    "hash": "9de25aa77e77a06877ff628177f8217a5a0587fa61e05a01867ee8a065aac807",
+    "matched_text": "Cutdcor",
+    "matched_text_bbox": [
+      43,
+      71,
+      93,
+      83
+    ],
+    "matched_text_confidence": 0.9725,
+    "crop_file": "legend_crops/000_Cutdcor.png"
+  },
+  {
+    "index": 1,
+    "name": "Wilclife Viewing",
+    "detected_class": "birding_wildlife_viewing",
+    "confidence": 0.9752,
+    "bbox": [
+      174,
+      35,
+      193,
+      54
+    ],
+    "polygon": [
+      [
+        175.0,
+        35.0
+      ],
+      [
+        174.0,
+        36.0
+      ],
+      [
+        174.0,
+        53.0
+      ],
+      [
+        192.0,
+        53.0
+      ],
+      [
+        192.0,
+        35.0
+      ]
+    ],
+    "hash": "c6e45e46391971997d96906179eb659078e792696f9e87189a6f96042f969668",
+    "matched_text": "Wilclife Viewing",
+    "matched_text_bbox": [
+      207,
+      41,
+      295,
+      55
+    ],
+    "matched_text_confidence": 0.4875,
+    "crop_file": "legend_crops/001_Wilclife_Viewing.png"
+  },
+  {
+    "index": 2,
+    "name": "visitor Center",
+    "detected_class": "ranger_station",
+    "confidence": 0.9744,
+    "bbox": [
+      174,
+      5,
+      193,
+      25
+    ],
+    "polygon": [
+      [
+        175.0,
+        4.0
+      ],
+      [
+        174.0,
+        5.0
+      ],
+      [
+        174.0,
+        24.0
+      ],
+      [
+        192.0,
+        24.0
+      ],
+      [
+        192.0,
+        5.0
+      ],
+      [
+        191.0,
+        4.0
+      ]
+    ],
+    "hash": "e3aa3e476e441d989a35c2476c256d78bdb895b83e47b6c2c2d9c2b718b55a50",
+    "matched_text": "visitor Center",
+    "matched_text_bbox": [
+      207,
+      11,
+      283,
+      25
+    ],
+    "matched_text_confidence": 0.7724,
+    "crop_file": "legend_crops/002_visitor_Center.png"
+  },
+  {
+    "index": 3,
+    "name": "Historic Building",
+    "detected_class": "historic_feature",
+    "confidence": 0.9742,
+    "bbox": [
+      10,
+      35,
+      29,
+      54
+    ],
+    "polygon": [
+      [
+        10.0,
+        35.0
+      ],
+      [
+        9.0,
+        36.0
+      ],
+      [
+        9.0,
+        53.0
+      ],
+      [
+        27.0,
+        53.0
+      ],
+      [
+        27.0,
+        35.0
+      ]
+    ],
+    "hash": "96f147bc6f3e3c436fcfd11abae190cd99831bbee4480efacb12647a2ee08500",
+    "matched_text": "Historic Building",
+    "matched_text_bbox": [
+      43,
+      41,
+      135,
+      55
+    ],
+    "matched_text_confidence": 0.9988,
+    "crop_file": "legend_crops/003_Historic_Building.png"
+  },
+  {
+    "index": 4,
+    "name": "Viewpcint",
+    "detected_class": "photography",
+    "confidence": 0.9693,
+    "bbox": [
+      10,
+      210,
+      29,
+      229
+    ],
+    "polygon": [
+      [
+        10.0,
+        210.0
+      ],
+      [
+        9.0,
+        211.0
+      ],
+      [
+        9.0,
+        227.0
+      ],
+      [
+        10.0,
+        228.0
+      ],
+      [
+        27.0,
+        228.0
+      ],
+      [
+        27.0,
+        210.0
+      ]
+    ],
+    "hash": "e40078fb7bffa4242f269f089ed83ba2fb6660d9e0e9d1256ea426d21e9a1b88",
+    "matched_text": "Viewpcint",
+    "matched_text_bbox": [
+      43,
+      217,
+      101,
+      231
+    ],
+    "matched_text_confidence": 0.6434,
+    "crop_file": "legend_crops/004_Viewpcint.png"
+  },
+  {
+    "index": 5,
+    "name": "Farking",
+    "detected_class": "parking",
+    "confidence": 0.9635,
+    "bbox": [
+      10,
+      93,
+      29,
+      113
+    ],
+    "polygon": [
+      [
+        9.0,
+        93.0
+      ],
+      [
+        9.0,
+        111.0
+      ],
+      [
+        10.0,
+        112.0
+      ],
+      [
+        27.0,
+        112.0
+      ],
+      [
+        27.0,
+        93.0
+      ]
+    ],
+    "hash": "c7ae9cf77960696a3cf0679d3cb09ad69a54c30dc981ccf3630d616d82153876",
+    "matched_text": "Farking",
+    "matched_text_bbox": [
+      43,
+      99,
+      87,
+      113
+    ],
+    "matched_text_confidence": 0.3228,
+    "crop_file": "legend_crops/005_Farking.png"
+  },
+  {
+    "index": 6,
+    "name": "Pestrocm",
+    "detected_class": "restrooms",
+    "confidence": 0.9612,
+    "bbox": [
+      10,
+      181,
+      29,
+      200
+    ],
+    "polygon": [
+      [
+        9.0,
+        181.0
+      ],
+      [
+        9.0,
+        198.0
+      ],
+      [
+        10.0,
+        199.0
+      ],
+      [
+        27.0,
+        199.0
+      ],
+      [
+        27.0,
+        181.0
+      ]
+    ],
+    "hash": "c4675e96179895697f97e0567979b56f79e881c1bea74696c2d6178086064878",
+    "matched_text": "Pestrocm",
+    "matched_text_bbox": [
+      43,
+      187,
+      97,
+      201
+    ],
+    "matched_text_confidence": 0.8364,
+    "crop_file": "legend_crops/006_Pestrocm.png"
+  },
+  {
+    "index": 7,
+    "name": "Cantact Staticn",
+    "detected_class": "ranger_station",
+    "confidence": 0.956,
+    "bbox": [
+      10,
+      5,
+      29,
+      25
+    ],
+    "polygon": [
+      [
+        10.0,
+        4.0
+      ],
+      [
+        9.0,
+        5.0
+      ],
+      [
+        9.0,
+        23.0
+      ],
+      [
+        10.0,
+        24.0
+      ],
+      [
+        27.0,
+        24.0
+      ],
+      [
+        27.0,
+        4.0
+      ]
+    ],
+    "hash": "9bbb39997790c67666c26cf16690964c3a6593e6bb966399883934868a877939",
+    "matched_text": "Cantact Staticn",
+    "matched_text_bbox": [
+      43,
+      11,
+      127,
+      25
+    ],
+    "matched_text_confidence": 0.5439,
+    "crop_file": "legend_crops/007_Cantact_Staticn.png"
+  },
+  {
+    "index": 8,
+    "name": "Ramada",
+    "detected_class": "picnic_shelter",
+    "confidence": 0.9515,
+    "bbox": [
+      10,
+      151,
+      29,
+      171
+    ],
+    "polygon": [
+      [
+        10.0,
+        151.0
+      ],
+      [
+        9.0,
+        152.0
+      ],
+      [
+        9.0,
+        170.0
+      ],
+      [
+        10.0,
+        171.0
+      ],
+      [
+        27.0,
+        171.0
+      ],
+      [
+        27.0,
+        151.0
+      ]
+    ],
+    "hash": "faea3d0f3f0730f87a0cc2926ed68b9d9ad01846f3a526b986b42d2aac0be5b8",
+    "matched_text": "Ramada",
+    "matched_text_bbox": [
+      43,
+      157,
+      89,
+      171
+    ],
+    "matched_text_confidence": 0.999,
+    "crop_file": "legend_crops/008_Ramada.png"
+  },
+  {
+    "index": 9,
+    "name": "Picnic Area",
+    "detected_class": "picnic_area",
+    "confidence": 0.9299,
+    "bbox": [
+      10,
+      122,
+      29,
+      141
+    ],
+    "polygon": [
+      [
+        10.0,
+        122.0
+      ],
+      [
+        9.0,
+        123.0
+      ],
+      [
+        9.0,
+        139.0
+      ],
+      [
+        10.0,
+        140.0
+      ],
+      [
+        27.0,
+        140.0
+      ],
+      [
+        27.0,
+        122.0
+      ]
+    ],
+    "hash": "d61e986979f52796f9693a611e968a8ad59e61386b7998e7d862878a93189a98",
+    "matched_text": "Picnic Area",
+    "matched_text_bbox": [
+      43,
+      129,
+      103,
+      141
+    ],
+    "matched_text_confidence": 0.5939,
+    "crop_file": "legend_crops/009_Picnic_Area.png"
+  },
+  {
+    "index": 10,
+    "name": "Trailhead",
+    "detected_class": "other_icon",
+    "confidence": 0.884,
+    "bbox": [
+      179,
+      122,
+      189,
+      132
+    ],
+    "polygon": [
+      [
+        180.0,
+        122.0
+      ],
+      [
+        180.0,
+        131.0
+      ],
+      [
+        188.0,
+        131.0
+      ],
+      [
+        188.0,
+        122.0
+      ]
+    ],
+    "hash": "afc08fe0d03e9f80d03fe83fd03f683fd01e2fa04ad0603a2bd07faa2f0596a7",
+    "matched_text": "Trailhead",
+    "matched_text_bbox": [
+      207,
+      123,
+      259,
+      137
+    ],
+    "matched_text_confidence": 0.9995,
+    "crop_file": "legend_crops/010_Trailhead.png"
+  },
+  {
+    "index": 11,
+    "name": "Hummingbird",
+    "detected_class": "sporting",
+    "confidence": 0.8697,
+    "bbox": [
+      175,
+      64,
+      193,
+      83
+    ],
+    "polygon": [
+      [
+        174.0,
+        65.0
+      ],
+      [
+        174.0,
+        82.0
+      ],
+      [
+        175.0,
+        83.0
+      ],
+      [
+        192.0,
+        83.0
+      ],
+      [
+        192.0,
+        65.0
+      ]
+    ],
+    "hash": "ebaab8c37e644f263ad1e6d8bc84c4263e185aeb5bf80e26e786b104f07170f8",
+    "matched_text": "Hummingbird",
+    "matched_text_bbox": [
+      207,
+      65,
+      283,
+      79
+    ],
+    "matched_text_confidence": 0.9794,
+    "crop_file": "legend_crops/011_Hummingbird.png"
+  }
+]

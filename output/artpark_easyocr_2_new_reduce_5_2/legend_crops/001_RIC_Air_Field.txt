@@ -1,0 +1,26 @@
+Legend icon 1: RIC Air Field
+============================
+Bounding box (x1,y1,x2,y2): [52, 1410, 104, 1461]
+Detection confidence      : 0.9359
+pHash (hex)               : 88aa6ecc7f77913bd7775902f5dd9266df11ac6ad4c4d208c966e488de42a08a
+Hash size                 : 16x16 = 256 bits (max possible Hamming distance = 256)
+
+Hamming distance to each legend icon (nearest first):
+  legend name                         hamming  hash_sim  weighted
+  ---------------------------------------------------------------
+  Playground                              116     0.547     0.687
+  Parking Area P                          112     0.562     0.662
+  Picnic Area                             112     0.562     0.655
+  Park Office                             112     0.562     0.654
+  Discovery                                92     0.641     0.645
+  Aquarium                                130     0.492     0.630
+  Softball Field                          128     0.500     0.629
+  Steps                                   132     0.484     0.624
+  Amphitheater                            108     0.578     0.623
+  Park Police                             114     0.555     0.614
+  Fishing                                 130     0.492     0.583
+  Public Restroom                         124     0.516     0.558
+  Souvenir Store                          120     0.531     0.413
+
+This legend icon : 'RIC Air Field'
+Note: distances are to OTHER legend icons (a nearest-neighbour of 0 would mean a duplicate icon).

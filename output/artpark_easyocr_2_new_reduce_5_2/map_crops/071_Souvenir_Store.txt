@@ -1,0 +1,28 @@
+Map icon 71: 071_Souvenir_Store.png
+===================================
+Bounding box (x1,y1,x2,y2): [1318, 3439, 1367, 3486]
+Detection confidence      : 0.4783
+pHash (hex)               : dfbfe8d5bc618f30e508f1a7c97384498b16058bc0d5617a92d50f5a968c7366
+Hash size                 : 16x16 = 256 bits (max possible Hamming distance = 256)
+
+Hamming distance to each legend icon (nearest first):
+  legend name                         hamming  hash_sim  weighted
+  ---------------------------------------------------------------
+  Souvenir Store                          110     0.570     0.619
+  Steps                                   118     0.539     0.422
+  Park Police                             112     0.562     0.402
+  RIC Air Field                           126     0.508     0.401
+  Playground                              106     0.586     0.400
+  Parking Area P                          118     0.539     0.398
+  Aquarium                                122     0.523     0.397
+  Fishing                                 114     0.555     0.390
+  Park Office                             120     0.531     0.388
+  Discovery                               116     0.547     0.383
+  Public Restroom                         116     0.547     0.381
+  Picnic Area                             124     0.516     0.381
+  Softball Field                          124     0.516     0.380
+  Amphitheater                            118     0.539     0.370
+
+Best match  : Souvenir Store  (hamming=110, weighted score=0.619)
+Score gate  : threshold=0.55 -> PASS
+Decision    : RENAMED  'stairs' -> 'Souvenir Store'

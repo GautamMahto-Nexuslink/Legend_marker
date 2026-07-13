@@ -1,0 +1,28 @@
+Map icon 1: 001_Amphitheater.png
+================================
+Bounding box (x1,y1,x2,y2): [179, 1380, 234, 1435]
+Detection confidence      : 0.9472
+pHash (hex)               : dfeaa915a0048656aa51816198079676e178979fe1a99a79669779e69a6667a6
+Hash size                 : 16x16 = 256 bits (max possible Hamming distance = 256)
+
+Hamming distance to each legend icon (nearest first):
+  legend name                         hamming  hash_sim  weighted
+  ---------------------------------------------------------------
+  Amphitheater                            122     0.523     0.656
+  Softball Field                          110     0.570     0.638
+  Aquarium                                122     0.523     0.616
+  Fishing                                 128     0.500     0.604
+  Steps                                   120     0.531     0.592
+  Playground                              126     0.508     0.588
+  Park Office                             120     0.531     0.588
+  RIC Air Field                           134     0.477     0.583
+  Picnic Area                             128     0.500     0.582
+  Parking Area P                          130     0.492     0.566
+  Public Restroom                         126     0.508     0.566
+  Park Police                             126     0.508     0.558
+  Discovery                               126     0.508     0.556
+  Souvenir Store                          132     0.484     0.369
+
+Best match  : Amphitheater  (hamming=122, weighted score=0.656)
+Score gate  : threshold=0.55 -> PASS
+Decision    : RENAMED  'other_icon' -> 'Amphitheater'

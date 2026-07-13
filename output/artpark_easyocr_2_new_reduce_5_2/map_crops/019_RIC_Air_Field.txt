@@ -1,0 +1,28 @@
+Map icon 19: 019_RIC_Air_Field.png
+==================================
+Bounding box (x1,y1,x2,y2): [1396, 1143, 1445, 1192]
+Detection confidence      : 0.8789
+pHash (hex)               : 86e95a56797ee5e87987879dff9eea62de689a6886698a268398a1986986a1a0
+Hash size                 : 16x16 = 256 bits (max possible Hamming distance = 256)
+
+Hamming distance to each legend icon (nearest first):
+  legend name                         hamming  hash_sim  weighted
+  ---------------------------------------------------------------
+  RIC Air Field                           110     0.570     0.652
+  Picnic Area                             122     0.523     0.617
+  Playground                              130     0.492     0.617
+  Parking Area P                          120     0.531     0.617
+  Amphitheater                            108     0.578     0.616
+  Park Office                             128     0.500     0.613
+  Aquarium                                124     0.516     0.610
+  Softball Field                          124     0.516     0.606
+  Steps                                   120     0.531     0.602
+  Park Police                             130     0.492     0.597
+  Discovery                               116     0.547     0.582
+  Fishing                                 130     0.492     0.576
+  Public Restroom                         128     0.500     0.523
+  Souvenir Store                          140     0.453     0.363
+
+Best match  : RIC Air Field  (hamming=110, weighted score=0.652)
+Score gate  : threshold=0.55 -> PASS
+Decision    : RENAMED  'birding_wildlife_viewing' -> 'RIC Air Field'

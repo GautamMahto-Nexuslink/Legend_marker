@@ -1,0 +1,28 @@
+Map icon 74: 074_Playground.png
+===============================
+Bounding box (x1,y1,x2,y2): [181, 2490, 233, 2544]
+Detection confidence      : 0.4391
+pHash (hex)               : ffeae79139109e3cc68161c798459633a451c9c9911cb73ecc534df691ce1399
+Hash size                 : 16x16 = 256 bits (max possible Hamming distance = 256)
+
+Hamming distance to each legend icon (nearest first):
+  legend name                         hamming  hash_sim  weighted
+  ---------------------------------------------------------------
+  Playground                               96     0.625     0.759
+  Aquarium                                106     0.586     0.660
+  RIC Air Field                           120     0.531     0.660
+  Softball Field                          124     0.516     0.648
+  Steps                                   122     0.523     0.633
+  Fishing                                 124     0.516     0.632
+  Park Office                             122     0.523     0.630
+  Parking Area P                          122     0.523     0.623
+  Park Police                             106     0.586     0.620
+  Picnic Area                             126     0.508     0.617
+  Discovery                               114     0.555     0.600
+  Amphitheater                            134     0.477     0.600
+  Public Restroom                         126     0.508     0.552
+  Souvenir Store                          122     0.523     0.413
+
+Best match  : Playground  (hamming=96, weighted score=0.759)
+Score gate  : threshold=0.55 -> PASS
+Decision    : RENAMED  'playground' -> 'Playground'

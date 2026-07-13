@@ -1,0 +1,28 @@
+Map icon 55: 055_Picnic_Area.png
+================================
+Bounding box (x1,y1,x2,y2): [181, 2327, 233, 2384]
+Detection confidence      : 0.6376
+pHash (hex)               : feaa8871e995a59e88699967869e85f8a5a57a7a81e695a25e187e81a9e668a1
+Hash size                 : 16x16 = 256 bits (max possible Hamming distance = 256)
+
+Hamming distance to each legend icon (nearest first):
+  legend name                         hamming  hash_sim  weighted
+  ---------------------------------------------------------------
+  Picnic Area                             112     0.562     0.700
+  Aquarium                                118     0.539     0.653
+  RIC Air Field                           126     0.508     0.626
+  Parking Area P                          128     0.500     0.606
+  Softball Field                          124     0.516     0.600
+  Fishing                                 128     0.500     0.598
+  Steps                                   126     0.508     0.594
+  Playground                              118     0.539     0.593
+  Amphitheater                            122     0.523     0.592
+  Park Office                             124     0.516     0.586
+  Public Restroom                         122     0.523     0.564
+  Discovery                               128     0.500     0.549
+  Park Police                             142     0.445     0.541
+  Souvenir Store                          120     0.531     0.408
+
+Best match  : Picnic Area  (hamming=112, weighted score=0.700)
+Score gate  : threshold=0.55 -> PASS
+Decision    : RENAMED  'picnic_area' -> 'Picnic Area'

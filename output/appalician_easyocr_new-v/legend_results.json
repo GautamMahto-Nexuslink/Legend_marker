@@ -1,0 +1,914 @@
+[
+  {
+    "index": 0,
+    "name": "legend_icon_0",
+    "detected_class": "post_office",
+    "confidence": 0.9581,
+    "bbox": [
+      1147,
+      399,
+      1184,
+      459
+    ],
+    "polygon": [
+      [
+        1148.0,
+        399.0
+      ],
+      [
+        1147.0,
+        400.0
+      ],
+      [
+        1147.0,
+        459.0
+      ],
+      [
+        1149.0,
+        459.0
+      ],
+      [
+        1150.0,
+        460.0
+      ],
+      [
+        1183.0,
+        460.0
+      ],
+      [
+        1184.0,
+        459.0
+      ],
+      [
+        1185.0,
+        459.0
+      ],
+      [
+        1186.0,
+        458.0
+      ],
+      [
+        1186.0,
+        400.0
+      ],
+      [
+        1185.0,
+        399.0
+      ]
+    ],
+    "hash": "b86b3834c696c38a63c3327938ce1d37cf09c79ee386334ccc69cc329cbd1e49",
+    "matched_text": null,
+    "matched_text_bbox": null,
+    "matched_text_confidence": null,
+    "crop_file": "legend_crops/000_legend_icon_0.png"
+  },
+  {
+    "index": 1,
+    "name": "legend_icon_1",
+    "detected_class": "campsite",
+    "confidence": 0.9501,
+    "bbox": [
+      339,
+      405,
+      388,
+      454
+    ],
+    "polygon": [
+      [
+        343.0,
+        406.0
+      ],
+      [
+        342.0,
+        407.0
+      ],
+      [
+        342.0,
+        451.0
+      ],
+      [
+        343.0,
+        452.0
+      ],
+      [
+        388.0,
+        452.0
+      ],
+      [
+        389.0,
+        451.0
+      ],
+      [
+        389.0,
+        407.0
+      ],
+      [
+        388.0,
+        407.0
+      ],
+      [
+        387.0,
+        406.0
+      ]
+    ],
+    "hash": "9abae5767369cd16cda593499969e64be649ccb68c9093269306967b9430d0cf",
+    "matched_text": null,
+    "matched_text_bbox": null,
+    "matched_text_confidence": null,
+    "crop_file": "legend_crops/001_legend_icon_1.png"
+  },
+  {
+    "index": 2,
+    "name": "legend_icon_2",
+    "detected_class": "photography",
+    "confidence": 0.9487,
+    "bbox": [
+      776,
+      405,
+      822,
+      453
+    ],
+    "polygon": [
+      [
+        774.0,
+        406.0
+      ],
+      [
+        772.0,
+        408.0
+      ],
+      [
+        772.0,
+        451.0
+      ],
+      [
+        773.0,
+        451.0
+      ],
+      [
+        774.0,
+        452.0
+      ],
+      [
+        819.0,
+        452.0
+      ],
+      [
+        820.0,
+        451.0
+      ],
+      [
+        820.0,
+        407.0
+      ],
+      [
+        819.0,
+        407.0
+      ],
+      [
+        818.0,
+        406.0
+      ]
+    ],
+    "hash": "9efbe1c7e984e61b6431987ce505c71be1449066c19390fb9664c39f9913666e",
+    "matched_text": null,
+    "matched_text_bbox": null,
+    "matched_text_confidence": null,
+    "crop_file": "legend_crops/002_legend_icon_2.png"
+  },
+  {
+    "index": 3,
+    "name": "legend_icon_3",
+    "detected_class": "cabin",
+    "confidence": 0.8638,
+    "bbox": [
+      565,
+      407,
+      603,
+      453
+    ],
+    "polygon": [
+      [
+        563.0,
+        406.0
+      ],
+      [
+        562.0,
+        407.0
+      ],
+      [
+        561.0,
+        407.0
+      ],
+      [
+        561.0,
+        451.0
+      ],
+      [
+        562.0,
+        452.0
+      ],
+      [
+        599.0,
+        452.0
+      ],
+      [
+        600.0,
+        451.0
+      ],
+      [
+        601.0,
+        451.0
+      ],
+      [
+        601.0,
+        407.0
+      ],
+      [
+        600.0,
+        407.0
+      ],
+      [
+        599.0,
+        406.0
+      ]
+    ],
+    "hash": "fa959b66c4b5c1999e2416319e2568f2697b9686a3cc6f129c1ce31c9cf3c1e4",
+    "matched_text": null,
+    "matched_text_bbox": null,
+    "matched_text_confidence": null,
+    "crop_file": "legend_crops/003_legend_icon_3.png"
+  },
+  {
+    "index": 4,
+    "name": "legend_icon_4",
+    "detected_class": "telephone",
+    "confidence": 0.8131,
+    "bbox": [
+      497,
+      333,
+      529,
+      376
+    ],
+    "polygon": [
+      [
+        498.0,
+        333.0
+      ],
+      [
+        497.0,
+        334.0
+      ],
+      [
+        496.0,
+        334.0
+      ],
+      [
+        496.0,
+        374.0
+      ],
+      [
+        497.0,
+        375.0
+      ],
+      [
+        499.0,
+        375.0
+      ],
+      [
+        500.0,
+        376.0
+      ],
+      [
+        524.0,
+        376.0
+      ],
+      [
+        525.0,
+        375.0
+      ],
+      [
+        527.0,
+        375.0
+      ],
+      [
+        528.0,
+        374.0
+      ],
+      [
+        528.0,
+        335.0
+      ],
+      [
+        526.0,
+        333.0
+      ]
+    ],
+    "hash": "ed2ce3c432b29e3b96d30cec1b4f38e6931665936d3c32cbce33660b4c25334c",
+    "matched_text": null,
+    "matched_text_bbox": null,
+    "matched_text_confidence": null,
+    "crop_file": "legend_crops/004_legend_icon_4.png"
+  },
+  {
+    "index": 5,
+    "name": "legend_icon_5",
+    "detected_class": "campsite",
+    "confidence": 0.7866,
+    "bbox": [
+      205,
+      351,
+      236,
+      377
+    ],
+    "polygon": [
+      [
+        206.0,
+        351.0
+      ],
+      [
+        205.0,
+        352.0
+      ],
+      [
+        204.0,
+        352.0
+      ],
+      [
+        203.0,
+        353.0
+      ],
+      [
+        203.0,
+        374.0
+      ],
+      [
+        204.0,
+        375.0
+      ],
+      [
+        206.0,
+        375.0
+      ],
+      [
+        207.0,
+        376.0
+      ],
+      [
+        231.0,
+        376.0
+      ],
+      [
+        232.0,
+        375.0
+      ],
+      [
+        234.0,
+        375.0
+      ],
+      [
+        235.0,
+        374.0
+      ],
+      [
+        235.0,
+        353.0
+      ],
+      [
+        234.0,
+        352.0
+      ],
+      [
+        233.0,
+        352.0
+      ],
+      [
+        232.0,
+        351.0
+      ]
+    ],
+    "hash": "ec92d36dc26db5929d92616eb52a4b45cf48189758d7a6a4e3949c691c6de19a",
+    "matched_text": null,
+    "matched_text_bbox": null,
+    "matched_text_confidence": null,
+    "crop_file": "legend_crops/005_legend_icon_5.png"
+  },
+  {
+    "index": 6,
+    "name": "legend_icon_6",
+    "detected_class": "birding_wildlife_viewing",
+    "confidence": 0.7523,
+    "bbox": [
+      1083,
+      267,
+      1108,
+      283
+    ],
+    "polygon": [
+      [
+        1084.0,
+        267.0
+      ],
+      [
+        1083.0,
+        268.0
+      ],
+      [
+        1082.0,
+        268.0
+      ],
+      [
+        1081.0,
+        269.0
+      ],
+      [
+        1081.0,
+        279.0
+      ],
+      [
+        1082.0,
+        279.0
+      ],
+      [
+        1083.0,
+        280.0
+      ],
+      [
+        1084.0,
+        280.0
+      ],
+      [
+        1085.0,
+        281.0
+      ],
+      [
+        1101.0,
+        281.0
+      ],
+      [
+        1102.0,
+        280.0
+      ],
+      [
+        1104.0,
+        280.0
+      ],
+      [
+        1105.0,
+        279.0
+      ],
+      [
+        1105.0,
+        268.0
+      ],
+      [
+        1104.0,
+        268.0
+      ],
+      [
+        1103.0,
+        267.0
+      ]
+    ],
+    "hash": "82baeec4ec44013b933b32cc3eccdcc16c13cd31c33223ceb3cf11bbbcec36c4",
+    "matched_text": null,
+    "matched_text_bbox": null,
+    "matched_text_confidence": null,
+    "crop_file": "legend_crops/006_legend_icon_6.png"
+  },
+  {
+    "index": 7,
+    "name": "legend_icon_7",
+    "detected_class": "telephone",
+    "confidence": 0.6203,
+    "bbox": [
+      423,
+      416,
+      455,
+      442
+    ],
+    "polygon": [
+      [
+        425.0,
+        417.0
+      ],
+      [
+        424.0,
+        418.0
+      ],
+      [
+        423.0,
+        418.0
+      ],
+      [
+        423.0,
+        440.0
+      ],
+      [
+        424.0,
+        441.0
+      ],
+      [
+        453.0,
+        441.0
+      ],
+      [
+        454.0,
+        440.0
+      ],
+      [
+        454.0,
+        418.0
+      ],
+      [
+        453.0,
+        417.0
+      ]
+    ],
+    "hash": "abbce459fd4193a692ea3b410ed36c046934c4cf79dac4b979ebc3b019279286",
+    "matched_text": null,
+    "matched_text_bbox": null,
+    "matched_text_confidence": null,
+    "crop_file": "legend_crops/007_legend_icon_7.png"
+  },
+  {
+    "index": 8,
+    "name": "legend_icon_8",
+    "detected_class": "telephone",
+    "confidence": 0.5878,
+    "bbox": [
+      351,
+      309,
+      385,
+      378
+    ],
+    "polygon": [
+      [
+        353.0,
+        307.0
+      ],
+      [
+        352.0,
+        308.0
+      ],
+      [
+        350.0,
+        308.0
+      ],
+      [
+        350.0,
+        374.0
+      ],
+      [
+        351.0,
+        375.0
+      ],
+      [
+        352.0,
+        375.0
+      ],
+      [
+        353.0,
+        376.0
+      ],
+      [
+        377.0,
+        376.0
+      ],
+      [
+        378.0,
+        375.0
+      ],
+      [
+        380.0,
+        375.0
+      ],
+      [
+        381.0,
+        374.0
+      ],
+      [
+        381.0,
+        308.0
+      ],
+      [
+        379.0,
+        308.0
+      ],
+      [
+        378.0,
+        307.0
+      ]
+    ],
+    "hash": "a499631c19ed4cd3670e0cf3c72c30ce9933664dcc73663366716679cce39926",
+    "matched_text": null,
+    "matched_text_bbox": null,
+    "matched_text_confidence": null,
+    "crop_file": "legend_crops/008_legend_icon_8.png"
+  },
+  {
+    "index": 9,
+    "name": "legend_icon_9",
+    "detected_class": "wheelchair_accessible",
+    "confidence": 0.5877,
+    "bbox": [
+      422,
+      339,
+      458,
+      378
+    ],
+    "polygon": [
+      [
+        425.0,
+        340.0
+      ],
+      [
+        424.0,
+        341.0
+      ],
+      [
+        423.0,
+        341.0
+      ],
+      [
+        423.0,
+        374.0
+      ],
+      [
+        424.0,
+        375.0
+      ],
+      [
+        425.0,
+        375.0
+      ],
+      [
+        426.0,
+        376.0
+      ],
+      [
+        451.0,
+        376.0
+      ],
+      [
+        452.0,
+        375.0
+      ],
+      [
+        453.0,
+        375.0
+      ],
+      [
+        454.0,
+        374.0
+      ],
+      [
+        454.0,
+        341.0
+      ],
+      [
+        453.0,
+        341.0
+      ],
+      [
+        452.0,
+        340.0
+      ]
+    ],
+    "hash": "bb0fe1c4d178672fc4f03b19c62798dc92d33c673e9a93f0939cc49439486723",
+    "matched_text": null,
+    "matched_text_bbox": null,
+    "matched_text_confidence": null,
+    "crop_file": "legend_crops/009_legend_icon_9.png"
+  },
+  {
+    "index": 10,
+    "name": "legend_icon_10",
+    "detected_class": "telephone",
+    "confidence": 0.5396,
+    "bbox": [
+      642,
+      319,
+      676,
+      375
+    ],
+    "polygon": [
+      [
+        645.0,
+        318.0
+      ],
+      [
+        644.0,
+        319.0
+      ],
+      [
+        643.0,
+        319.0
+      ],
+      [
+        642.0,
+        320.0
+      ],
+      [
+        642.0,
+        374.0
+      ],
+      [
+        643.0,
+        375.0
+      ],
+      [
+        645.0,
+        375.0
+      ],
+      [
+        646.0,
+        376.0
+      ],
+      [
+        670.0,
+        376.0
+      ],
+      [
+        671.0,
+        375.0
+      ],
+      [
+        673.0,
+        375.0
+      ],
+      [
+        674.0,
+        374.0
+      ],
+      [
+        674.0,
+        320.0
+      ],
+      [
+        673.0,
+        319.0
+      ],
+      [
+        672.0,
+        319.0
+      ],
+      [
+        671.0,
+        318.0
+      ]
+    ],
+    "hash": "b09ec78e387998ce64b63a7164c966363196661934d999e69c6f34d867066673",
+    "matched_text": null,
+    "matched_text_bbox": null,
+    "matched_text_confidence": null,
+    "crop_file": "legend_crops/010_legend_icon_10.png"
+  },
+  {
+    "index": 11,
+    "name": "legend_icon_11",
+    "detected_class": "parking",
+    "confidence": 0.5381,
+    "bbox": [
+      638,
+      415,
+      672,
+      443
+    ],
+    "polygon": [
+      [
+        644.0,
+        417.0
+      ],
+      [
+        642.0,
+        419.0
+      ],
+      [
+        642.0,
+        440.0
+      ],
+      [
+        643.0,
+        440.0
+      ],
+      [
+        644.0,
+        441.0
+      ],
+      [
+        673.0,
+        441.0
+      ],
+      [
+        674.0,
+        440.0
+      ],
+      [
+        674.0,
+        418.0
+      ],
+      [
+        673.0,
+        418.0
+      ],
+      [
+        672.0,
+        417.0
+      ]
+    ],
+    "hash": "bec0915fd9bf4f80864f7e203a21b14779b6c17ec6d8c9d147c58646c2367a32",
+    "matched_text": null,
+    "matched_text_bbox": null,
+    "matched_text_confidence": null,
+    "crop_file": "legend_crops/011_legend_icon_11.png"
+  },
+  {
+    "index": 12,
+    "name": "8",
+    "detected_class": "campsite",
+    "confidence": 0.4049,
+    "bbox": [
+      643,
+      210,
+      672,
+      245
+    ],
+    "polygon": [
+      [
+        646.0,
+        208.0
+      ],
+      [
+        645.0,
+        209.0
+      ],
+      [
+        643.0,
+        209.0
+      ],
+      [
+        642.0,
+        210.0
+      ],
+      [
+        642.0,
+        242.0
+      ],
+      [
+        643.0,
+        243.0
+      ],
+      [
+        644.0,
+        243.0
+      ],
+      [
+        645.0,
+        244.0
+      ],
+      [
+        671.0,
+        244.0
+      ],
+      [
+        672.0,
+        243.0
+      ],
+      [
+        673.0,
+        243.0
+      ],
+      [
+        674.0,
+        242.0
+      ],
+      [
+        674.0,
+        210.0
+      ],
+      [
+        673.0,
+        209.0
+      ],
+      [
+        671.0,
+        209.0
+      ],
+      [
+        670.0,
+        208.0
+      ]
+    ],
+    "hash": "ed92f34cc36c349bc1ece1ec9c0394a5b0e74c6768c679d2664669672ce5c313",
+    "matched_text": "8",
+    "matched_text_bbox": [
+      641,
+      165,
+      677,
+      247
+    ],
+    "matched_text_confidence": 0.417,
+    "crop_file": "legend_crops/012_8.png"
+  }
+]

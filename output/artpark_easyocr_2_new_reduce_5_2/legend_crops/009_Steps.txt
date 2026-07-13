@@ -1,0 +1,26 @@
+Legend icon 9: Steps
+====================
+Bounding box (x1,y1,x2,y2): [52, 1729, 104, 1782]
+Detection confidence      : 0.5495
+pHash (hex)               : abbf6b4ab4641cb1cf58a7acf35269b9c4741b56a5011ec4c45061cfb0477973
+Hash size                 : 16x16 = 256 bits (max possible Hamming distance = 256)
+
+Hamming distance to each legend icon (nearest first):
+  legend name                         hamming  hash_sim  weighted
+  ---------------------------------------------------------------
+  Softball Field                           94     0.633     0.683
+  Aquarium                                108     0.578     0.671
+  Picnic Area                             108     0.578     0.642
+  Parking Area P                          124     0.516     0.628
+  RIC Air Field                           132     0.484     0.624
+  Playground                              132     0.484     0.614
+  Park Office                             118     0.539     0.608
+  Discovery                               116     0.547     0.602
+  Amphitheater                            118     0.539     0.599
+  Fishing                                 122     0.523     0.597
+  Park Police                             114     0.555     0.565
+  Public Restroom                         126     0.508     0.520
+  Souvenir Store                          118     0.539     0.407
+
+This legend icon : 'Steps'
+Note: distances are to OTHER legend icons (a nearest-neighbour of 0 would mean a duplicate icon).

@@ -1,0 +1,14 @@
+# Core
+numpy>=1.24
+opencv-python>=4.8
+Pillow>=10.0
+imagehash>=4.3
+scikit-image>=0.22        # SSIM
+
+# OCR (install at least one)
+easyocr>=1.7
+# paddleocr>=2.7          # alternative OCR engine
+# paddlepaddle>=2.6       # backend for paddleocr
+
+# Roboflow local inference (provides `from inference import get_model`)
+inference>=0.9

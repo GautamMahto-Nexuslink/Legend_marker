@@ -1,0 +1,28 @@
+Map icon 26: 026_Parking_Area_P.png
+===================================
+Bounding box (x1,y1,x2,y2): [1327, 673, 1382, 724]
+Detection confidence      : 0.8573
+pHash (hex)               : deeb98566940a7a18896969e845178668465597f845d579e819e6799e17e5e62
+Hash size                 : 16x16 = 256 bits (max possible Hamming distance = 256)
+
+Hamming distance to each legend icon (nearest first):
+  legend name                         hamming  hash_sim  weighted
+  ---------------------------------------------------------------
+  Parking Area P                          104     0.594     0.635
+  Playground                              114     0.555     0.614
+  Picnic Area                             116     0.547     0.612
+  RIC Air Field                           128     0.500     0.611
+  Steps                                   112     0.562     0.605
+  Park Office                             122     0.523     0.601
+  Aquarium                                122     0.523     0.601
+  Park Police                             124     0.516     0.601
+  Public Restroom                         106     0.586     0.586
+  Fishing                                 120     0.531     0.586
+  Softball Field                          130     0.492     0.585
+  Amphitheater                            134     0.477     0.558
+  Discovery                               124     0.516     0.546
+  Souvenir Store                          122     0.523     0.399
+
+Best match  : Parking Area P  (hamming=104, weighted score=0.635)
+Score gate  : threshold=0.55 -> PASS
+Decision    : RENAMED  'maintenance' -> 'Parking Area P'

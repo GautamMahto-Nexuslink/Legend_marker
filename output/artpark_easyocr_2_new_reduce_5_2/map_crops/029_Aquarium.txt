@@ -1,0 +1,28 @@
+Map icon 29: 029_Aquarium.png
+=============================
+Bounding box (x1,y1,x2,y2): [180, 1761, 236, 1825]
+Detection confidence      : 0.8102
+pHash (hex)               : fbee949b3c17c164cd41c12fb521b68f905dced0c1066db2943e342f906d4b6d
+Hash size                 : 16x16 = 256 bits (max possible Hamming distance = 256)
+
+Hamming distance to each legend icon (nearest first):
+  legend name                         hamming  hash_sim  weighted
+  ---------------------------------------------------------------
+  Aquarium                                110     0.570     0.626
+  Softball Field                          106     0.586     0.624
+  Picnic Area                             124     0.516     0.621
+  Park Police                             114     0.555     0.616
+  Parking Area P                          120     0.531     0.612
+  RIC Air Field                           130     0.492     0.609
+  Park Office                             120     0.531     0.604
+  Steps                                   120     0.531     0.603
+  Playground                              128     0.500     0.594
+  Public Restroom                         114     0.555     0.576
+  Amphitheater                            120     0.531     0.571
+  Fishing                                 132     0.484     0.565
+  Discovery                               118     0.539     0.565
+  Souvenir Store                          120     0.531     0.409
+
+Best match  : Aquarium  (hamming=110, weighted score=0.626)
+Score gate  : threshold=0.55 -> PASS
+Decision    : RENAMED  'pets_on_leash' -> 'Aquarium'

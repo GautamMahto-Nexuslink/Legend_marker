@@ -1,0 +1,26 @@
+Legend icon 4: Amphitheater
+===========================
+Bounding box (x1,y1,x2,y2): [53, 144, 103, 195]
+Detection confidence      : 0.7167
+pHash (hex)               : 8aaa2ccc3cf7f2c33b45b02dbff4cb30b73f0b03b0f32c2fcb4c30cc8c0cc3c4
+Hash size                 : 16x16 = 256 bits (max possible Hamming distance = 256)
+
+Hamming distance to each legend icon (nearest first):
+  legend name                         hamming  hash_sim  weighted
+  ---------------------------------------------------------------
+  Softball Field                          114     0.555     0.634
+  Park Office                             110     0.570     0.628
+  Discovery                               108     0.578     0.626
+  RIC Air Field                           108     0.578     0.623
+  Picnic Area                             112     0.562     0.614
+  Aquarium                                120     0.531     0.610
+  Playground                              128     0.500     0.608
+  Steps                                   118     0.539     0.599
+  Fishing                                 130     0.492     0.598
+  Parking Area P                          134     0.477     0.571
+  Park Police                             130     0.492     0.550
+  Public Restroom                         122     0.523     0.547
+  Souvenir Store                          128     0.500     0.372
+
+This legend icon : 'Amphitheater'
+Note: distances are to OTHER legend icons (a nearest-neighbour of 0 would mean a duplicate icon).

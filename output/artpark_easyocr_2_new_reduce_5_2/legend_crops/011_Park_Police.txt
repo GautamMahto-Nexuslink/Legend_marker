@@ -1,0 +1,26 @@
+Legend icon 11: Park Police
+===========================
+Bounding box (x1,y1,x2,y2): [52, 929, 104, 984]
+Detection confidence      : 0.4435
+pHash (hex)               : 83bae4b13c47936f6d194e92b3659869c671c1b0d919b6c5b444c793d991336e
+Hash size                 : 16x16 = 256 bits (max possible Hamming distance = 256)
+
+Hamming distance to each legend icon (nearest first):
+  legend name                         hamming  hash_sim  weighted
+  ---------------------------------------------------------------
+  Parking Area P                          114     0.555     0.623
+  RIC Air Field                           114     0.555     0.614
+  Park Office                             118     0.539     0.613
+  Aquarium                                114     0.555     0.600
+  Fishing                                 104     0.594     0.595
+  Playground                              114     0.555     0.586
+  Softball Field                          120     0.531     0.581
+  Discovery                               104     0.594     0.574
+  Public Restroom                         116     0.547     0.568
+  Steps                                   114     0.555     0.565
+  Picnic Area                             130     0.492     0.555
+  Amphitheater                            130     0.492     0.550
+  Souvenir Store                          126     0.508     0.408
+
+This legend icon : 'Park Police'
+Note: distances are to OTHER legend icons (a nearest-neighbour of 0 would mean a duplicate icon).

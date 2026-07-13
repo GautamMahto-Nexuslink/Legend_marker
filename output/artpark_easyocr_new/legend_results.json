@@ -1,0 +1,1919 @@
+[
+  {
+    "index": 0,
+    "name": "legend_icon_0",
+    "detected_class": "snorkeling",
+    "confidence": 0.9574,
+    "bbox": [
+      56,
+      1653,
+      100,
+      1698
+    ],
+    "polygon": [
+      [
+        58.0,
+        1657.0
+      ],
+      [
+        57.0,
+        1658.0
+      ],
+      [
+        57.0,
+        1695.0
+      ],
+      [
+        58.0,
+        1696.0
+      ],
+      [
+        100.0,
+        1696.0
+      ],
+      [
+        100.0,
+        1692.0
+      ],
+      [
+        101.0,
+        1691.0
+      ],
+      [
+        101.0,
+        1662.0
+      ],
+      [
+        100.0,
+        1661.0
+      ],
+      [
+        100.0,
+        1657.0
+      ]
+    ],
+    "hash": "aabe834baf432cbcbd3492f4d750ccd3c742672dd1c271cbdc329c32d20cde08",
+    "matched_text": null,
+    "matched_text_bbox": null,
+    "matched_text_confidence": null,
+    "crop_file": "legend_crops/000_legend_icon_0.png"
+  },
+  {
+    "index": 1,
+    "name": "RIC Air Field",
+    "detected_class": "airpots",
+    "confidence": 0.9359,
+    "bbox": [
+      52,
+      1410,
+      104,
+      1461
+    ],
+    "polygon": [
+      [
+        55.0,
+        1414.0
+      ],
+      [
+        55.0,
+        1415.0
+      ],
+      [
+        54.0,
+        1416.0
+      ],
+      [
+        54.0,
+        1452.0
+      ],
+      [
+        55.0,
+        1453.0
+      ],
+      [
+        55.0,
+        1454.0
+      ],
+      [
+        102.0,
+        1454.0
+      ],
+      [
+        103.0,
+        1453.0
+      ],
+      [
+        103.0,
+        1448.0
+      ],
+      [
+        104.0,
+        1447.0
+      ],
+      [
+        104.0,
+        1421.0
+      ],
+      [
+        103.0,
+        1420.0
+      ],
+      [
+        103.0,
+        1415.0
+      ],
+      [
+        102.0,
+        1414.0
+      ]
+    ],
+    "hash": "88aa6ecc7f77913bd7775902f5dd9266df11ac6ad4c4d208c966e488de42a08a",
+    "matched_text": "RIC Air Field",
+    "matched_text_bbox": [
+      148,
+      1413,
+      387,
+      1464
+    ],
+    "matched_text_confidence": 0.5455,
+    "crop_file": "legend_crops/001_RIC_Air_Field.png"
+  },
+  {
+    "index": 2,
+    "name": "Scenic View",
+    "detected_class": "fishing",
+    "confidence": 0.8759,
+    "bbox": [
+      154,
+      1500,
+      177,
+      1533
+    ],
+    "polygon": [
+      [
+        154.0,
+        1495.0
+      ],
+      [
+        154.0,
+        1496.0
+      ],
+      [
+        153.0,
+        1497.0
+      ],
+      [
+        153.0,
+        1533.0
+      ],
+      [
+        154.0,
+        1534.0
+      ],
+      [
+        176.0,
+        1534.0
+      ],
+      [
+        176.0,
+        1532.0
+      ],
+      [
+        177.0,
+        1531.0
+      ],
+      [
+        177.0,
+        1499.0
+      ],
+      [
+        176.0,
+        1498.0
+      ],
+      [
+        176.0,
+        1495.0
+      ]
+    ],
+    "hash": "bd2d927c6587e1e032d29b07c65acf0793689c3fcd2d2cb4d9a038fccd8532c2",
+    "matched_text": "Scenic View",
+    "matched_text_bbox": [
+      145,
+      1492,
+      377,
+      1544
+    ],
+    "matched_text_confidence": 0.7108,
+    "crop_file": "legend_crops/002_Scenic_View.png"
+  },
+  {
+    "index": 3,
+    "name": "Playground",
+    "detected_class": "fishing",
+    "confidence": 0.8116,
+    "bbox": [
+      52,
+      1253,
+      103,
+      1304
+    ],
+    "polygon": [
+      [
+        52.0,
+        1253.0
+      ],
+      [
+        52.0,
+        1254.0
+      ],
+      [
+        51.0,
+        1255.0
+      ],
+      [
+        51.0,
+        1303.0
+      ],
+      [
+        52.0,
+        1304.0
+      ],
+      [
+        52.0,
+        1305.0
+      ],
+      [
+        100.0,
+        1305.0
+      ],
+      [
+        100.0,
+        1301.0
+      ],
+      [
+        101.0,
+        1300.0
+      ],
+      [
+        101.0,
+        1258.0
+      ],
+      [
+        100.0,
+        1257.0
+      ],
+      [
+        100.0,
+        1253.0
+      ]
+    ],
+    "hash": "cfff63d83b8a1f0e87a960c2c8e21e33b6316c79c8d833ae92086e38cc263ee6",
+    "matched_text": "Playground",
+    "matched_text_bbox": [
+      148,
+      1256,
+      362,
+      1310
+    ],
+    "matched_text_confidence": 0.9985,
+    "crop_file": "legend_crops/003_Playground.png"
+  },
+  {
+    "index": 4,
+    "name": "legend_icon_4",
+    "detected_class": "fishing",
+    "confidence": 0.7692,
+    "bbox": [
+      243,
+      1669,
+      265,
+      1695
+    ],
+    "polygon": [
+      [
+        244.0,
+        1670.0
+      ],
+      [
+        244.0,
+        1672.0
+      ],
+      [
+        243.0,
+        1673.0
+      ],
+      [
+        243.0,
+        1693.0
+      ],
+      [
+        244.0,
+        1694.0
+      ],
+      [
+        244.0,
+        1696.0
+      ],
+      [
+        263.0,
+        1696.0
+      ],
+      [
+        264.0,
+        1695.0
+      ],
+      [
+        264.0,
+        1691.0
+      ],
+      [
+        265.0,
+        1690.0
+      ],
+      [
+        265.0,
+        1676.0
+      ],
+      [
+        264.0,
+        1675.0
+      ],
+      [
+        264.0,
+        1671.0
+      ],
+      [
+        263.0,
+        1670.0
+      ]
+    ],
+    "hash": "bf146b49e0fb94aea7a062d59681c70a9e1f6630587c9627995a9a5e68f13d38",
+    "matched_text": null,
+    "matched_text_bbox": null,
+    "matched_text_confidence": null,
+    "crop_file": "legend_crops/004_legend_icon_4.png"
+  },
+  {
+    "index": 5,
+    "name": "Parking Area P",
+    "detected_class": "fishing",
+    "confidence": 0.7513,
+    "bbox": [
+      53,
+      1011,
+      103,
+      1064
+    ],
+    "polygon": [
+      [
+        55.0,
+        1010.0
+      ],
+      [
+        55.0,
+        1011.0
+      ],
+      [
+        54.0,
+        1012.0
+      ],
+      [
+        54.0,
+        1061.0
+      ],
+      [
+        55.0,
+        1062.0
+      ],
+      [
+        55.0,
+        1063.0
+      ],
+      [
+        102.0,
+        1063.0
+      ],
+      [
+        103.0,
+        1062.0
+      ],
+      [
+        103.0,
+        1058.0
+      ],
+      [
+        104.0,
+        1057.0
+      ],
+      [
+        104.0,
+        1017.0
+      ],
+      [
+        103.0,
+        1016.0
+      ],
+      [
+        103.0,
+        1011.0
+      ],
+      [
+        102.0,
+        1010.0
+      ]
+    ],
+    "hash": "8eba9ac679e56d25b0c52693e611994edb4ce5b7cd14d9afb4506632904294db",
+    "matched_text": "Parking Area P",
+    "matched_text_bbox": [
+      64,
+      1009,
+      391,
+      1072
+    ],
+    "matched_text_confidence": 0.9477,
+    "crop_file": "legend_crops/005_Parking_Area_P.png"
+  },
+  {
+    "index": 6,
+    "name": "Softball Field",
+    "detected_class": "fishing",
+    "confidence": 0.7407,
+    "bbox": [
+      154,
+      1579,
+      176,
+      1614
+    ],
+    "polygon": [
+      [
+        154.0,
+        1576.0
+      ],
+      [
+        153.0,
+        1577.0
+      ],
+      [
+        153.0,
+        1614.0
+      ],
+      [
+        154.0,
+        1615.0
+      ],
+      [
+        173.0,
+        1615.0
+      ],
+      [
+        173.0,
+        1614.0
+      ],
+      [
+        174.0,
+        1613.0
+      ],
+      [
+        174.0,
+        1578.0
+      ],
+      [
+        173.0,
+        1577.0
+      ],
+      [
+        173.0,
+        1576.0
+      ]
+    ],
+    "hash": "bd2d90f13687c38732d29e1eca5a0e1ed3493870cd2d64e16db631c36c9c670f",
+    "matched_text": "Softball Field",
+    "matched_text_bbox": [
+      146,
+      1575,
+      393,
+      1619
+    ],
+    "matched_text_confidence": 0.9998,
+    "crop_file": "legend_crops/006_Softball_Field.png"
+  },
+  {
+    "index": 7,
+    "name": "Amphitheater",
+    "detected_class": "amphitheater",
+    "confidence": 0.7167,
+    "bbox": [
+      53,
+      144,
+      103,
+      195
+    ],
+    "polygon": [
+      [
+        55.0,
+        148.0
+      ],
+      [
+        55.0,
+        149.0
+      ],
+      [
+        54.0,
+        150.0
+      ],
+      [
+        54.0,
+        186.0
+      ],
+      [
+        55.0,
+        187.0
+      ],
+      [
+        55.0,
+        188.0
+      ],
+      [
+        102.0,
+        188.0
+      ],
+      [
+        102.0,
+        187.0
+      ],
+      [
+        103.0,
+        186.0
+      ],
+      [
+        103.0,
+        182.0
+      ],
+      [
+        104.0,
+        181.0
+      ],
+      [
+        104.0,
+        155.0
+      ],
+      [
+        103.0,
+        154.0
+      ],
+      [
+        103.0,
+        149.0
+      ],
+      [
+        102.0,
+        148.0
+      ]
+    ],
+    "hash": "8aaa2ccc3cf7f2c33b45b02dbff4cb30b73f0b03b0f32c2fcb4c30cc8c0cc3c4",
+    "matched_text": "Amphitheater",
+    "matched_text_bbox": [
+      147,
+      147,
+      407,
+      199
+    ],
+    "matched_text_confidence": 1.0,
+    "crop_file": "legend_crops/007_Amphitheater.png"
+  },
+  {
+    "index": 8,
+    "name": "Elevator",
+    "detected_class": "fishing",
+    "confidence": 0.7098,
+    "bbox": [
+      186,
+      630,
+      208,
+      656
+    ],
+    "polygon": [
+      [
+        188.0,
+        633.0
+      ],
+      [
+        187.0,
+        634.0
+      ],
+      [
+        187.0,
+        638.0
+      ],
+      [
+        186.0,
+        639.0
+      ],
+      [
+        186.0,
+        653.0
+      ],
+      [
+        187.0,
+        654.0
+      ],
+      [
+        187.0,
+        658.0
+      ],
+      [
+        188.0,
+        659.0
+      ],
+      [
+        207.0,
+        659.0
+      ],
+      [
+        207.0,
+        657.0
+      ],
+      [
+        208.0,
+        656.0
+      ],
+      [
+        208.0,
+        636.0
+      ],
+      [
+        207.0,
+        635.0
+      ],
+      [
+        207.0,
+        633.0
+      ]
+    ],
+    "hash": "bf146b49e0fb94aea7a062d59681c30a9e1f6730587e9e27991a9a5e68f0bd18",
+    "matched_text": "Elevator",
+    "matched_text_bbox": [
+      148,
+      616,
+      306,
+      660
+    ],
+    "matched_text_confidence": 1.0,
+    "crop_file": "legend_crops/008_Elevator.png"
+  },
+  {
+    "index": 9,
+    "name": "legend_icon_9",
+    "detected_class": "fishing",
+    "confidence": 0.6985,
+    "bbox": [
+      51,
+      690,
+      103,
+      742
+    ],
+    "polygon": [
+      [
+        52.0,
+        687.0
+      ],
+      [
+        52.0,
+        688.0
+      ],
+      [
+        51.0,
+        689.0
+      ],
+      [
+        51.0,
+        737.0
+      ],
+      [
+        52.0,
+        738.0
+      ],
+      [
+        52.0,
+        740.0
+      ],
+      [
+        102.0,
+        740.0
+      ],
+      [
+        103.0,
+        739.0
+      ],
+      [
+        103.0,
+        734.0
+      ],
+      [
+        104.0,
+        733.0
+      ],
+      [
+        104.0,
+        693.0
+      ],
+      [
+        103.0,
+        692.0
+      ],
+      [
+        103.0,
+        688.0
+      ],
+      [
+        102.0,
+        687.0
+      ]
+    ],
+    "hash": "bfff6ab56a80954ae2b8e634c88199cd9316633196419cc7b50eccdcccb19333",
+    "matched_text": null,
+    "matched_text_bbox": null,
+    "matched_text_confidence": null,
+    "crop_file": "legend_crops/009_legend_icon_9.png"
+  },
+  {
+    "index": 10,
+    "name": "Aquarium",
+    "detected_class": "fishing",
+    "confidence": 0.6946,
+    "bbox": [
+      48,
+      221,
+      108,
+      285
+    ],
+    "polygon": [
+      [
+        49.0,
+        216.0
+      ],
+      [
+        49.0,
+        218.0
+      ],
+      [
+        48.0,
+        219.0
+      ],
+      [
+        48.0,
+        278.0
+      ],
+      [
+        49.0,
+        279.0
+      ],
+      [
+        49.0,
+        282.0
+      ],
+      [
+        105.0,
+        282.0
+      ],
+      [
+        105.0,
+        281.0
+      ],
+      [
+        106.0,
+        280.0
+      ],
+      [
+        106.0,
+        217.0
+      ],
+      [
+        105.0,
+        216.0
+      ]
+    ],
+    "hash": "9befb2c96490cd34db0532e3b654ce9cecd17931e904c647965190dbe107c73c",
+    "matched_text": "Aquarium",
+    "matched_text_bbox": [
+      148,
+      232,
+      334,
+      284
+    ],
+    "matched_text_confidence": 1.0,
+    "crop_file": "legend_crops/010_Aquarium.png"
+  },
+  {
+    "index": 11,
+    "name": "Steps",
+    "detected_class": "fishing",
+    "confidence": 0.6782,
+    "bbox": [
+      154,
+      1739,
+      177,
+      1773
+    ],
+    "polygon": [
+      [
+        155.0,
+        1737.0
+      ],
+      [
+        153.0,
+        1739.0
+      ],
+      [
+        153.0,
+        1776.0
+      ],
+      [
+        154.0,
+        1777.0
+      ],
+      [
+        176.0,
+        1777.0
+      ],
+      [
+        176.0,
+        1774.0
+      ],
+      [
+        177.0,
+        1773.0
+      ],
+      [
+        177.0,
+        1741.0
+      ],
+      [
+        176.0,
+        1740.0
+      ],
+      [
+        176.0,
+        1738.0
+      ],
+      [
+        175.0,
+        1738.0
+      ],
+      [
+        174.0,
+        1737.0
+      ]
+    ],
+    "hash": "bd2d92783687e1e132d29e17cb4a061fc3481878cd2d6c75cc3639f88cbc6787",
+    "matched_text": "Steps",
+    "matched_text_bbox": [
+      143,
+      1732,
+      262,
+      1788
+    ],
+    "matched_text_confidence": 0.9998,
+    "crop_file": "legend_crops/011_Steps.png"
+  },
+  {
+    "index": 12,
+    "name": "Souvenir Store",
+    "detected_class": "fishing",
+    "confidence": 0.6687,
+    "bbox": [
+      154,
+      1659,
+      177,
+      1693
+    ],
+    "polygon": [
+      [
+        154.0,
+        1657.0
+      ],
+      [
+        153.0,
+        1658.0
+      ],
+      [
+        153.0,
+        1695.0
+      ],
+      [
+        154.0,
+        1696.0
+      ],
+      [
+        176.0,
+        1696.0
+      ],
+      [
+        176.0,
+        1694.0
+      ],
+      [
+        177.0,
+        1693.0
+      ],
+      [
+        177.0,
+        1660.0
+      ],
+      [
+        176.0,
+        1659.0
+      ],
+      [
+        176.0,
+        1657.0
+      ]
+    ],
+    "hash": "bd2d92786787e1e132d29e0fcb5a8e1fd3681c7fcd2524f4c9b030d8cc8433c3",
+    "matched_text": "Souvenir Store",
+    "matched_text_bbox": [
+      147,
+      1655,
+      427,
+      1699
+    ],
+    "matched_text_confidence": 0.9341,
+    "crop_file": "legend_crops/012_Souvenir_Store.png"
+  },
+  {
+    "index": 13,
+    "name": "Public Restroom",
+    "detected_class": "historic_feature",
+    "confidence": 0.6278,
+    "bbox": [
+      69,
+      1330,
+      103,
+      1382
+    ],
+    "polygon": [
+      [
+        69.0,
+        1333.0
+      ],
+      [
+        69.0,
+        1335.0
+      ],
+      [
+        68.0,
+        1336.0
+      ],
+      [
+        68.0,
+        1384.0
+      ],
+      [
+        69.0,
+        1385.0
+      ],
+      [
+        69.0,
+        1386.0
+      ],
+      [
+        102.0,
+        1386.0
+      ],
+      [
+        103.0,
+        1385.0
+      ],
+      [
+        103.0,
+        1381.0
+      ],
+      [
+        104.0,
+        1380.0
+      ],
+      [
+        104.0,
+        1340.0
+      ],
+      [
+        103.0,
+        1339.0
+      ],
+      [
+        103.0,
+        1334.0
+      ],
+      [
+        102.0,
+        1333.0
+      ]
+    ],
+    "hash": "bb1a94f424c7c72194e092d89739c3379324c7e6d33cd0da94d9c2d9e4e6cb16",
+    "matched_text": "Public Restroom",
+    "matched_text_bbox": [
+      148,
+      1333,
+      450,
+      1386
+    ],
+    "matched_text_confidence": 0.9988,
+    "crop_file": "legend_crops/013_Public_Restroom.png"
+  },
+  {
+    "index": 14,
+    "name": "legend_icon_14",
+    "detected_class": "picnic_area",
+    "confidence": 0.6274,
+    "bbox": [
+      52,
+      849,
+      104,
+      901
+    ],
+    "polygon": [
+      [
+        52.0,
+        849.0
+      ],
+      [
+        52.0,
+        850.0
+      ],
+      [
+        51.0,
+        851.0
+      ],
+      [
+        51.0,
+        899.0
+      ],
+      [
+        52.0,
+        900.0
+      ],
+      [
+        52.0,
+        901.0
+      ],
+      [
+        102.0,
+        901.0
+      ],
+      [
+        103.0,
+        900.0
+      ],
+      [
+        103.0,
+        896.0
+      ],
+      [
+        104.0,
+        895.0
+      ],
+      [
+        104.0,
+        855.0
+      ],
+      [
+        103.0,
+        854.0
+      ],
+      [
+        103.0,
+        850.0
+      ],
+      [
+        102.0,
+        849.0
+      ]
+    ],
+    "hash": "c3abb64b6e5c9d949a34ea46ed35a57c95bd9483be4394c8c25dc13c9950c34c",
+    "matched_text": null,
+    "matched_text_bbox": null,
+    "matched_text_confidence": null,
+    "crop_file": "legend_crops/014_legend_icon_14.png"
+  },
+  {
+    "index": 15,
+    "name": "Legend",
+    "detected_class": "fishing",
+    "confidence": 0.6264,
+    "bbox": [
+      184,
+      63,
+      211,
+      94
+    ],
+    "polygon": [
+      [
+        185.0,
+        67.0
+      ],
+      [
+        185.0,
+        68.0
+      ],
+      [
+        184.0,
+        69.0
+      ],
+      [
+        184.0,
+        92.0
+      ],
+      [
+        185.0,
+        93.0
+      ],
+      [
+        210.0,
+        93.0
+      ],
+      [
+        210.0,
+        90.0
+      ],
+      [
+        211.0,
+        89.0
+      ],
+      [
+        211.0,
+        71.0
+      ],
+      [
+        210.0,
+        70.0
+      ],
+      [
+        210.0,
+        67.0
+      ]
+    ],
+    "hash": "b805c26de1fe95a286a14a559e07b55a4a9e25699c784ba56961b596d9e5639e",
+    "matched_text": "Legend",
+    "matched_text_bbox": [
+      149,
+      47,
+      339,
+      111
+    ],
+    "matched_text_confidence": 0.9393,
+    "crop_file": "legend_crops/015_Legend.png"
+  },
+  {
+    "index": 16,
+    "name": "Fishing",
+    "detected_class": "fishing",
+    "confidence": 0.6066,
+    "bbox": [
+      185,
+      709,
+      203,
+      734
+    ],
+    "polygon": [
+      [
+        188.0,
+        714.0
+      ],
+      [
+        187.0,
+        715.0
+      ],
+      [
+        187.0,
+        719.0
+      ],
+      [
+        186.0,
+        720.0
+      ],
+      [
+        187.0,
+        721.0
+      ],
+      [
+        187.0,
+        725.0
+      ],
+      [
+        188.0,
+        726.0
+      ],
+      [
+        201.0,
+        726.0
+      ],
+      [
+        202.0,
+        725.0
+      ],
+      [
+        202.0,
+        715.0
+      ],
+      [
+        201.0,
+        714.0
+      ]
+    ],
+    "hash": "ad6bb0f8678fc3c034b49e07d6d48e0b9250983ecb4e69edccb0369cdb583986",
+    "matched_text": "Fishing",
+    "matched_text_bbox": [
+      145,
+      688,
+      289,
+      750
+    ],
+    "matched_text_confidence": 1.0,
+    "crop_file": "legend_crops/016_Fishing.png"
+  },
+  {
+    "index": 17,
+    "name": "legend_icon_17",
+    "detected_class": "bench",
+    "confidence": 0.5495,
+    "bbox": [
+      52,
+      1729,
+      104,
+      1782
+    ],
+    "polygon": [
+      [
+        52.0,
+        1724.0
+      ],
+      [
+        52.0,
+        1726.0
+      ],
+      [
+        51.0,
+        1727.0
+      ],
+      [
+        51.0,
+        1774.0
+      ],
+      [
+        52.0,
+        1775.0
+      ],
+      [
+        52.0,
+        1777.0
+      ],
+      [
+        102.0,
+        1777.0
+      ],
+      [
+        103.0,
+        1776.0
+      ],
+      [
+        103.0,
+        1771.0
+      ],
+      [
+        104.0,
+        1770.0
+      ],
+      [
+        104.0,
+        1731.0
+      ],
+      [
+        103.0,
+        1730.0
+      ],
+      [
+        103.0,
+        1725.0
+      ],
+      [
+        102.0,
+        1724.0
+      ]
+    ],
+    "hash": "abbf6b4ab4641cb1cf58a7acf35269b9c4741b56a5011ec4c45061cfb0477973",
+    "matched_text": null,
+    "matched_text_bbox": null,
+    "matched_text_confidence": null,
+    "crop_file": "legend_crops/017_legend_icon_17.png"
+  },
+  {
+    "index": 18,
+    "name": "Sidewalk",
+    "detected_class": "trail_name",
+    "confidence": 0.5074,
+    "bbox": [
+      214,
+      2027,
+      237,
+      2057
+    ],
+    "polygon": [
+      [
+        216.0,
+        2034.0
+      ],
+      [
+        216.0,
+        2035.0
+      ],
+      [
+        215.0,
+        2036.0
+      ],
+      [
+        215.0,
+        2058.0
+      ],
+      [
+        216.0,
+        2059.0
+      ],
+      [
+        216.0,
+        2060.0
+      ],
+      [
+        235.0,
+        2060.0
+      ],
+      [
+        235.0,
+        2059.0
+      ],
+      [
+        236.0,
+        2058.0
+      ],
+      [
+        236.0,
+        2036.0
+      ],
+      [
+        235.0,
+        2035.0
+      ],
+      [
+        235.0,
+        2034.0
+      ]
+    ],
+    "hash": "bd2fc2e5c0f09696874a69688d3db49468f2624ab684cb2f63439cb58f2fc96c",
+    "matched_text": "Sidewalk",
+    "matched_text_bbox": [
+      149,
+      2017,
+      325,
+      2061
+    ],
+    "matched_text_confidence": 1.0,
+    "crop_file": "legend_crops/018_Sidewalk.png"
+  },
+  {
+    "index": 19,
+    "name": "Discovery",
+    "detected_class": "museum",
+    "confidence": 0.471,
+    "bbox": [
+      53,
+      417,
+      104,
+      469
+    ],
+    "polygon": [
+      [
+        55.0,
+        418.0
+      ],
+      [
+        54.0,
+        419.0
+      ],
+      [
+        54.0,
+        469.0
+      ],
+      [
+        55.0,
+        470.0
+      ],
+      [
+        102.0,
+        470.0
+      ],
+      [
+        103.0,
+        469.0
+      ],
+      [
+        103.0,
+        465.0
+      ],
+      [
+        104.0,
+        464.0
+      ],
+      [
+        104.0,
+        424.0
+      ],
+      [
+        103.0,
+        423.0
+      ],
+      [
+        103.0,
+        419.0
+      ],
+      [
+        102.0,
+        418.0
+      ]
+    ],
+    "hash": "aaaacf512f72d4ddbeddf502f3f5c302cf75cc8cdc40d4a0f0c0330ad31cc30a",
+    "matched_text": "Discovery",
+    "matched_text_bbox": [
+      146,
+      395,
+      335,
+      450
+    ],
+    "matched_text_confidence": 0.9988,
+    "crop_file": "legend_crops/019_Discovery.png"
+  },
+  {
+    "index": 20,
+    "name": "Park Office",
+    "detected_class": "fishing",
+    "confidence": 0.4678,
+    "bbox": [
+      155,
+      860,
+      176,
+      894
+    ],
+    "polygon": [
+      [
+        157.0,
+        862.0
+      ],
+      [
+        156.0,
+        863.0
+      ],
+      [
+        156.0,
+        867.0
+      ],
+      [
+        155.0,
+        868.0
+      ],
+      [
+        155.0,
+        882.0
+      ],
+      [
+        156.0,
+        883.0
+      ],
+      [
+        156.0,
+        887.0
+      ],
+      [
+        157.0,
+        888.0
+      ],
+      [
+        173.0,
+        888.0
+      ],
+      [
+        173.0,
+        886.0
+      ],
+      [
+        174.0,
+        885.0
+      ],
+      [
+        174.0,
+        864.0
+      ],
+      [
+        173.0,
+        863.0
+      ],
+      [
+        173.0,
+        862.0
+      ]
+    ],
+    "hash": "bc3c6da592c332d23287c968db69934bc783cd31cb2166c9cd91ccb1e3c72696",
+    "matched_text": "Park Office",
+    "matched_text_bbox": [
+      148,
+      852,
+      358,
+      903
+    ],
+    "matched_text_confidence": 0.96,
+    "crop_file": "legend_crops/020_Park_Office.png"
+  },
+  {
+    "index": 21,
+    "name": "Park Police",
+    "detected_class": "parking",
+    "confidence": 0.4435,
+    "bbox": [
+      52,
+      929,
+      104,
+      984
+    ],
+    "polygon": [
+      [
+        52.0,
+        929.0
+      ],
+      [
+        52.0,
+        931.0
+      ],
+      [
+        51.0,
+        932.0
+      ],
+      [
+        51.0,
+        980.0
+      ],
+      [
+        52.0,
+        981.0
+      ],
+      [
+        52.0,
+        982.0
+      ],
+      [
+        102.0,
+        982.0
+      ],
+      [
+        103.0,
+        981.0
+      ],
+      [
+        103.0,
+        977.0
+      ],
+      [
+        104.0,
+        976.0
+      ],
+      [
+        104.0,
+        936.0
+      ],
+      [
+        103.0,
+        935.0
+      ],
+      [
+        103.0,
+        930.0
+      ],
+      [
+        102.0,
+        929.0
+      ]
+    ],
+    "hash": "83bae4b13c47936f6d194e92b3659869c671c1b0d919b6c5b444c793d991336e",
+    "matched_text": "Park Police",
+    "matched_text_bbox": [
+      149,
+      937,
+      355,
+      981
+    ],
+    "matched_text_confidence": 0.7677,
+    "crop_file": "legend_crops/021_Park_Police.png"
+  },
+  {
+    "index": 22,
+    "name": "legend_icon_22",
+    "detected_class": "fishing",
+    "confidence": 0.4221,
+    "bbox": [
+      400,
+      1669,
+      421,
+      1695
+    ],
+    "polygon": [
+      [
+        402.0,
+        1670.0
+      ],
+      [
+        402.0,
+        1673.0
+      ],
+      [
+        401.0,
+        1674.0
+      ],
+      [
+        401.0,
+        1692.0
+      ],
+      [
+        402.0,
+        1693.0
+      ],
+      [
+        402.0,
+        1696.0
+      ],
+      [
+        419.0,
+        1696.0
+      ],
+      [
+        419.0,
+        1693.0
+      ],
+      [
+        420.0,
+        1692.0
+      ],
+      [
+        420.0,
+        1674.0
+      ],
+      [
+        419.0,
+        1673.0
+      ],
+      [
+        419.0,
+        1670.0
+      ]
+    ],
+    "hash": "be156b4ae1fab4aaa7a062d59607c71a9e1f663158749c26995a9a1e68d33d38",
+    "matched_text": null,
+    "matched_text_bbox": null,
+    "matched_text_confidence": null,
+    "crop_file": "legend_crops/022_legend_icon_22.png"
+  },
+  {
+    "index": 23,
+    "name": "legend_icon_23",
+    "detected_class": "picnic_area",
+    "confidence": 0.4164,
+    "bbox": [
+      52,
+      1570,
+      104,
+      1622
+    ],
+    "polygon": [
+      [
+        52.0,
+        1576.0
+      ],
+      [
+        52.0,
+        1577.0
+      ],
+      [
+        51.0,
+        1578.0
+      ],
+      [
+        51.0,
+        1613.0
+      ],
+      [
+        52.0,
+        1614.0
+      ],
+      [
+        52.0,
+        1615.0
+      ],
+      [
+        102.0,
+        1615.0
+      ],
+      [
+        103.0,
+        1614.0
+      ],
+      [
+        103.0,
+        1610.0
+      ],
+      [
+        104.0,
+        1609.0
+      ],
+      [
+        104.0,
+        1582.0
+      ],
+      [
+        103.0,
+        1581.0
+      ],
+      [
+        103.0,
+        1577.0
+      ],
+      [
+        102.0,
+        1576.0
+      ]
+    ],
+    "hash": "9bae6992e669386cb990c66deb84b39bb1959a31cc31ce62c44671c7b4476c6c",
+    "matched_text": null,
+    "matched_text_bbox": null,
+    "matched_text_confidence": null,
+    "crop_file": "legend_crops/023_legend_icon_23.png"
+  },
+  {
+    "index": 24,
+    "name": "Road",
+    "detected_class": "showers",
+    "confidence": 0.4146,
+    "bbox": [
+      207,
+      2104,
+      228,
+      2131
+    ],
+    "polygon": [
+      [
+        210.0,
+        2101.0
+      ],
+      [
+        210.0,
+        2102.0
+      ],
+      [
+        209.0,
+        2103.0
+      ],
+      [
+        209.0,
+        2104.0
+      ],
+      [
+        208.0,
+        2105.0
+      ],
+      [
+        208.0,
+        2111.0
+      ],
+      [
+        207.0,
+        2112.0
+      ],
+      [
+        207.0,
+        2124.0
+      ],
+      [
+        210.0,
+        2127.0
+      ],
+      [
+        227.0,
+        2127.0
+      ],
+      [
+        227.0,
+        2124.0
+      ],
+      [
+        228.0,
+        2123.0
+      ],
+      [
+        228.0,
+        2105.0
+      ],
+      [
+        227.0,
+        2104.0
+      ],
+      [
+        227.0,
+        2101.0
+      ]
+    ],
+    "hash": "ea5ae5a8b4a59f04e2f1ce169f0d385b6da663c88dab33ec2689cf25960ec0d2",
+    "matched_text": "Road",
+    "matched_text_bbox": [
+      151,
+      2093,
+      257,
+      2137
+    ],
+    "matched_text_confidence": 1.0,
+    "crop_file": "legend_crops/024_Road.png"
+  },
+  {
+    "index": 25,
+    "name": "Picnic Area",
+    "detected_class": "picnic_area",
+    "confidence": 0.4051,
+    "bbox": [
+      52,
+      1089,
+      104,
+      1144
+    ],
+    "polygon": [
+      [
+        52.0,
+        1091.0
+      ],
+      [
+        52.0,
+        1092.0
+      ],
+      [
+        51.0,
+        1093.0
+      ],
+      [
+        51.0,
+        1141.0
+      ],
+      [
+        52.0,
+        1142.0
+      ],
+      [
+        52.0,
+        1144.0
+      ],
+      [
+        102.0,
+        1144.0
+      ],
+      [
+        103.0,
+        1143.0
+      ],
+      [
+        103.0,
+        1138.0
+      ],
+      [
+        104.0,
+        1137.0
+      ],
+      [
+        104.0,
+        1097.0
+      ],
+      [
+        103.0,
+        1096.0
+      ],
+      [
+        103.0,
+        1092.0
+      ],
+      [
+        102.0,
+        1091.0
+      ]
+    ],
+    "hash": "aabfcd3d3cd0f0cbdd2c9930c7d3c44fd4c43b0eb530d4b3c10b0bccc04ac4bb",
+    "matched_text": "Picnic Area",
+    "matched_text_bbox": [
+      148,
+      1096,
+      357,
+      1141
+    ],
+    "matched_text_confidence": 0.7158,
+    "crop_file": "legend_crops/025_Picnic_Area.png"
+  }
+]

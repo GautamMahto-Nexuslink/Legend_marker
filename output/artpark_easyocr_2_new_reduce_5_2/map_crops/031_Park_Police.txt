@@ -1,0 +1,28 @@
+Map icon 31: 031_Park_Police.png
+================================
+Bounding box (x1,y1,x2,y2): [1212, 4289, 1264, 4340]
+Detection confidence      : 0.7984
+pHash (hex)               : d7bba4e43846b31969904e15b168986ec4e099388647e6e596179997993766df
+Hash size                 : 16x16 = 256 bits (max possible Hamming distance = 256)
+
+Hamming distance to each legend icon (nearest first):
+  legend name                         hamming  hash_sim  weighted
+  ---------------------------------------------------------------
+  Park Police                              80     0.688     0.634
+  Souvenir Store                          130     0.492     0.542
+  Park Office                             114     0.555     0.453
+  Public Restroom                         130     0.492     0.446
+  Parking Area P                          122     0.523     0.434
+  Softball Field                          118     0.539     0.429
+  RIC Air Field                           124     0.516     0.428
+  Fishing                                 114     0.555     0.427
+  Picnic Area                             122     0.523     0.419
+  Aquarium                                112     0.562     0.417
+  Steps                                   118     0.539     0.399
+  Amphitheater                            128     0.500     0.394
+  Playground                              130     0.492     0.387
+  Discovery                               132     0.484     0.371
+
+Best match  : Park Police  (hamming=80, weighted score=0.634)
+Score gate  : threshold=0.55 -> PASS
+Decision    : RENAMED  'parking' -> 'Park Police'
