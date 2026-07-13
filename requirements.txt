@@ -1,9 +1,8 @@
 # Core
 numpy>=1.24
-opencv-python>=4.8
-Pillow>=10.0
-imagehash>=4.3
-scikit-image>=0.22        # SSIM
+opencv-python>=4.8        # image IO, ORB, template matching
+Pillow>=10.0              # required by imagehash
+imagehash>=4.3            # pHash for the Hamming .txt reports only
 
 # OCR (install at least one)
 easyocr>=1.7
