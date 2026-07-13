@@ -369,6 +369,25 @@ def visualize_map(
     return canvas
 
 
+def visualize_detections(
+    image: np.ndarray,
+    detections: List["Detection"],
+    color: Tuple[int, int, int] = (0, 128, 255),
+) -> np.ndarray:
+    """Draw the RAW Roboflow detections exactly as returned by the model.
+
+    Every box is labelled with its detected class and confidence — no
+    filtering, matching or renaming.  Useful for sanity-checking what the
+    detector actually saw on the legend and the original map.
+    """
+    canvas = image.copy()
+    font_scale, thickness = _scaled_font(canvas)
+    for det in detections:
+        label = f"{det.class_name} {det.confidence:.2f}"
+        draw_label(canvas, det.bbox, label, color, font_scale, thickness)
+    return canvas
+
+
 # ===========================================================================
 # Per-crop Hamming-distance report (.txt)
 # ===========================================================================
@@ -1135,6 +1154,14 @@ class LegendMarkerPipeline:
             LOGGER.warning("No icons detected in the legend image.")
             return []
 
+        # Visualization: raw legend detections exactly as the model returned
+        # them (before any filtering), for sanity-checking the detector.
+        if self.config.save_visualization:
+            raw_viz = visualize_detections(legend_img, icons)
+            out_path = os.path.join(self.config.output_dir, "legend_detections_raw.png")
+            cv2.imwrite(out_path, raw_viz)
+            LOGGER.info("Saved raw legend detections -> %s", out_path)
+
         # Step 2: OCR the whole legend.
         texts = self.ocr.read(legend_img)
 
@@ -1270,6 +1297,14 @@ class LegendMarkerPipeline:
         if not detections:
             LOGGER.warning("No icons detected on the map image.")
             return []
+
+        # Visualization: raw map detections exactly as the model returned them
+        # (original class + confidence), before any hash matching / renaming.
+        if self.config.save_visualization:
+            raw_viz = visualize_detections(map_img, detections)
+            out_path = os.path.join(self.config.output_dir, "map_detections_raw.png")
+            cv2.imwrite(out_path, raw_viz)
+            LOGGER.info("Saved raw map detections -> %s", out_path)
 
         crop_dir = ensure_dir(os.path.join(self.config.output_dir, "map_crops"))
         results: List[Dict[str, Any]] = []
