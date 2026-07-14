@@ -24,6 +24,13 @@ testable function, thresholds/weights live in a single dataclass, and there are
 no hard-coded paths.
 
 Author: (generated) — production-ready reference implementation.
+
+
+cli eg:
+
+python legend_marker.py --map 'Input_image_path' --legend 'legend_sub_part' --api-key xx-xx-xx --project xxx-xxx --version 1 --output-dir 'Output_of_folder' -v(verbose)
+
+python3 legend_marker.py --map /home/nls34/Work/OuterMap/Main_Dataset/Icons_Dataset/map.coco/train/AhjumawiLavaSpringsStatePark_page-0004_jpgrfSmY3DOtP6Zazv8jbmCdK.jpg  --legend /home/nls34/Documents/POCs/legend_marker/legend/AhjumawiLavaSpringsStatePark_page-0004_jpgSmY3DOtP6Zazv8jbmCdK.jpg  --api-key K06rVQD1zQ46eOFObJvi --project plotmymap-icon-lqf56 --version 1 --output-dir output/ahujawani_easyocr_new_6_updated -v
 """
 
 from __future__ import annotations
@@ -96,14 +103,22 @@ class PipelineConfig:
     # ---- Icon <-> text spatial matching --------------------------------
     # A text box is only considered as a label for an icon if its centre lies
     # within these gates (expressed as multiples of the icon's own size).
-    text_max_horizontal_gap_factor: float = 6.0   # x-gap <= factor * icon_w
+    text_max_horizontal_gap_factor: float = 8.0   # x-gap <= factor * icon_w
     text_max_vertical_offset_factor: float = 1.2   # |y-align| <= factor * icon_h
+    # A text token is on the icon's row when their vertical spans overlap by at
+    # least this fraction of the shorter box.  Overlap is far more robust than
+    # comparing centres when the icon and text boxes differ in height.
+    row_vertical_overlap: float = 0.30
     # We prefer text to the RIGHT of the icon (typical legend layout) but also
     # allow left / below as fall-backs with a penalty.
     prefer_right_of_icon: bool = True
     # If this fraction of a detection's area lies inside an OCR text box, the
     # detection is treated as text (not an icon) and dropped from the legend.
     text_containment_threshold: float = 0.6
+    # If this fraction of an OCR text box lies inside an icon detection, the
+    # text is treated as the icon's glyph misread as text (e.g. "P", "=", "#")
+    # and dropped, so it can't be mistaken for the icon's real label.
+    text_on_icon_threshold: float = 0.5
 
     # ---- Foreground / glyph normalisation ------------------------------
     # Icons are rendered symbols on a solid or textured background.  Matching
@@ -385,6 +400,24 @@ def visualize_detections(
     for det in detections:
         label = f"{det.class_name} {det.confidence:.2f}"
         draw_label(canvas, det.bbox, label, color, font_scale, thickness)
+    return canvas
+
+
+def visualize_ocr_text(
+    image: np.ndarray,
+    texts: List["OcrText"],
+    color: Tuple[int, int, int] = (200, 0, 160),
+) -> np.ndarray:
+    """Draw ONLY the OCR text boxes + their recognised strings.
+
+    Lets you verify what the OCR engine read (and where) independently of the
+    icon detections — the other half of the icon<->text matching input.
+    """
+    canvas = image.copy()
+    font_scale, thickness = _scaled_font(canvas)
+    for t in texts:
+        label = f"{t.text} {t.confidence:.2f}"
+        draw_label(canvas, t.bbox, label, color, font_scale, thickness)
     return canvas
 
 
@@ -728,6 +761,51 @@ def detection_inside_text(
     return False
 
 
+def filter_text_on_icons(
+    texts: List[OcrText],
+    icons: List[Detection],
+    config: PipelineConfig,
+) -> List[OcrText]:
+    """Drop OCR tokens that sit on top of an icon (the glyph read as text).
+
+    OCR frequently "reads" an icon's symbol as spurious characters ("P", "=",
+    "#", "4", ...).  Those boxes overlap the icon almost entirely, so a
+    nearest-neighbour matcher would grab them instead of the real label to the
+    right.  We remove any text token whose box is largely inside an icon box.
+    """
+    kept: List[OcrText] = []
+    for text in texts:
+        on_icon = False
+        for icon in icons:
+            # Two overlap directions catch both shapes of glyph-as-text:
+            #  - a small glyph box mostly INSIDE the icon, and
+            #  - a tall/wide glyph box that CONTAINS the icon.
+            text_in_icon = _fraction_inside(text.bbox, icon.bbox)
+            icon_in_text = _fraction_inside(icon.bbox, text.bbox)
+            if (text_in_icon >= config.text_on_icon_threshold
+                    or icon_in_text >= config.text_on_icon_threshold):
+                on_icon = True
+                break
+        if on_icon:
+            LOGGER.debug("Dropping icon-glyph text %r (sits on an icon).", text.text)
+        else:
+            kept.append(text)
+    dropped = len(texts) - len(kept)
+    if dropped:
+        LOGGER.info("Dropped %d OCR token(s) sitting on icons (glyph-as-text).",
+                    dropped)
+    return kept
+
+
+def _vertical_overlap_ratio(a: Sequence[int], b: Sequence[int]) -> float:
+    """Vertical overlap of two boxes as a fraction of the shorter box's height."""
+    ay1, ay2 = a[1], a[3]
+    by1, by2 = b[1], b[3]
+    overlap = max(0, min(ay2, by2) - max(ay1, by1))
+    min_h = max(1, min(ay2 - ay1, by2 - by1))
+    return overlap / float(min_h)
+
+
 def _same_line_tokens(
     candidates: List[OcrText],
     icon_center_y: float,
@@ -770,52 +848,61 @@ def match_icons_to_text(
     texts: List[OcrText],
     config: PipelineConfig,
 ) -> Dict[int, Optional[OcrText]]:
-    """Assign the SINGLE-LINE legend label on the icon's own row (column-aware).
+    """Map each icon to its legend label by row assignment (offset-robust).
 
-    Legends are frequently laid out in MULTIPLE columns (icon | label |
-    icon | label | ...).  For each icon we therefore take the text that is:
+    Legends put one icon per row with its label to the right (often in several
+    columns).  Real detection and OCR boxes rarely share the exact same centre,
+    so we choose the icon's row by **maximum vertical overlap** (tie-break by
+    nearest centre) rather than a strict alignment gate.
 
-      1. Vertically aligned with the icon's own row (tight vertical gate).
-      2. To the RIGHT of the icon, within the horizontal gap gate.
-      3. BEFORE the next icon on the same row — i.e. we never reach across into
-         the next column's label.  This is the key to multi-column legends:
-         each icon owns only the text between itself and the next icon.
+    For each icon:
+      1. Gather text tokens to the RIGHT (within the horizontal gap) and BEFORE
+         the next icon on the same row (column gate — no reaching into the next
+         column's label).
+      2. Pick the token whose vertical span overlaps the icon most; ties and the
+         no-overlap case fall back to the nearest centre.
+      3. Drop the icon only if the best candidate neither overlaps nor lies
+         within ~one row spacing — i.e. it has no label of its own.
+      4. Merge the tokens on the chosen row into the final label.
 
-    The kept tokens are reduced to the icon's own line and merged left-to-right.
+    (OCR tokens sitting on top of icons should already have been removed by
+    ``filter_text_on_icons`` before this call.)
+
     Returns icon-index -> merged OcrText | None.
     """
     matches: Dict[int, Optional[OcrText]] = {}
     if not icons:
         return matches
 
+    min_ov = config.row_vertical_overlap
+    # Estimate the legend's row spacing from the distinct text-row centres, so
+    # "same row" is judged relative to the actual layout — not a box-size guess.
+    centers = sorted({round(t.center[1]) for t in texts})
+    gaps = [b - a for a, b in zip(centers, centers[1:]) if b - a > 3]
+    row_gap = float(np.median(gaps)) if gaps else 40.0
+    # An icon may sit up to ~one row away from its label centre and still be a
+    # genuine match; beyond that it has no real label (e.g. spurious detection).
+    v_cap = row_gap
+
     for idx, icon in enumerate(icons):
         ix1, _iy1, ix2, _iy2 = icon.bbox
         icy = icon.center[1]
         max_h_gap = config.text_max_horizontal_gap_factor * max(icon.width, 1)
-        # Tight vertical gate: the label must be roughly on the icon's own row.
-        max_v_off = config.text_max_vertical_offset_factor * max(icon.height, 1)
 
-        # Column boundary: the left edge of the nearest OTHER icon that is on
-        # this row and to the right.  Text at/after this x belongs to the next
-        # column, so it is excluded.
+        # Column boundary: left edge of the nearest OTHER icon sharing this row
+        # and lying to the right.  Text at/after this x is the next column's.
         x_limit = float("inf")
         for j, other in enumerate(icons):
             if j == idx:
                 continue
-            ojx1, _o1, _o2, _o3 = other.bbox
-            if abs(other.center[1] - icy) <= max_v_off and ojx1 >= ix2:
+            ojx1 = other.bbox[0]
+            if ojx1 >= ix2 and _vertical_overlap_ratio(icon.bbox, other.bbox) >= min_ov:
                 x_limit = min(x_limit, float(ojx1))
 
-        candidates: List[OcrText] = []
+        # Collect right-side, in-column text tokens (no vertical gate yet).
+        right: List[OcrText] = []
         for text in texts:
             tx1, _ty1, tx2, _ty2 = text.bbox
-            _tcx, tcy = text.center
-
-            # Vertical gate: aligned to the icon's row.
-            if abs(tcy - icy) > max_v_off:
-                continue
-
-            # Horizontal gate: prefer text to the right; allow slight overlap.
             if tx1 >= ix2:                      # entirely to the right.
                 h_gap = tx1 - ix2
             elif tx2 > ix1 and tx1 < ix2:       # overlaps icon horizontally.
@@ -824,24 +911,40 @@ def match_icons_to_text(
                 h_gap = ix1 - tx2
             else:
                 continue                         # to the left but right-only mode.
-
-            if h_gap > max_h_gap:
+            if h_gap > max_h_gap or tx1 >= x_limit:
                 continue
-            # Column gate: the label must START before the next column's icon.
-            if tx1 >= x_limit:
-                continue
-            candidates.append(text)
+            right.append(text)
 
-        if candidates:
-            # Take only the icon's own line, then merge its tokens L-to-R.
-            group = _same_line_tokens(candidates, icy)
-            merged = _merge_texts(group)
-            matches[idx] = merged
-            LOGGER.debug("Icon %d -> %r (%d token(s))",
-                         idx, merged.text, len(group))
-        else:
+        if not right:
             matches[idx] = None
-            LOGGER.debug("Icon %d had no text within gates.", idx)
+            LOGGER.debug("Icon %d had no text to its right.", idx)
+            continue
+
+        # Choose the row the icon actually belongs to: strongest vertical
+        # overlap wins; ties (and the no-overlap case) fall back to the nearest
+        # centre.  This is robust to the icon box and text box being offset.
+        def _row_key(t: OcrText) -> Tuple[float, float]:
+            overlap = _vertical_overlap_ratio(icon.bbox, t.bbox)
+            return (-overlap, abs(t.center[1] - icy))
+
+        best = min(right, key=_row_key)
+        v_dist = abs(best.center[1] - icy)
+        overlaps = _vertical_overlap_ratio(icon.bbox, best.bbox) >= min_ov
+
+        # Drop only when the best candidate is neither overlapping nor within a
+        # row of the icon — i.e. this icon has no label of its own.
+        if not overlaps and v_dist > v_cap:
+            matches[idx] = None
+            LOGGER.debug("Icon %d: best text %r too far (v_dist=%.0f > cap=%.0f).",
+                         idx, best.text, v_dist, v_cap)
+            continue
+
+        # Merge the tokens sharing the chosen row into the final label.
+        group = _same_line_tokens(right, best.center[1])
+        merged = _merge_texts(group)
+        matches[idx] = merged
+        LOGGER.debug("Icon %d -> %r (%d token(s), v_dist=%.0f)",
+                     idx, merged.text, len(group), v_dist)
 
     matched = sum(1 for v in matches.values() if v is not None)
     LOGGER.info("Matched %d/%d legend icon(s) to text.", matched, len(icons))
@@ -1164,8 +1267,21 @@ class LegendMarkerPipeline:
         # Step 2: OCR the whole legend.
         texts = self.ocr.read(legend_img)
 
-        # Filter 1: drop detections that lie inside an OCR text box — these are
-        # text regions the model mistook for icons (e.g. the "Legend" title).
+        # Visualization: OCR text boxes only (what the OCR engine read + where).
+        if self.config.save_visualization:
+            ocr_viz = visualize_ocr_text(legend_img, texts)
+            out_path = os.path.join(self.config.output_dir, "legend_ocr_text.png")
+            cv2.imwrite(out_path, ocr_viz)
+            LOGGER.info("Saved OCR text visualization -> %s", out_path)
+
+        # Filter 1: drop OCR tokens sitting on an icon (the glyph read as text,
+        # e.g. "P"/"="/"#"/"4").  This MUST run first: OCR often boxes the glyph
+        # in a tall box that fully contains the icon, and Filter 2 below would
+        # otherwise delete the icon as "inside a text box".
+        texts = filter_text_on_icons(texts, icons, self.config)
+
+        # Filter 2: drop detections that lie inside a (remaining, real) text box
+        # — text regions the model mistook for icons (e.g. the "Legend" title).
         kept = [ic for ic in icons if not detection_inside_text(ic, texts, self.config)]
         dropped_inside = len(icons) - len(kept)
         if dropped_inside:
