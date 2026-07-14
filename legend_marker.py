@@ -99,16 +99,29 @@ class PipelineConfig:
     ocr_languages: Tuple[str, ...] = ("en",)
     ocr_gpu: bool = False
     ocr_min_confidence: float = 0.30      # Drop very low-confidence text.
+    # Keep only tokens that look like real words: at least this many alphabetic
+    # characters.  Drops pure numbers ("4", "0.91") and symbols ("=", "@", "#").
+    text_min_letters: int = 2
+    # Legend crops are often tiny (e.g. 105x388), where the text is only a few
+    # pixels tall and OCR fails.  Upscale small legends before OCR so the text
+    # is large enough to read; OCR boxes are mapped back to original coords.
+    ocr_upscale: bool = True
+    ocr_target_long_side: int = 1600      # upscale until the long side hits this
+    ocr_max_upscale: float = 6.0          # never enlarge more than this factor
 
     # ---- Icon <-> text spatial matching --------------------------------
     # A text box is only considered as a label for an icon if its centre lies
     # within these gates (expressed as multiples of the icon's own size).
-    text_max_horizontal_gap_factor: float = 8.0   # x-gap <= factor * icon_w
+    text_max_horizontal_gap_factor: float = 4.0   # x-gap <= factor * icon_w
     text_max_vertical_offset_factor: float = 1.2   # |y-align| <= factor * icon_h
     # A text token is on the icon's row when their vertical spans overlap by at
     # least this fraction of the shorter box.  Overlap is far more robust than
     # comparing centres when the icon and text boxes differ in height.
     row_vertical_overlap: float = 0.30
+    # When merging the tokens of one label, only join tokens whose horizontal
+    # gap is at most this multiple of the text height — i.e. words that belong
+    # together.  A larger gap means a separate label (e.g. the next column).
+    max_word_gap_factor: float = 2.0
     # We prefer text to the RIGHT of the icon (typical legend layout) but also
     # allow left / below as fall-backs with a penalty.
     prefer_right_of_icon: bool = True
@@ -677,24 +690,66 @@ class OcrEngine:
         # Normalise all whitespace runs to a single space.
         cleaned = " ".join(str(text).split())
         # Remove characters that are almost always OCR noise at token edges.
-        return cleaned.strip(" .:;|_-").strip()
+        return cleaned.strip(" .:;|_-[](){}<>*=+~^`\"'").strip()
+
+    @staticmethod
+    def _is_real_word(text: str, min_letters: int) -> bool:
+        """True if the token is genuine text (enough letters), not a number/symbol.
+
+        Rejects pure numbers ("4", "0.91"), punctuation/symbols ("=", "@", "#")
+        and icon-glyph noise, while keeping any real label (which always has
+        several letters, even things like "Boat Docks 8 a.m.").
+        """
+        return sum(ch.isalpha() for ch in text) >= min_letters
 
     # -- Inference --------------------------------------------------------
+    def _upscale_for_ocr(self, image: np.ndarray) -> Tuple[np.ndarray, float]:
+        """Enlarge a small legend so its text is big enough for OCR.
+
+        Returns the (possibly upscaled) image and the scale factor applied, so
+        detected boxes can be divided back to the original coordinate system.
+        """
+        if not self.config.ocr_upscale:
+            return image, 1.0
+        h, w = image.shape[:2]
+        long_side = max(h, w)
+        if long_side >= self.config.ocr_target_long_side:
+            return image, 1.0
+        scale = min(self.config.ocr_max_upscale,
+                    self.config.ocr_target_long_side / float(long_side))
+        if scale <= 1.01:
+            return image, 1.0
+        up = cv2.resize(image, (int(round(w * scale)), int(round(h * scale))),
+                        interpolation=cv2.INTER_CUBIC)
+        LOGGER.info("Upscaled legend %dx%d -> %dx%d (x%.2f) for OCR.",
+                    w, h, up.shape[1], up.shape[0], scale)
+        return up, scale
+
     def read(self, image: np.ndarray) -> List[OcrText]:
         """Run OCR and return cleaned, spatially-aware text tokens."""
+        proc, scale = self._upscale_for_ocr(image)
         engine = self.config.ocr_engine.lower()
         if engine == "easyocr":
-            raw = self._read_easyocr(image)
+            raw = self._read_easyocr(proc)
         else:
-            raw = self._read_paddleocr(image)
+            raw = self._read_paddleocr(proc)
 
+        inv = 1.0 / scale if scale else 1.0
         results: List[OcrText] = []
         for text, conf, box in raw:
+            # Map the box from the upscaled image back to original coordinates.
+            if scale != 1.0:
+                box = (int(round(box[0] * inv)), int(round(box[1] * inv)),
+                       int(round(box[2] * inv)), int(round(box[3] * inv)))
             cleaned = self._clean_text(text)
             if not cleaned:
                 continue
             if conf < self.config.ocr_min_confidence:
                 LOGGER.debug("Dropping low-conf OCR %r (%.2f)", cleaned, conf)
+                continue
+            # Keep only real words — drop pure numbers / special characters.
+            if not self._is_real_word(cleaned, self.config.text_min_letters):
+                LOGGER.debug("Dropping non-word OCR %r (number/symbol).", cleaned)
                 continue
             results.append(OcrText(text=cleaned, confidence=float(conf), bbox=box))
         LOGGER.info("OCR produced %d cleaned text token(s).", len(results))
@@ -826,6 +881,26 @@ def _same_line_tokens(
     return [t for t in candidates if abs(t.center[1] - anchor_cy) <= tol]
 
 
+def _contiguous_tokens(tokens: List[OcrText], max_gap: float) -> List[OcrText]:
+    """Keep only the run of horizontally-adjacent tokens (one label's words).
+
+    Starting from the leftmost token, walk right and stop at the first big
+    horizontal gap — that gap marks the start of a *different* label (e.g. the
+    next column), so words far from each other are never merged together.
+    """
+    if not tokens:
+        return tokens
+    ordered = sorted(tokens, key=lambda t: t.bbox[0])
+    run = [ordered[0]]
+    for t in ordered[1:]:
+        gap = t.bbox[0] - run[-1].bbox[2]     # negative when boxes overlap.
+        if gap <= max_gap:
+            run.append(t)
+        else:
+            break                              # big gap -> separate label.
+    return run
+
+
 def _merge_texts(tokens: List[OcrText]) -> OcrText:
     """Combine same-line OCR tokens into one label (reading order + union bbox).
 
@@ -880,9 +955,10 @@ def match_icons_to_text(
     centers = sorted({round(t.center[1]) for t in texts})
     gaps = [b - a for a, b in zip(centers, centers[1:]) if b - a > 3]
     row_gap = float(np.median(gaps)) if gaps else 40.0
-    # An icon may sit up to ~one row away from its label centre and still be a
-    # genuine match; beyond that it has no real label (e.g. spurious detection).
-    v_cap = row_gap
+    # The label must be HORIZONTALLY ALIGNED with the icon (same row): accept a
+    # non-overlapping candidate only if it is well within half a row of the
+    # icon's centre.  This stops "slanted" matches to a row above/below.
+    v_cap = 0.45 * row_gap
 
     for idx, icon in enumerate(icons):
         ix1, _iy1, ix2, _iy2 = icon.bbox
@@ -899,19 +975,21 @@ def match_icons_to_text(
             if ojx1 >= ix2 and _vertical_overlap_ratio(icon.bbox, other.bbox) >= min_ov:
                 x_limit = min(x_limit, float(ojx1))
 
-        # Collect right-side, in-column text tokens (no vertical gate yet).
+        # Collect right-side, in-column text tokens (no per-token distance gate:
+        # a long label's later words are naturally far from the icon; we bound
+        # only where the label STARTS, after grouping, below).
         right: List[OcrText] = []
         for text in texts:
             tx1, _ty1, tx2, _ty2 = text.bbox
             if tx1 >= ix2:                      # entirely to the right.
-                h_gap = tx1 - ix2
+                pass
             elif tx2 > ix1 and tx1 < ix2:       # overlaps icon horizontally.
-                h_gap = 0.0
+                pass
             elif not config.prefer_right_of_icon and tx2 <= ix1:  # left allowed.
-                h_gap = ix1 - tx2
+                pass
             else:
                 continue                         # to the left but right-only mode.
-            if h_gap > max_h_gap or tx1 >= x_limit:
+            if tx1 >= x_limit:                   # next column — excluded.
                 continue
             right.append(text)
 
@@ -939,12 +1017,27 @@ def match_icons_to_text(
                          idx, best.text, v_dist, v_cap)
             continue
 
-        # Merge the tokens sharing the chosen row into the final label.
-        group = _same_line_tokens(right, best.center[1])
+        # Tokens on the chosen row, then keep only the ones near each other
+        # (one label's words) — never merge across a wide gap.
+        line = _same_line_tokens(right, best.center[1])
+        line_heights = [t.bbox[3] - t.bbox[1] for t in line if t.bbox[3] > t.bbox[1]]
+        line_h = float(np.median(line_heights)) if line_heights else 20.0
+        max_word_gap = config.max_word_gap_factor * line_h
+        group = _contiguous_tokens(line, max_word_gap)
+
+        # The label must START near the icon; if even its first word is far to
+        # the right, this text belongs to something else (too far), so skip.
+        anchor_gap = min(t.bbox[0] for t in group) - ix2
+        if anchor_gap > max_h_gap:
+            matches[idx] = None
+            LOGGER.debug("Icon %d: label %r starts too far (gap=%.0f > %.0f).",
+                         idx, _merge_texts(group).text, anchor_gap, max_h_gap)
+            continue
+
         merged = _merge_texts(group)
         matches[idx] = merged
-        LOGGER.debug("Icon %d -> %r (%d token(s), v_dist=%.0f)",
-                     idx, merged.text, len(group), v_dist)
+        LOGGER.debug("Icon %d -> %r (%d/%d token(s), gap=%.0f, v_dist=%.0f)",
+                     idx, merged.text, len(group), len(line), anchor_gap, v_dist)
 
     matched = sum(1 for v in matches.values() if v is not None)
     LOGGER.info("Matched %d/%d legend icon(s) to text.", matched, len(icons))

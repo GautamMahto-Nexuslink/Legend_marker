@@ -37,7 +37,7 @@ CONFIG = {
     # ---- Folders (absolute paths recommended) -----------------------------
     "INPUT_FOLDER":  "/home/nls34/Documents/POCs/legend_marker/inputs",
     "LEGEND_FOLDER": "/home/nls34/Documents/POCs/legend_marker/legend",
-    "OUTPUT_FOLDER": "/home/nls34/Documents/POCs/legend_marker/output/batch",
+    "OUTPUT_FOLDER": "/home/nls34/Documents/POCs/legend_marker/output/batch_3",
 
     # ---- Roboflow ---------------------------------------------------------
     "API_KEY":   "K06rVQD1zQ46eOFObJvi",
