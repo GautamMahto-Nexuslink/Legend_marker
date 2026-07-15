@@ -4,9 +4,12 @@ opencv-python>=4.8        # image IO, ORB, template matching
 Pillow>=10.0              # required by imagehash
 imagehash>=4.3            # pHash for the Hamming .txt reports only
 
-# OCR (install at least one)
+# OCR (default engine is Tesseract — best for small printed map legends)
+# Needs the system binary too:  sudo apt-get install tesseract-ocr
+pytesseract>=0.3.10
+# Alternative engines (select via --ocr-engine / CONFIG["OCR_ENGINE"]):
 easyocr>=1.7
-# paddleocr>=2.7          # alternative OCR engine
+# paddleocr>=2.7          # note: some paddle versions error on load
 # paddlepaddle>=2.6       # backend for paddleocr
 
 # Roboflow local inference (provides `from inference import get_model`)

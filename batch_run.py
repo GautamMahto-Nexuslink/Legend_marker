@@ -37,7 +37,7 @@ CONFIG = {
     # ---- Folders (absolute paths recommended) -----------------------------
     "INPUT_FOLDER":  "/home/nls34/Documents/POCs/legend_marker/inputs",
     "LEGEND_FOLDER": "/home/nls34/Documents/POCs/legend_marker/legend",
-    "OUTPUT_FOLDER": "/home/nls34/Documents/POCs/legend_marker/output/batch_3",
+    "OUTPUT_FOLDER": "/home/nls34/Documents/POCs/legend_marker/output/batch_5_easyocr_conf_0.25",
 
     # ---- Roboflow ---------------------------------------------------------
     "API_KEY":   "K06rVQD1zQ46eOFObJvi",
@@ -46,7 +46,7 @@ CONFIG = {
     "VERSION":   1,
 
     # ---- OCR --------------------------------------------------------------
-    "OCR_ENGINE": "easyocr",               # "easyocr" | "paddleocr"
+    "OCR_ENGINE": "easyocr",             # "tesseract" | "easyocr" | "paddleocr"
     "OCR_GPU":    False,
 
     # ---- Matching thresholds ---------------------------------------------

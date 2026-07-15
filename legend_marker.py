@@ -90,14 +90,19 @@ class PipelineConfig:
     # Roboflow serverless inference endpoint (overridable for self-hosted).
     api_url: str = "https://detect.roboflow.com"
     # Minimum detection confidence (percent, Roboflow convention: 0-100).
-    rf_confidence: float = 40.0
+    # rf_confidence: float = 40.0
+    rf_confidence: float = 25.0
     # Non-max-suppression overlap (percent).
     rf_overlap: float = 30.0
 
     # ---- OCR ------------------------------------------------------------
-    ocr_engine: str = "easyocr"          # "easyocr" | "paddleocr"
+    ocr_engine: str = "tesseract"        # "tesseract" | "easyocr" | "paddleocr"
     ocr_languages: Tuple[str, ...] = ("en",)
     ocr_gpu: bool = False
+    # Tesseract page-segmentation config.  --psm 6 = "uniform block of text",
+    # which works well for the tidy rows/columns of a map legend.
+    tesseract_config: str = "--oem 3 --psm 6"
+    tesseract_lang: str = "eng"
     ocr_min_confidence: float = 0.30      # Drop very low-confidence text.
     # Keep only tokens that look like real words: at least this many alphabetic
     # characters.  Drops pure numbers ("4", "0.91") and symbols ("=", "@", "#").
@@ -647,7 +652,12 @@ class RoboflowDetector:
 # Step 2: OCR
 # ===========================================================================
 class OcrEngine:
-    """Wrapper over EasyOCR / PaddleOCR that yields cleaned OcrText objects."""
+    """OCR wrapper (Tesseract / EasyOCR / PaddleOCR) yielding cleaned OcrText.
+
+    Tesseract is the default: on the small, printed text of map legends it
+    consistently reads far more real labels than EasyOCR (which tends to return
+    icon-glyph garbage on low-resolution crops).
+    """
 
     def __init__(self, config: PipelineConfig) -> None:
         self.config = config
@@ -655,11 +665,33 @@ class OcrEngine:
 
     def _build_reader(self) -> Any:
         engine = self.config.ocr_engine.lower()
+        if engine == "tesseract":
+            return self._build_tesseract()
         if engine == "easyocr":
             return self._build_easyocr()
         if engine == "paddleocr":
             return self._build_paddleocr()
         raise ValueError(f"Unknown OCR engine: {self.config.ocr_engine!r}")
+
+    def _build_tesseract(self) -> Any:
+        try:
+            import pytesseract  # type: ignore
+        except ImportError as exc:
+            raise RuntimeError(
+                "pytesseract not installed. Install with: pip install pytesseract "
+                "(and the tesseract binary: apt-get install tesseract-ocr)"
+            ) from exc
+        # Fail early with a clear message if the binary itself is missing.
+        try:
+            pytesseract.get_tesseract_version()
+        except Exception as exc:
+            raise RuntimeError(
+                "The tesseract binary was not found. Install it, e.g. "
+                "`sudo apt-get install tesseract-ocr`."
+            ) from exc
+        LOGGER.info("Using Tesseract OCR (lang=%s, config=%r).",
+                    self.config.tesseract_lang, self.config.tesseract_config)
+        return pytesseract
 
     def _build_easyocr(self) -> Any:
         try:
@@ -729,7 +761,9 @@ class OcrEngine:
         """Run OCR and return cleaned, spatially-aware text tokens."""
         proc, scale = self._upscale_for_ocr(image)
         engine = self.config.ocr_engine.lower()
-        if engine == "easyocr":
+        if engine == "tesseract":
+            raw = self._read_tesseract(proc)
+        elif engine == "easyocr":
             raw = self._read_easyocr(proc)
         else:
             raw = self._read_paddleocr(proc)
@@ -755,11 +789,85 @@ class OcrEngine:
         LOGGER.info("OCR produced %d cleaned text token(s).", len(results))
         return results
 
+    def _read_tesseract(
+        self, image: np.ndarray
+    ) -> List[Tuple[str, float, Tuple[int, int, int, int]]]:
+        """Phrase-level tokens from Tesseract (best for small printed legends).
+
+        Tesseract returns words; we group them back into phrases per text line,
+        splitting a line wherever there is a big horizontal gap (a gap marks a
+        column boundary or the jump from an icon glyph to its label).  So a
+        label like "Picnic Area" stays one token, while single-character junk
+        Tesseract reads over an icon becomes its own token and is filtered out.
+        """
+        gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY) if image.ndim == 3 else image
+        data = self._reader.image_to_data(
+            gray,
+            lang=self.config.tesseract_lang,
+            config=self.config.tesseract_config,
+            output_type=self._reader.Output.DICT,
+        )
+
+        # Collect words grouped by Tesseract's (block, paragraph, line) index.
+        lines: Dict[Tuple[int, int, int], List[Tuple[str, float, int, int, int, int]]] = {}
+        for i in range(len(data["text"])):
+            text = data["text"][i].strip()
+            try:
+                conf = float(data["conf"][i])
+            except (TypeError, ValueError):
+                conf = -1.0
+            if not text or conf < 0:
+                continue
+            # Drop pure symbol/number words (icon-glyph noise like "$", "|", "=")
+            # BEFORE grouping, so they never get merged into a real label phrase.
+            if not any(ch.isalpha() for ch in text):
+                continue
+            key = (data["block_num"][i], data["par_num"][i], data["line_num"][i])
+            x, y = int(data["left"][i]), int(data["top"][i])
+            w, h = int(data["width"][i]), int(data["height"][i])
+            lines.setdefault(key, []).append((text, conf, x, y, x + w, y + h))
+
+        out: List[Tuple[str, float, Tuple[int, int, int, int]]] = []
+        for words in lines.values():
+            words.sort(key=lambda t: t[2])            # left-to-right.
+            med_h = float(np.median([w[5] - w[3] for w in words])) or 12.0
+            gap_thresh = 1.5 * med_h                  # bigger gap => new phrase.
+            run: List[Tuple[str, float, int, int, int, int]] = [words[0]]
+            for wd in words[1:]:
+                if wd[2] - run[-1][4] <= gap_thresh:
+                    run.append(wd)
+                else:
+                    out.append(self._merge_word_run(run))
+                    run = [wd]
+            out.append(self._merge_word_run(run))
+        return out
+
+    @staticmethod
+    def _merge_word_run(
+        run: List[Tuple[str, float, int, int, int, int]]
+    ) -> Tuple[str, float, Tuple[int, int, int, int]]:
+        """Join a run of words into one phrase token (union box, mean conf)."""
+        text = " ".join(w[0] for w in run)
+        conf = float(np.mean([w[1] for w in run])) / 100.0   # 0-100 -> 0-1.
+        x1 = min(w[2] for w in run)
+        y1 = min(w[3] for w in run)
+        x2 = max(w[4] for w in run)
+        y2 = max(w[5] for w in run)
+        return text, conf, (x1, y1, x2, y2)
+
     def _read_easyocr(
         self, image: np.ndarray
     ) -> List[Tuple[str, float, Tuple[int, int, int, int]]]:
         # EasyOCR returns [ [box(4 pts)], text, confidence ].
-        detections = self._reader.readtext(image)
+        # Keep grouping tight: EasyOCR's default width_ths (0.5) merges
+        # horizontally-close boxes, which glues an icon's glyph (e.g. the
+        # "H<tent>B" symbol misread as "HAE") onto its neighbouring label
+        # ("Hike & Bike Campground"). Once merged, filter_text_on_icons can't
+        # strip the glyph because the combined box sits mostly OFF the icon.
+        # Emitting finer boxes lets the glyph become its own token that the
+        # on-icon filter drops; a label's real words are re-joined later by
+        # _contiguous_tokens / _merge_texts, so tighter splitting is safe.
+        detections = self._reader.readtext(image, width_ths=0.1, paragraph=False)
         out = []
         for box, text, conf in detections:
             xs = [p[0] for p in box]
@@ -1652,8 +1760,8 @@ def build_arg_parser() -> argparse.ArgumentParser:
                    help="Roboflow inference endpoint.")
 
     # OCR
-    p.add_argument("--ocr-engine", choices=["easyocr", "paddleocr"],
-                   default="easyocr")
+    p.add_argument("--ocr-engine", choices=["tesseract", "easyocr", "paddleocr"],
+                   default="tesseract")
     p.add_argument("--ocr-gpu", action="store_true", help="Use GPU for OCR.")
 
     # Thresholds
