@@ -122,6 +122,21 @@ class PipelineConfig:
     mask_icons_for_ocr: bool = True
     icon_mask_shrink: int = 1             # px eroded from each icon box edge
 
+    # ---- False-positive detection filtering ----------------------------
+    # The model sometimes fires a false-positive "icon" on a LETTER of a label
+    # (e.g. the "O" of "Overlook").  We drop a detection only when BOTH:
+    #   (a) it is largely contained by a text box clearly wider than itself
+    #       (it sits INSIDE a real label, not to the left of one), AND
+    #   (b) its left edge is NOT in an icon column.
+    # The icon columns are learned from the detections that are clearly real
+    # icons (those NOT inside a label, i.e. sitting to the left of their text).
+    # This keeps a real icon even when OCR merges its own glyph into the label
+    # (e.g. "CH Camp Host"): the icon still sits in the icon column, so it
+    # survives and is masked out before the final OCR.  It runs BEFORE masking so
+    # a dropped letter stays visible and its label reads correctly.
+    filter_text_zone_false_positives: bool = True
+    column_x_tolerance_factor: float = 1.2 # icon-column half-width = factor * median icon width
+
     # ---- Icon <-> text spatial matching --------------------------------
     # A text box is only considered as a label for an icon if its centre lies
     # within these gates (expressed as multiples of the icon's own size).
@@ -915,6 +930,73 @@ def _fraction_inside(inner: Sequence[int], outer: Sequence[int]) -> float:
     return inter / float(inner_area)
 
 
+def filter_text_zone_false_positives(
+    icons: List[Detection],
+    texts: List[OcrText],
+    config: PipelineConfig,
+) -> List[Detection]:
+    """Drop detections the model fired on the label text itself (text-zone FPs).
+
+    Legend icons line up in a left column and every label is left-aligned in the
+    column to their right.  So a *real* icon sits to the LEFT of its label and
+    does not overlap any text box, whereas a false-positive (the model boxing the
+    "O" of "Overlook", or a stray box on "Picnic Area") sits ON the label text.
+    A detection is treated as an FP -- ignored for mapping -- when it BOTH:
+      1. overlaps a text box, AND
+      2. does not sit in an icon column.
+
+    The icon column(s) are learned from the detections that clearly are real
+    icons: the ones that do NOT overlap any text (they lie to the left of it).
+    Only columns with at least two members count, so a lone stray box out in the
+    text zone can't pretend to be its own icon column.  This still keeps a real
+    icon whose own glyph OCR merged into the label (e.g. "CH Camp Host"): the
+    icon remains aligned with the icon column, so rule 2 fails and it survives
+    (it is then masked out before the final OCR).
+    """
+    if not config.filter_text_zone_false_positives or not texts or len(icons) < 2:
+        return icons
+
+    med_w = float(np.median([max(ic.width, 1) for ic in icons])) or 20.0
+    tol = config.column_x_tolerance_factor * med_w
+
+    def overlaps_text(ic: Detection) -> bool:
+        return any(
+            _fraction_inside(ic.bbox, t.bbox) >= config.text_on_icon_threshold
+            for t in texts
+        )
+
+    # Learn the icon column(s) from the detections that clearly are real icons:
+    # those NOT overlapping any text (they sit to the LEFT of their label).  A big
+    # gap between sorted left-edges starts a new column (multi-column legends).
+    clean_lefts = sorted(ic.bbox[0] for ic in icons if not overlaps_text(ic))
+    columns: List[List[int]] = []
+    for x in clean_lefts:
+        if columns and x - columns[-1][-1] <= tol:
+            columns[-1].append(x)
+        else:
+            columns.append([x])
+    # Only a column backed by >= 2 aligned icons is trusted as a real column.
+    col_bounds = [(c[0], c[-1]) for c in columns if len(c) >= 2]
+
+    def in_icon_column(ic: Detection) -> bool:
+        x = ic.bbox[0]
+        return any(lo - tol <= x <= hi + tol for lo, hi in col_bounds)
+
+    kept: List[Detection] = []
+    dropped: List[Detection] = []
+    for ic in icons:
+        is_fp = overlaps_text(ic) and not in_icon_column(ic)
+        (dropped if is_fp else kept).append(ic)
+
+    for ic in dropped:
+        LOGGER.info(
+            "Dropping text-zone false positive '%s' at bbox=%s (sits on label text, outside icon column).",
+            ic.class_name, ic.bbox,
+        )
+    # Safety net: never let the filter delete every detection.
+    return kept if kept else icons
+
+
 def mask_icons_in_image(
     image: np.ndarray,
     icons: List[Detection],
@@ -1064,8 +1146,14 @@ def _merge_texts(tokens: List[OcrText]) -> OcrText:
     Tokens are ordered left-to-right (top-to-bottom tie-break) so a label split
     into several tokens on one line (e.g. "Reservation Headquarters") reads
     naturally.  The merged bbox is the union of the boxes; confidence is mean.
+
+    Reading order is by the box's LEFT edge (x) first: these tokens are already
+    on one line, and neighbouring words have slightly different box tops (e.g.
+    lowercase "on" vs "Leash"), so sorting by y first would scramble the words
+    ("Dogs Allowed on Leash" -> "Dogs Allowed Leash on").  The y tie-break only
+    orders tokens that start at the same x.
     """
-    ordered = sorted(tokens, key=lambda t: (t.bbox[1], t.bbox[0]))
+    ordered = sorted(tokens, key=lambda t: (t.bbox[0], t.bbox[1]))
     text = " ".join(t.text for t in ordered).strip()
     x1 = min(t.bbox[0] for t in ordered)
     y1 = min(t.bbox[1] for t in ordered)
@@ -1514,13 +1602,26 @@ class LegendMarkerPipeline:
             cv2.imwrite(out_path, raw_viz)
             LOGGER.info("Saved raw legend detections -> %s", out_path)
 
-        # Step 2: OCR the whole legend.  Paint the icon boxes out first so an
-        # icon's glyph can never be read as text and merged into its label
-        # (e.g. the "H<tent>B" symbol misread as "HAE Hike & Bike Campground").
-        ocr_img = legend_img
+        # Step 2a: OCR the UNMASKED legend to locate the real label text.  We use
+        # this pass only to spot false-positive detections (the model firing on a
+        # letter of a label) and then discard the detections it flags.
+        texts_pass1 = self.ocr.read(legend_img)
+
+        # Filter 0: drop text-zone false positives (e.g. the model boxing the "O"
+        # of "Overlook").  This MUST run before masking so the letter stays
+        # visible to OCR and the label reads correctly; only REAL icons remain.
+        icons = filter_text_zone_false_positives(icons, texts_pass1, self.config)
+
+        # Step 2b: mask ONLY the real icons and re-read, so an icon's own glyph
+        # can't be read as text and merged into its label (e.g. the "H<tent>B"
+        # symbol misread as "HAE Hike & Bike Campground").  False-positive
+        # letters were already dropped, so they are NOT masked and their labels
+        # remain intact.  When masking is off, reuse the first pass.
         if self.config.mask_icons_for_ocr:
             ocr_img = mask_icons_in_image(legend_img, icons, self.config.icon_mask_shrink)
-        texts = self.ocr.read(ocr_img)
+            texts = self.ocr.read(ocr_img)
+        else:
+            texts = texts_pass1
 
         # Visualization: OCR text boxes only (what the OCR engine read + where).
         if self.config.save_visualization:
