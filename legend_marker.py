@@ -113,6 +113,14 @@ class PipelineConfig:
     ocr_upscale: bool = True
     ocr_target_long_side: int = 1600      # upscale until the long side hits this
     ocr_max_upscale: float = 6.0          # never enlarge more than this factor
+    # Paint the detected icon boxes out of the image BEFORE OCR so the icon's
+    # own glyph (e.g. the "H<tent>B" symbol misread as "HAE") can never be read
+    # as text and glued onto the neighbouring label.  Legends put the label in a
+    # column to the RIGHT of the icon, so blanking the icon box leaves the real
+    # label untouched.  A small inward margin avoids clipping any label pixels
+    # that abut the icon box.
+    mask_icons_for_ocr: bool = True
+    icon_mask_shrink: int = 1             # px eroded from each icon box edge
 
     # ---- Icon <-> text spatial matching --------------------------------
     # A text box is only considered as a label for an icon if its centre lies
@@ -907,6 +915,47 @@ def _fraction_inside(inner: Sequence[int], outer: Sequence[int]) -> float:
     return inter / float(inner_area)
 
 
+def mask_icons_in_image(
+    image: np.ndarray,
+    icons: List[Detection],
+    shrink: int = 1,
+) -> np.ndarray:
+    """Return a copy of ``image`` with every icon box painted over.
+
+    Legends lay the label out in a column to the RIGHT of the icon, so blanking
+    the icon's own box removes the glyph (which OCR would otherwise misread as
+    text, e.g. "HAE", and glue onto the label) while leaving the label intact.
+    The box is shrunk a couple of pixels so a label glyph touching the icon's
+    edge is not clipped.  The fill is the image's median border colour so the
+    patch blends into the legend background (usually white) instead of adding a
+    hard-edged rectangle that the detector could latch onto.
+    """
+    if not icons:
+        return image
+    masked = image.copy()
+    h, w = masked.shape[:2]
+    # Median colour of the image border ~ the legend background.
+    if masked.ndim == 3:
+        border = np.concatenate([
+            masked[0, :, :], masked[-1, :, :], masked[:, 0, :], masked[:, -1, :]
+        ])
+        fill = tuple(int(c) for c in np.median(border, axis=0))
+    else:
+        border = np.concatenate([
+            masked[0, :], masked[-1, :], masked[:, 0], masked[:, -1]
+        ])
+        fill = int(np.median(border))
+    for icon in icons:
+        x1, y1, x2, y2 = icon.bbox
+        x1 = max(0, int(x1) + shrink)
+        y1 = max(0, int(y1) + shrink)
+        x2 = min(w, int(x2) - shrink)
+        y2 = min(h, int(y2) - shrink)
+        if x2 > x1 and y2 > y1:
+            masked[y1:y2, x1:x2] = fill
+    return masked
+
+
 def detection_inside_text(
     detection: Detection,
     texts: List[OcrText],
@@ -1465,8 +1514,13 @@ class LegendMarkerPipeline:
             cv2.imwrite(out_path, raw_viz)
             LOGGER.info("Saved raw legend detections -> %s", out_path)
 
-        # Step 2: OCR the whole legend.
-        texts = self.ocr.read(legend_img)
+        # Step 2: OCR the whole legend.  Paint the icon boxes out first so an
+        # icon's glyph can never be read as text and merged into its label
+        # (e.g. the "H<tent>B" symbol misread as "HAE Hike & Bike Campground").
+        ocr_img = legend_img
+        if self.config.mask_icons_for_ocr:
+            ocr_img = mask_icons_in_image(legend_img, icons, self.config.icon_mask_shrink)
+        texts = self.ocr.read(ocr_img)
 
         # Visualization: OCR text boxes only (what the OCR engine read + where).
         if self.config.save_visualization:
