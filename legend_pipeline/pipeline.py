@@ -3,6 +3,7 @@ from __future__ import annotations
 
 import json
 import os
+import time
 from typing import Any, Dict, List, Optional, Tuple
 
 import numpy as np
@@ -22,6 +23,7 @@ from .ocr import OcrEngine
 from .orientation import detect_upright_rotation, rotate_image
 from .reporting import write_hamming_info
 from .signatures import SignatureBuilder, SignatureMatcher
+from .timing import StepTimer
 from .utils import ensure_dir, load_image, sanitize_filename
 from .visualization import (
     visualize_detections,
@@ -44,6 +46,8 @@ class LegendMarkerPipeline:
         # Upright correction found for the legend; reused for the map (same page)
         # so the map never re-runs the slow 4-way OCR orientation probe.
         self._legend_angle: Optional[int] = None
+        # Per-step timing for the current run(); (re)created at the top of run().
+        self._timer: StepTimer = StepTimer(LOGGER)
 
     @property
     def ocr(self) -> OcrEngine:
@@ -108,8 +112,9 @@ class LegendMarkerPipeline:
     ) -> List[Tuple[str, VisualSignature]]:
         """Steps 1-4: detect legend icons, OCR, match, sign -> name<->signature."""
         # Correct a sideways legend first: rotated labels defeat OCR entirely.
-        legend_path, legend_img, legend_angle = self._prepare_oriented_image(
-            legend_path, "legend")
+        with self._timer.step("legend: orientation"):
+            legend_path, legend_img, legend_angle = self._prepare_oriented_image(
+                legend_path, "legend")
         # Remember it so the map (same source page) can reuse this angle instead
         # of re-running the slow orientation probe.
         self._legend_angle = legend_angle
@@ -119,7 +124,8 @@ class LegendMarkerPipeline:
             os.path.join(self.config.output_dir, "legend_roboflow_raw.json")
             if self.config.save_debug_json else None
         )
-        icons = self.detector.detect(legend_path, legend_img, raw_dump_path=raw_path)
+        with self._timer.step("legend: roboflow detect"):
+            icons = self.detector.detect(legend_path, legend_img, raw_dump_path=raw_path)
         if not icons:
             LOGGER.warning("No icons detected in the legend image.")
             return []
@@ -135,7 +141,8 @@ class LegendMarkerPipeline:
         # Step 2a: OCR the UNMASKED legend to locate the real label text.  We use
         # this pass only to spot false-positive detections (the model firing on a
         # letter of a label) and then discard the detections it flags.
-        texts_pass1 = self.ocr.read(legend_img)
+        with self._timer.step("legend: ocr pass1 (fp scan)"):
+            texts_pass1 = self.ocr.read(legend_img)
 
         # Filter 0: drop text-zone false positives (e.g. the model boxing the "O"
         # of "Overlook").  This MUST run before masking so the letter stays
@@ -148,8 +155,9 @@ class LegendMarkerPipeline:
         # letters were already dropped, so they are NOT masked and their labels
         # remain intact.  When masking is off, reuse the first pass.
         if self.config.mask_icons_for_ocr:
-            ocr_img = mask_icons_in_image(legend_img, icons, self.config.icon_mask_shrink)
-            texts = self.ocr.read(ocr_img)
+            with self._timer.step("legend: ocr pass2 (masked)"):
+                ocr_img = mask_icons_in_image(legend_img, icons, self.config.icon_mask_shrink)
+                texts = self.ocr.read(ocr_img)
         else:
             texts = texts_pass1
 
@@ -180,6 +188,7 @@ class LegendMarkerPipeline:
 
         # Step 4: signatures keyed by OCR name.  We keep ONLY icons that have a
         # nearby text label; those without one are skipped entirely (no hash).
+        _t_sig = time.perf_counter()
         legend_db: List[Tuple[str, VisualSignature]] = []
         crop_dir = ensure_dir(os.path.join(self.config.output_dir, "legend_crops"))
 
@@ -236,6 +245,7 @@ class LegendMarkerPipeline:
                 }
             )
 
+        self._timer.add("legend: match + signatures", time.perf_counter() - _t_sig)
         LOGGER.info(
             "Built legend database with %d entries (dropped %d text-boxes, "
             "%d without nearby text).",
@@ -298,15 +308,17 @@ class LegendMarkerPipeline:
                 and self._legend_angle is not None)
             else None
         )
-        map_path, map_img, _ = self._prepare_oriented_image(
-            map_path, "map", reuse_angle=reuse_angle)
+        with self._timer.step("map: orientation"):
+            map_path, map_img, _ = self._prepare_oriented_image(
+                map_path, "map", reuse_angle=reuse_angle)
 
         # Step 5: detect icons on the full map (raw Roboflow JSON saved too).
         raw_path = (
             os.path.join(self.config.output_dir, "map_roboflow_raw.json")
             if self.config.save_debug_json else None
         )
-        detections = self.detector.detect(map_path, map_img, raw_dump_path=raw_path)
+        with self._timer.step("map: roboflow detect"):
+            detections = self.detector.detect(map_path, map_img, raw_dump_path=raw_path)
         if not detections:
             LOGGER.warning("No icons detected on the map image.")
             return []
@@ -322,6 +334,7 @@ class LegendMarkerPipeline:
         crop_dir = ensure_dir(os.path.join(self.config.output_dir, "map_crops"))
         results: List[Dict[str, Any]] = []
 
+        _t_match = time.perf_counter()
         for idx, det in enumerate(detections):
             det.signature = self.sig_builder.build(det.crop)
 
@@ -398,6 +411,7 @@ class LegendMarkerPipeline:
                 idx, det.class_name, final_class, score, renamed,
             )
 
+        self._timer.add("map: signatures + match", time.perf_counter() - _t_match)
         renamed_count = sum(1 for r in results if r["renamed"])
         LOGGER.info("Renamed %d/%d map detections.", renamed_count, len(results))
 
@@ -413,10 +427,27 @@ class LegendMarkerPipeline:
     def run(self, map_path: str, legend_path: str) -> List[Dict[str, Any]]:
         ensure_dir(self.config.output_dir)
         LOGGER.info("=== Legend Marker pipeline started ===")
+        # Fresh timer per run so a reused pipeline (batch mode) reports per-map.
+        self._timer = StepTimer(LOGGER)
+        _t_run = time.perf_counter()
+
         legend_db = self.build_legend_database(legend_path)
         results = self.process_map(map_path, legend_db)
         if self.config.save_debug_json:
             self._dump_json("map_results.json", results)
+
+        # Per-step timing breakdown.  The timed steps sum to ~= wall clock; the
+        # remainder is untimed glue (visualization writes, JSON dumps, one-time
+        # OCR/model init on the first run).
+        wall = time.perf_counter() - _t_run
+        LOGGER.info("%s\n  %-32s%8.2fs  (untimed glue: %.2fs)",
+                    self._timer.summary(), "WALL CLOCK", wall,
+                    max(0.0, wall - self._timer.total))
+        if self.config.save_debug_json:
+            timings = self._timer.as_dict()
+            timings["wall_clock_seconds"] = round(wall, 3)
+            self._dump_json("timings.json", timings)
+
         LOGGER.info("=== Pipeline finished: %d detection(s) ===", len(results))
         return results
 
