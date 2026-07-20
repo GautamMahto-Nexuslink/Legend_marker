@@ -139,6 +139,29 @@ class PipelineConfig:
     # Downscale the long side to this before the orientation probe, so probing a
     # large map with 4x OCR stays fast (the decision only needs relative scores).
     rotate_probe_long_side: int = 1600
+    # How the upright rotation is found:
+    #   "osd"       — Tesseract OSD only: reads the angle in ONE fast pass.
+    #   "ocr_probe" — the original 4-way OCR probe (slow but OCR-engine-agnostic).
+    #   "auto"      — try OSD first, fall back to the OCR probe (default).
+    # The OCR probe OCRs all four orientations (4 passes); OSD needs a single
+    # tesseract pass, so it is dramatically faster — especially with EasyOCR.
+    orientation_method: str = "auto"
+    # Minimum OSD "orientation confidence" to trust its angle.  Below this we
+    # fall back to the OCR probe (in "auto"), or keep upright (in "osd").
+    osd_min_confidence: float = 0.5
+    # tesseract binary used for OSD (PATH name or absolute path).  OSD is invoked
+    # directly on this binary, so it works even when ocr_engine is easyocr/paddle.
+    tesseract_cmd: str = "tesseract"
+    # Hard cap (seconds) on a single OSD subprocess call, so a stuck tesseract
+    # can never hang the pipeline; on timeout we fall back to the OCR probe.
+    osd_timeout: float = 30.0
+    # The legend is a crop of the SAME source page as the map, so they share the
+    # same rotation.  Once the legend's upright angle is found (fast, via OSD on
+    # its tidy text), reuse it for the map instead of re-detecting — this skips
+    # the slow 4-way OCR probe on the full map (orientation is ambiguous there,
+    # so OSD often falls back to OCR'ing all four rotations, ~minutes each).
+    # Set False if a dataset's legends and maps can be rotated independently.
+    share_legend_map_orientation: bool = True
 
     # ---- Output ---------------------------------------------------------
     output_dir: str = "output"

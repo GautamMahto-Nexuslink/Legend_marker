@@ -41,6 +41,9 @@ class LegendMarkerPipeline:
         self.matcher = SignatureMatcher(config)
         # OCR is heavy to init; build lazily only when the legend stage runs.
         self._ocr: Optional[OcrEngine] = None
+        # Upright correction found for the legend; reused for the map (same page)
+        # so the map never re-runs the slow 4-way OCR orientation probe.
+        self._legend_angle: Optional[int] = None
 
     @property
     def ocr(self) -> OcrEngine:
@@ -50,8 +53,8 @@ class LegendMarkerPipeline:
 
     # -- Auto-orientation -------------------------------------------------
     def _prepare_oriented_image(
-        self, image_path: str, kind: str
-    ) -> Tuple[str, np.ndarray]:
+        self, image_path: str, kind: str, reuse_angle: Optional[int] = None
+    ) -> Tuple[str, np.ndarray, int]:
         """Load an image and, if rotated, return an upright copy + its new path.
 
         ``kind`` is "legend" or "map" and only tags the saved filenames.  The
@@ -62,19 +65,28 @@ class LegendMarkerPipeline:
         directory for auditing; an already-upright image is passed through
         untouched (no extra files, original path preserved).
 
-        Returns ``(path_to_use, image_array)``.
+        ``reuse_angle`` short-circuits detection with a known clockwise
+        correction (e.g. the map reusing the legend's angle — same source page),
+        avoiding the slow 4-way OCR orientation probe.
+
+        Returns ``(path_to_use, image_array, angle_applied)``.
         """
         image = load_image(image_path)
         if not self.config.auto_rotate:
-            return image_path, image
+            return image_path, image, 0
 
-        angle, scores = detect_upright_rotation(image, self.ocr, self.config)
-        if scores:
-            LOGGER.info("%s orientation scores (deg CW -> text score): %s",
-                        kind, {a: round(s, 1) for a, s in scores.items()})
+        if reuse_angle is not None:
+            angle = reuse_angle
+            LOGGER.info("%s reusing legend orientation: rotate %d deg CW "
+                        "(orientation detection skipped).", kind, angle)
+        else:
+            angle, scores = detect_upright_rotation(image, self.ocr, self.config)
+            if scores:
+                LOGGER.info("%s orientation scores (deg CW -> text score): %s",
+                            kind, {a: round(s, 1) for a, s in scores.items()})
         if angle == 0:
             LOGGER.info("%s already upright — no rotation applied.", kind)
-            return image_path, image
+            return image_path, image, 0
 
         rotated = rotate_image(image, angle)
         out_dir = ensure_dir(self.config.output_dir)
@@ -88,7 +100,7 @@ class LegendMarkerPipeline:
             "rotated -> %s (rotated image is used for detection/OCR).",
             kind, angle, original_out, rotated_out,
         )
-        return rotated_out, rotated
+        return rotated_out, rotated, angle
 
     # -- Legend side ------------------------------------------------------
     def build_legend_database(
@@ -96,7 +108,11 @@ class LegendMarkerPipeline:
     ) -> List[Tuple[str, VisualSignature]]:
         """Steps 1-4: detect legend icons, OCR, match, sign -> name<->signature."""
         # Correct a sideways legend first: rotated labels defeat OCR entirely.
-        legend_path, legend_img = self._prepare_oriented_image(legend_path, "legend")
+        legend_path, legend_img, legend_angle = self._prepare_oriented_image(
+            legend_path, "legend")
+        # Remember it so the map (same source page) can reuse this angle instead
+        # of re-running the slow orientation probe.
+        self._legend_angle = legend_angle
 
         # Step 1: detect legend icons (raw Roboflow JSON saved alongside).
         raw_path = (
@@ -271,8 +287,19 @@ class LegendMarkerPipeline:
         legend_db: List[Tuple[str, VisualSignature]],
     ) -> List[Dict[str, Any]]:
         """Steps 5-6: detect map icons, sign, match against legend, rename."""
-        # Correct a sideways map the same way the legend is corrected.
-        map_path, map_img = self._prepare_oriented_image(map_path, "map")
+        # Correct a sideways map the same way the legend is corrected.  The map
+        # and legend come from the same source page, so reuse the legend's angle
+        # (found fast via OSD) instead of re-probing — orientation is ambiguous
+        # on a full map, where the probe otherwise OCRs all four rotations.
+        reuse_angle = (
+            self._legend_angle
+            if (self.config.share_legend_map_orientation
+                and self.config.auto_rotate
+                and self._legend_angle is not None)
+            else None
+        )
+        map_path, map_img, _ = self._prepare_oriented_image(
+            map_path, "map", reuse_angle=reuse_angle)
 
         # Step 5: detect icons on the full map (raw Roboflow JSON saved too).
         raw_path = (
