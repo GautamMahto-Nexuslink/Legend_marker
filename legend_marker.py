@@ -190,6 +190,25 @@ class PipelineConfig:
     match_score_threshold: float = 0.60    # absolute floor.
     match_margin: float = 0.08             # best must exceed 2nd-best by this.
 
+    # ---- Auto-orientation (rotated legend / map correction) ------------
+    # Some source pages are scanned/exported sideways, so a legend's labels
+    # (and sometimes the whole map) end up rotated by a multiple of 90 degrees.
+    # OCR and the detector both expect upright text, so before any detection we
+    # probe the four right-angle orientations, OCR each, and keep the one that
+    # reads the most real text.  The image is rotated to that upright pose; both
+    # the original and the rotated image are then saved for auditing.
+    auto_rotate: bool = True
+    # Candidate clockwise rotations to try (degrees).  Legends are only ever off
+    # by a right angle, so these four cover every real case.
+    rotate_candidate_angles: Tuple[int, ...] = (0, 90, 180, 270)
+    # Only rotate away from upright (0) when another orientation reads clearly
+    # more text: its score must beat upright's by at least this factor.  Stops a
+    # near-tie (already-upright image) from being needlessly rotated.
+    rotate_min_gain: float = 1.5
+    # Downscale the long side to this before the orientation probe, so probing a
+    # large map with 4x OCR stays fast (the decision only needs relative scores).
+    rotate_probe_long_side: int = 1600
+
     # ---- Output ---------------------------------------------------------
     output_dir: str = "output"
     save_crops: bool = True
@@ -321,6 +340,108 @@ def sanitize_filename(name: str) -> str:
     keep = "-_.() "
     cleaned = "".join(c if (c.isalnum() or c in keep) else "_" for c in name)
     return cleaned.strip().replace(" ", "_") or "unnamed"
+
+
+# ===========================================================================
+# Auto-orientation (correct legends / maps rotated by a multiple of 90 deg)
+# ===========================================================================
+# Map a clockwise correction angle to the matching lossless OpenCV rotation.
+_ROTATE_OPS: Dict[int, Optional[int]] = {}
+
+
+def _rotate_ops() -> Dict[int, Optional[int]]:
+    """Build the {clockwise-degrees: cv2 rotate flag} table (cv2 may be absent)."""
+    global _ROTATE_OPS
+    if not _ROTATE_OPS and cv2 is not None:
+        _ROTATE_OPS = {
+            0: None,
+            90: cv2.ROTATE_90_CLOCKWISE,
+            180: cv2.ROTATE_180,
+            270: cv2.ROTATE_90_COUNTERCLOCKWISE,   # 270 CW == 90 CCW.
+        }
+    return _ROTATE_OPS
+
+
+def rotate_image(image: np.ndarray, angle_cw: int) -> np.ndarray:
+    """Rotate ``image`` clockwise by ``angle_cw`` (one of 0/90/180/270) losslessly.
+
+    Only right-angle rotations are supported — they need no interpolation and
+    never crop, so the pixel data is preserved exactly.  ``angle_cw`` is
+    normalised into [0, 360), so passing e.g. -90 or 450 also works.
+    """
+    _require(cv2, "opencv-python", "pip install opencv-python")
+    angle = int(angle_cw) % 360
+    op = _rotate_ops().get(angle)
+    if op is None:
+        if angle != 0:
+            raise ValueError(f"Only 0/90/180/270 deg rotations are supported, got {angle_cw}.")
+        return image
+    return cv2.rotate(image, op)
+
+
+def _resize_long_side(image: np.ndarray, target: int) -> np.ndarray:
+    """Downscale so the long side is at most ``target`` px (never upscales)."""
+    h, w = image.shape[:2]
+    long_side = max(h, w)
+    if long_side <= target:
+        return image
+    scale = target / float(long_side)
+    return cv2.resize(image, (int(round(w * scale)), int(round(h * scale))),
+                      interpolation=cv2.INTER_AREA)
+
+
+def _text_orientation_score(texts: List["OcrText"]) -> float:
+    """Score how upright text reads: sum of confidence x alphabetic-char count.
+
+    Upright text OCRs into many high-confidence, letter-rich tokens; the same
+    text rotated 90/180 deg OCRs into little or nothing, so this score peaks at
+    the correct orientation.  Weighting by letters (not raw token count) keeps
+    a few solid words from being outvoted by many one-character misreads.
+    """
+    total = 0.0
+    for t in texts:
+        letters = sum(ch.isalpha() for ch in t.text)
+        if letters >= 2:
+            total += t.confidence * letters
+    return total
+
+
+def detect_upright_rotation(
+    image: np.ndarray,
+    ocr: "OcrEngine",
+    config: PipelineConfig,
+) -> Tuple[int, Dict[int, float]]:
+    """Find the clockwise rotation that makes ``image`` read upright.
+
+    Each candidate right-angle rotation is OCR'd (on a size-capped copy for
+    speed) and scored by :func:`_text_orientation_score`.  The best-scoring
+    orientation is returned as the clockwise correction to apply, together with
+    the per-angle scores (for logging).  Upright (0 deg) is only abandoned when
+    another orientation beats it by ``config.rotate_min_gain`` — a safeguard so
+    an already-upright image is never rotated on a near-tie.
+    """
+    if not config.auto_rotate:
+        return 0, {}
+    probe = _resize_long_side(image, config.rotate_probe_long_side)
+    scores: Dict[int, float] = {}
+    for angle in config.rotate_candidate_angles:
+        try:
+            rotated = rotate_image(probe, angle)
+        except ValueError:
+            LOGGER.warning("Skipping unsupported rotation angle %s.", angle)
+            continue
+        scores[angle] = _text_orientation_score(ocr.read(rotated))
+        LOGGER.debug("Orientation probe %3d deg CW -> score %.2f", angle, scores[angle])
+    if not scores:
+        return 0, {}
+    best = max(scores, key=lambda a: scores[a])
+    upright = scores.get(0, 0.0)
+    # Keep upright unless a rotation reads clearly more text.
+    if best != 0 and scores[best] < config.rotate_min_gain * max(upright, 1.0):
+        LOGGER.debug("Best angle %d only scored %.2f vs upright %.2f — keeping upright.",
+                     best, scores[best], upright)
+        best = 0
+    return best, scores
 
 
 # ===========================================================================
@@ -1577,12 +1698,55 @@ class LegendMarkerPipeline:
             self._ocr = OcrEngine(self.config)
         return self._ocr
 
+    # -- Auto-orientation -------------------------------------------------
+    def _prepare_oriented_image(
+        self, image_path: str, kind: str
+    ) -> Tuple[str, np.ndarray]:
+        """Load an image and, if rotated, return an upright copy + its new path.
+
+        ``kind`` is "legend" or "map" and only tags the saved filenames.  The
+        detector infers from a *path* (Roboflow) while crops are taken from the
+        *array*, so a rotated image must be written to disk and its path used —
+        otherwise the boxes and the crops would disagree.  When a rotation is
+        applied, BOTH the original and the rotated image are saved to the output
+        directory for auditing; an already-upright image is passed through
+        untouched (no extra files, original path preserved).
+
+        Returns ``(path_to_use, image_array)``.
+        """
+        image = load_image(image_path)
+        if not self.config.auto_rotate:
+            return image_path, image
+
+        angle, scores = detect_upright_rotation(image, self.ocr, self.config)
+        if scores:
+            LOGGER.info("%s orientation scores (deg CW -> text score): %s",
+                        kind, {a: round(s, 1) for a, s in scores.items()})
+        if angle == 0:
+            LOGGER.info("%s already upright — no rotation applied.", kind)
+            return image_path, image
+
+        rotated = rotate_image(image, angle)
+        out_dir = ensure_dir(self.config.output_dir)
+        stem = sanitize_filename(os.path.splitext(os.path.basename(image_path))[0])
+        original_out = os.path.join(out_dir, f"{kind}_{stem}_original.png")
+        rotated_out = os.path.join(out_dir, f"{kind}_{stem}_rotated_{angle}cw.png")
+        cv2.imwrite(original_out, image)
+        cv2.imwrite(rotated_out, rotated)
+        LOGGER.info(
+            "%s was rotated %d deg CW to upright. Saved original -> %s and "
+            "rotated -> %s (rotated image is used for detection/OCR).",
+            kind, angle, original_out, rotated_out,
+        )
+        return rotated_out, rotated
+
     # -- Legend side ------------------------------------------------------
     def build_legend_database(
         self, legend_path: str
     ) -> List[Tuple[str, VisualSignature]]:
         """Steps 1-4: detect legend icons, OCR, match, sign -> name<->signature."""
-        legend_img = load_image(legend_path)
+        # Correct a sideways legend first: rotated labels defeat OCR entirely.
+        legend_path, legend_img = self._prepare_oriented_image(legend_path, "legend")
 
         # Step 1: detect legend icons (raw Roboflow JSON saved alongside).
         raw_path = (
@@ -1757,7 +1921,8 @@ class LegendMarkerPipeline:
         legend_db: List[Tuple[str, VisualSignature]],
     ) -> List[Dict[str, Any]]:
         """Steps 5-6: detect map icons, sign, match against legend, rename."""
-        map_img = load_image(map_path)
+        # Correct a sideways map the same way the legend is corrected.
+        map_path, map_img = self._prepare_oriented_image(map_path, "map")
 
         # Step 5: detect icons on the full map (raw Roboflow JSON saved too).
         raw_path = (
@@ -1934,6 +2099,9 @@ def build_arg_parser() -> argparse.ArgumentParser:
     p.add_argument("--no-crops", action="store_true", help="Do not save crops.")
     p.add_argument("--no-viz", action="store_true",
                    help="Do not save annotated visualization images.")
+    p.add_argument("--no-auto-rotate", action="store_true",
+                   help="Disable automatic correction of sideways (90/180/270 deg) "
+                        "legend/map images.")
     p.add_argument("-v", "--verbose", action="store_true", help="Debug logging.")
     return p
 
@@ -1953,6 +2121,7 @@ def config_from_args(args: argparse.Namespace) -> PipelineConfig:
         output_dir=args.output_dir,
         save_crops=not args.no_crops,
         save_visualization=not args.no_viz,
+        auto_rotate=not args.no_auto_rotate,
     )
 
 

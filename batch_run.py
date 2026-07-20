@@ -35,9 +35,9 @@ import legend_marker as lm
 # ===========================================================================
 CONFIG = {
     # ---- Folders (absolute paths recommended) -----------------------------
-    "INPUT_FOLDER":  "/home/nls34/Documents/POCs/legend_marker/inputs",
-    "LEGEND_FOLDER": "/home/nls34/Documents/POCs/legend_marker/legend",
-    "OUTPUT_FOLDER": "/home/nls34/Documents/POCs/legend_marker/output/batch_10_easyocr_conf_0.25",
+    "INPUT_FOLDER":  "/home/nls34/Documents/maps_trail_download/Rotated_Maps",
+    "LEGEND_FOLDER": "/home/nls34/Downloads/Dataset_lengend_marker_viewer/Rotated_legends",
+    "OUTPUT_FOLDER": "/home/nls34/Documents/POCs/legend_marker/output/batch_10_easyocr_Rotated",
 
     # ---- Roboflow ---------------------------------------------------------
     "API_KEY":   "K06rVQD1zQ46eOFObJvi",
@@ -53,6 +53,9 @@ CONFIG = {
     "MATCH_THRESHOLD": 0.60,               # absolute floor to rename a map icon
     "MATCH_MARGIN":    0.08,               # best must beat 2nd-best by this
     "HASH_ALGORITHM":  "phash",
+
+    # ---- Auto-orientation -------------------------------------------------
+    "AUTO_ROTATE":        True,            # correct sideways (90/180/270) inputs
 
     # ---- Batch behaviour --------------------------------------------------
     "SAVE_CROPS":         True,
@@ -136,6 +139,7 @@ def make_pipeline_config(output_dir: str) -> lm.PipelineConfig:
         save_crops=bool(CONFIG["SAVE_CROPS"]),
         save_visualization=bool(CONFIG["SAVE_VISUALIZATION"]),
         save_debug_json=bool(CONFIG["SAVE_DEBUG_JSON"]),
+        auto_rotate=bool(CONFIG.get("AUTO_ROTATE", True)),
     )
 
 
