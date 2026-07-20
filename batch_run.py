@@ -37,7 +37,7 @@ CONFIG = {
     # ---- Folders (absolute paths recommended) -----------------------------
     "INPUT_FOLDER":  "/home/nls34/Documents/maps_trail_download/Rotated_Maps",
     "LEGEND_FOLDER": "/home/nls34/Downloads/Dataset_lengend_marker_viewer/Rotated_legends",
-    "OUTPUT_FOLDER": "/home/nls34/Documents/POCs/legend_marker/output/batch_10_easyocr_Rotated",
+    "OUTPUT_FOLDER": "/home/nls34/Documents/POCs/legend_marker/output/batch_10_easyocr_Rotated_pipeline",
 
     # ---- Roboflow ---------------------------------------------------------
     "API_KEY":   "K06rVQD1zQ46eOFObJvi",
