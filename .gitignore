@@ -1,3 +1,6 @@
 inputs/
 output/
 temp/
+Save_icons/
+__pycache__/
+Save_icons_modified/
