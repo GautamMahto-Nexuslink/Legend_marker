@@ -34,10 +34,14 @@ import legend_marker as lm
 # CONFIG — edit these values, then run `python3 batch_run.py`
 # ===========================================================================
 CONFIG = {
-    # ---- Folders (absolute paths recommended) -----------------------------
-    "INPUT_FOLDER":  "/home/nls34/Documents/maps_trail_download/Rotated_Maps",
-    "LEGEND_FOLDER": "/home/nls34/Downloads/Dataset_lengend_marker_viewer/Rotated_legends",
-    "OUTPUT_FOLDER": "/home/nls34/Documents/POCs/legend_marker/output/batch_11_easyocr_Rotated_pipeline",
+    # # ---- Folders (absolute paths recommended) -----------------------------
+    # "INPUT_FOLDER":  "/home/nls34/Documents/maps_trail_download/Rotated_Maps",
+    # "LEGEND_FOLDER": "/home/nls34/Downloads/Dataset_lengend_marker_viewer/Rotated_legends",
+    # "OUTPUT_FOLDER": "/home/nls34/Documents/POCs/legend_marker/output/batch_11_easyocr_Rotated_pipeline",
+    "INPUT_FOLDER":  "/home/nls34/Documents/POCs/legend_marker/temp",
+    # "LEGEND_FOLDER": "/home/nls34/Downloads/Dataset_lengend_marker_viewer/Rotated_legends",
+    'LEGEND_FOLDER':'/home/nls34/Documents/POCs/legend_marker/legend',
+    "OUTPUT_FOLDER": "/home/nls34/Documents/POCs/legend_marker/output/batch_13_easyocr_Rotated",
 
     # ---- Roboflow ---------------------------------------------------------
     "API_KEY":   "K06rVQD1zQ46eOFObJvi",

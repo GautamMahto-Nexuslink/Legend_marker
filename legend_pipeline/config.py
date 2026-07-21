@@ -52,6 +52,14 @@ class PipelineConfig:
     # that abut the icon box.
     mask_icons_for_ocr: bool = True
     icon_mask_shrink: int = 1             # px eroded from each icon box edge
+    # OCR runs twice on the legend: pass 1 (unmasked) locates label text so
+    # false-positive detections can be dropped, then pass 2 (masked) reads the
+    # real labels.  Pass 1's recognised TEXT is discarded — only its box
+    # positions are used — so it needs no upscaling and can run at this reduced
+    # long-side to save time (pass 2 keeps the accurate ocr_target_long_side).
+    # Only applied when mask_icons_for_ocr is True (otherwise pass 1 IS the
+    # labels).  Set 0 to run pass 1 at full resolution (old behaviour).
+    ocr_fp_scan_long_side: int = 1000
 
     # ---- False-positive detection filtering ----------------------------
     # The model sometimes fires a false-positive "icon" on a LETTER of a label
@@ -136,9 +144,17 @@ class PipelineConfig:
     # more text: its score must beat upright's by at least this factor.  Stops a
     # near-tie (already-upright image) from being needlessly rotated.
     rotate_min_gain: float = 1.5
-    # Downscale the long side to this before the orientation probe, so probing a
-    # large map with 4x OCR stays fast (the decision only needs relative scores).
+    # Working long-side for the orientation probe/OSD.  A large map is
+    # downscaled to this, and a tiny legend is UPSCALED to it, so OSD has enough
+    # resolution to read orientation confidently (a starved OSD bails to the slow
+    # OCR probe).  The decision only needs relative scores, so this stays modest.
     rotate_probe_long_side: int = 1600
+    # OCR resolution cap for the 4-way OCR probe (the OSD fallback).  The probe
+    # only needs which rotation reads the MOST text — a relative comparison — so
+    # it OCRs at this reduced long-side instead of ocr_target_long_side.  Four
+    # full-res probe passes are the single biggest cost when OSD is inconclusive;
+    # lowering this cuts that time proportionally.  0 = full resolution.
+    rotate_probe_ocr_long_side: int = 800
     # How the upright rotation is found:
     #   "osd"       — Tesseract OSD only: reads the angle in ONE fast pass.
     #   "ocr_probe" — the original 4-way OCR probe (slow but OCR-engine-agnostic).
@@ -152,6 +168,11 @@ class PipelineConfig:
     # tesseract binary used for OSD (PATH name or absolute path).  OSD is invoked
     # directly on this binary, so it works even when ocr_engine is easyocr/paddle.
     tesseract_cmd: str = "tesseract"
+    # OSD's default `min_characters_to_try` is 50 — far more than a map legend's
+    # handful of words, so OSD aborts with "Too few characters. Skipping this
+    # page" and the pipeline falls back to the slow 4-way OCR probe.  Lowering it
+    # lets OSD read sparse legends and return the angle directly.
+    osd_min_characters: int = 5
     # Hard cap (seconds) on a single OSD subprocess call, so a stuck tesseract
     # can never hang the pipeline; on timeout we fall back to the OCR probe.
     osd_timeout: float = 30.0

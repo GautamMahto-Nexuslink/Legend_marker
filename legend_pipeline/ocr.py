@@ -1,7 +1,7 @@
 """Step 2: OCR (Tesseract / EasyOCR / PaddleOCR) yielding cleaned OcrText."""
 from __future__ import annotations
 
-from typing import Any, Dict, List, Tuple
+from typing import Any, Dict, List, Optional, Tuple
 
 import numpy as np
 
@@ -94,31 +94,59 @@ class OcrEngine:
         return sum(ch.isalpha() for ch in text) >= min_letters
 
     # -- Inference --------------------------------------------------------
-    def _upscale_for_ocr(self, image: np.ndarray) -> Tuple[np.ndarray, float]:
-        """Enlarge a small legend so its text is big enough for OCR.
+    def _resize_for_ocr(
+        self, image: np.ndarray, target_long_side: Optional[int] = None
+    ) -> Tuple[np.ndarray, float]:
+        """Resize a legend so its text is a good size for OCR.
 
-        Returns the (possibly upscaled) image and the scale factor applied, so
-        detected boxes can be divided back to the original coordinate system.
+        With ``target_long_side=None`` this keeps the original behaviour: only
+        *upscale* small legends toward ``ocr_target_long_side`` (never shrink).
+
+        With an explicit positive ``target_long_side`` the image is scaled toward
+        that cap in *either* direction — so a large legend is DOWNSCALED, which
+        the throwaway false-positive-scan pass uses to run much faster.
+
+        Returns the (possibly resized) image and the scale factor applied, so
+        detected boxes can be mapped back to the original coordinate system.
         """
-        if not self.config.ocr_upscale:
-            return image, 1.0
         h, w = image.shape[:2]
         long_side = max(h, w)
-        if long_side >= self.config.ocr_target_long_side:
-            return image, 1.0
-        scale = min(self.config.ocr_max_upscale,
-                    self.config.ocr_target_long_side / float(long_side))
-        if scale <= 1.01:
-            return image, 1.0
-        up = cv2.resize(image, (int(round(w * scale)), int(round(h * scale))),
-                        interpolation=cv2.INTER_CUBIC)
-        LOGGER.info("Upscaled legend %dx%d -> %dx%d (x%.2f) for OCR.",
-                    w, h, up.shape[1], up.shape[0], scale)
-        return up, scale
 
-    def read(self, image: np.ndarray) -> List[OcrText]:
-        """Run OCR and return cleaned, spatially-aware text tokens."""
-        proc, scale = self._upscale_for_ocr(image)
+        if target_long_side and target_long_side > 0:
+            scale = target_long_side / float(long_side)
+            if abs(scale - 1.0) <= 0.01:
+                return image, 1.0
+            if scale > 1.0:
+                if not self.config.ocr_upscale:
+                    return image, 1.0
+                scale = min(scale, self.config.ocr_max_upscale)
+            interp = cv2.INTER_AREA if scale < 1.0 else cv2.INTER_CUBIC
+        else:
+            if not self.config.ocr_upscale:
+                return image, 1.0
+            if long_side >= self.config.ocr_target_long_side:
+                return image, 1.0
+            scale = min(self.config.ocr_max_upscale,
+                        self.config.ocr_target_long_side / float(long_side))
+            if scale <= 1.01:
+                return image, 1.0
+            interp = cv2.INTER_CUBIC
+
+        out = cv2.resize(image, (int(round(w * scale)), int(round(h * scale))),
+                         interpolation=interp)
+        LOGGER.info("Resized legend %dx%d -> %dx%d (x%.2f) for OCR.",
+                    w, h, out.shape[1], out.shape[0], scale)
+        return out, scale
+
+    def read(
+        self, image: np.ndarray, target_long_side: Optional[int] = None
+    ) -> List[OcrText]:
+        """Run OCR and return cleaned, spatially-aware text tokens.
+
+        ``target_long_side`` optionally caps the working resolution (see
+        :meth:`_resize_for_ocr`); the FP-scan pass uses it to run faster.
+        """
+        proc, scale = self._resize_for_ocr(image, target_long_side)
         engine = self.config.ocr_engine.lower()
         if engine == "tesseract":
             raw = self._read_tesseract(proc)

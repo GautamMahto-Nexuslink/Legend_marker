@@ -140,9 +140,17 @@ class LegendMarkerPipeline:
 
         # Step 2a: OCR the UNMASKED legend to locate the real label text.  We use
         # this pass only to spot false-positive detections (the model firing on a
-        # letter of a label) and then discard the detections it flags.
+        # letter of a label) and then discard the detections it flags.  When
+        # masking is on, pass 1 is throwaway (only its box positions are used),
+        # so run it at a reduced resolution to save time; when masking is off,
+        # pass 1 IS the labels and must stay at full resolution.
+        fp_scan_target = (
+            self.config.ocr_fp_scan_long_side
+            if (self.config.mask_icons_for_ocr and self.config.ocr_fp_scan_long_side > 0)
+            else None
+        )
         with self._timer.step("legend: ocr pass1 (fp scan)"):
-            texts_pass1 = self.ocr.read(legend_img)
+            texts_pass1 = self.ocr.read(legend_img, target_long_side=fp_scan_target)
 
         # Filter 0: drop text-zone false positives (e.g. the model boxing the "O"
         # of "Overlook").  This MUST run before masking so the letter stays

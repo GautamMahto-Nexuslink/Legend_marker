@@ -65,6 +65,23 @@ def _resize_long_side(image: np.ndarray, target: int) -> np.ndarray:
                       interpolation=cv2.INTER_AREA)
 
 
+def _resize_to_long_side(image: np.ndarray, target: int) -> np.ndarray:
+    """Scale so the long side is ~= ``target`` px, upscaling OR downscaling.
+
+    Unlike :func:`_resize_long_side`, this enlarges a small image too — OSD
+    needs adequately-sized characters to read orientation, and a tiny legend
+    fed at native size makes OSD bail out (triggering the slow OCR probe).
+    """
+    h, w = image.shape[:2]
+    long_side = max(h, w)
+    if long_side <= 0 or abs(long_side - target) <= 1:
+        return image
+    scale = target / float(long_side)
+    interp = cv2.INTER_AREA if scale < 1.0 else cv2.INTER_CUBIC
+    return cv2.resize(image, (max(1, int(round(w * scale))),
+                              max(1, int(round(h * scale)))), interpolation=interp)
+
+
 def _text_orientation_score(texts: List["OcrText"]) -> float:
     """Score how upright text reads: sum of confidence x alphabetic-char count.
 
@@ -97,13 +114,16 @@ def _osd_rotation(image: np.ndarray, config: PipelineConfig) -> Optional[int]:
     """
     if cv2 is None:
         return None
-    probe = _resize_long_side(image, config.rotate_probe_long_side)
+    # Scale toward the probe size in BOTH directions: downscale a big map (fast)
+    # and upscale a tiny legend (so OSD has enough resolution to be confident).
+    probe = _resize_to_long_side(image, config.rotate_probe_long_side)
     ok, buf = cv2.imencode(".png", probe)
     if not ok:
         return None
     try:
         proc = subprocess.run(
-            [config.tesseract_cmd, "-", "stdout", "--psm", "0"],
+            [config.tesseract_cmd, "-", "stdout", "--psm", "0",
+             "-c", f"min_characters_to_try={config.osd_min_characters}"],
             input=buf.tobytes(),
             capture_output=True,
             timeout=config.osd_timeout,
@@ -168,6 +188,9 @@ def detect_upright_rotation(
         LOGGER.info("OSD inconclusive — falling back to the 4-way OCR probe.")
 
     probe = _resize_long_side(image, config.rotate_probe_long_side)
+    # The probe only needs relative text scores, so OCR at a reduced resolution
+    # (4 full-res passes is what makes this fallback slow).  0 => full res.
+    probe_ocr_target = config.rotate_probe_ocr_long_side or None
     scores: Dict[int, float] = {}
     for angle in config.rotate_candidate_angles:
         try:
@@ -175,7 +198,8 @@ def detect_upright_rotation(
         except ValueError:
             LOGGER.warning("Skipping unsupported rotation angle %s.", angle)
             continue
-        scores[angle] = _text_orientation_score(ocr.read(rotated))
+        scores[angle] = _text_orientation_score(
+            ocr.read(rotated, target_long_side=probe_ocr_target))
         LOGGER.debug("Orientation probe %3d deg CW -> score %.2f", angle, scores[angle])
     if not scores:
         return 0, {}
