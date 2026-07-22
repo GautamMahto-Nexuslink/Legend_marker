@@ -10,7 +10,7 @@ import numpy as np
 
 from .config import PipelineConfig
 from .containers import Detection, OcrText, VisualSignature
-from .deps import LOGGER, cv2
+from .deps import LOGGER, cv2, imagehash
 from .detector import RoboflowDetector
 from .matching import (
     detection_inside_text,
@@ -48,6 +48,83 @@ class LegendMarkerPipeline:
         self._legend_angle: Optional[int] = None
         # Per-step timing for the current run(); (re)created at the top of run().
         self._timer: StepTimer = StepTimer(LOGGER)
+        # Known-icon pHash database ({phash_hex: classname}); loaded lazily from
+        # config.phash_db_path on first use.  None = "not loaded yet".
+        self._phash_db: Optional[List[Tuple[Any, str]]] = None
+
+    # -- Known-icon pHash database ---------------------------------------
+    def _load_phash_db(self) -> List[Tuple[Any, str]]:
+        """Load & parse the {phash_hex: classname} JSON into (ImageHash, name).
+
+        Cached after the first call.  Returns an empty list when no path is
+        configured, the file is missing, or imagehash is unavailable — the
+        pipeline then behaves exactly as before (no DB stage).
+        """
+        if self._phash_db is not None:
+            return self._phash_db
+
+        db: List[Tuple[Any, str]] = []
+        path = self.config.phash_db_path
+        if path and imagehash is not None and os.path.isfile(path):
+            try:
+                with open(path, "r", encoding="utf-8") as fh:
+                    raw = json.load(fh)
+                for phash_hex, class_name in raw.items():
+                    try:
+                        db.append((imagehash.hex_to_hash(phash_hex), class_name))
+                    except Exception as exc:
+                        LOGGER.warning("Bad pHash entry '%s' in %s: %s",
+                                       phash_hex, path, exc)
+                LOGGER.info("Loaded %d known-icon pHash entrie(s) from %s.",
+                            len(db), path)
+            except Exception as exc:
+                LOGGER.warning("Failed to load pHash DB %s: %s", path, exc)
+        elif path and imagehash is None:
+            LOGGER.warning("phash_db_path set but imagehash is unavailable — "
+                           "pHash DB stage disabled.")
+        elif path:
+            LOGGER.warning("phash_db_path '%s' not found — pHash DB stage "
+                           "disabled.", path)
+
+        self._phash_db = db
+        return db
+
+    def _match_phash_db(
+        self, sig: VisualSignature
+    ) -> Tuple[Optional[str], Optional[str], Optional[int]]:
+        """Look a detection's pHash up in the known-icon DB.
+
+        Compares the detection's ``phash`` (computed by SignatureBuilder, so
+        identical to how the DB was generated) against every DB entry.
+
+        Returns ``(matched_name, nearest_name, nearest_dist)``:
+          * ``matched_name`` — the class when the nearest entry is within
+            ``config.phash_db_max_hamming`` Hamming distance, else ``None``.
+          * ``nearest_name`` / ``nearest_dist`` — the closest entry regardless of
+            the threshold, so the report can show how close the DB got even on a
+            miss (helps calibrate the threshold).  ``(None, None)`` if the DB is
+            empty or the detection has no pHash.
+        """
+        db = self._load_phash_db()
+        if not db or sig is None or sig.phash is None:
+            return None, None, None
+
+        nearest_name: Optional[str] = None
+        nearest_dist: Optional[int] = None
+        for db_hash, name in db:
+            dist = int(sig.phash - db_hash)      # Hamming distance
+            if nearest_dist is None or dist < nearest_dist:
+                nearest_dist, nearest_name = dist, name
+                if dist == 0:
+                    break                        # perfect hit — can't do better
+
+        matched_name = (
+            nearest_name
+            if nearest_dist is not None
+            and nearest_dist <= self.config.phash_db_max_hamming
+            else None
+        )
+        return matched_name, nearest_name, nearest_dist
 
     @property
     def ocr(self) -> OcrEngine:
@@ -346,7 +423,17 @@ class LegendMarkerPipeline:
         for idx, det in enumerate(detections):
             det.signature = self.sig_builder.build(det.crop)
 
-            # Step 6: rank the detection against every legend signature.
+            # Step 5.5: known-icon pHash DB lookup FIRST (priority shortcut).  If
+            # this detection's glyph pHash matches a curated entry, rename it
+            # straight away — the DB is a cross-map, human-verified source of
+            # truth.  We also keep the nearest entry (even on a miss) so the
+            # report shows the DB was consulted first and how close it got.
+            db_class, db_nearest_name, db_nearest_dist = self._match_phash_db(
+                det.signature)
+
+            # Step 6: rank the detection against every legend signature.  We
+            # still compute this for the report even when the DB already
+            # decided, so the .txt / JSON keep the full match breakdown.
             rows = self.matcher.rank(det.signature, legend_db)
             top = rows[0] if rows else None
             name = top["name"] if top else None
@@ -356,16 +443,22 @@ class LegendMarkerPipeline:
             second_score = rows[1]["score"] if len(rows) > 1 else 0.0
             margin = score - second_score
 
-            # Decision: rename only when the best match clears the absolute
-            # floor AND clearly beats the runner-up (margin gate).  Otherwise
-            # keep the original class rather than force a "least-bad" match.
+            # Decision.  pHash DB wins first; otherwise rename only when the best
+            # legend match clears the absolute floor AND clearly beats the
+            # runner-up (margin gate) — never force a "least-bad" match.
             final_class = det.class_name
             renamed = False
+            match_method: Optional[str] = None
             passes_floor = name is not None and score >= self.config.match_score_threshold
             passes_margin = (len(rows) < 2) or (margin >= self.config.match_margin)
-            if passes_floor and passes_margin:
+            if db_class is not None:
+                final_class = db_class
+                renamed = True
+                match_method = "phash_db"
+            elif passes_floor and passes_margin:
                 final_class = name
                 renamed = True
+                match_method = "legend"
 
             crop_file = f"{idx:03d}_{sanitize_filename(final_class)}.png"
             if self.config.save_crops and det.crop is not None and det.crop.size:
@@ -374,7 +467,27 @@ class LegendMarkerPipeline:
                 # Per-crop report .txt right beside the image.  Note the score
                 # is the template+ORB match score; the hamming column is pHash
                 # (informational only).
+                # Step 5.5 report line — ALWAYS shown first, so it is clear the
+                # JSON DB is consulted before the legend.  Describes what the DB
+                # lookup found (hit / nearest miss / disabled).
+                if not self._load_phash_db():
+                    db_line = "pHash DB    : disabled (no --phash-db configured)"
+                elif db_class is not None:
+                    db_line = (
+                        f"pHash DB    : HIT -> '{db_class}' "
+                        f"(hamming={db_nearest_dist} <= "
+                        f"{self.config.phash_db_max_hamming}) — wins, "
+                        f"legend match ignored"
+                    )
+                else:
+                    db_line = (
+                        f"pHash DB    : miss (nearest '{db_nearest_name}' "
+                        f"hamming={db_nearest_dist} > "
+                        f"{self.config.phash_db_max_hamming}) — fell back to legend"
+                    )
+
                 footer = [
+                    db_line,
                     f"Best match  : {name}  (match score={score:.3f}, "
                     f"pHash hamming={best_hamming})",
                     f"Floor gate  : score {score:.3f} >= "
@@ -384,7 +497,8 @@ class LegendMarkerPipeline:
                     f"{self.config.match_margin} -> "
                     f"{'PASS' if passes_margin else 'FAIL'}",
                     f"Decision    : {'RENAMED' if renamed else 'KEPT'}  "
-                    f"'{det.class_name}' -> '{final_class}'",
+                    f"'{det.class_name}' -> '{final_class}'"
+                    f"{f' (via {match_method})' if match_method else ''}",
                 ]
                 info_path = os.path.join(
                     crop_dir, os.path.splitext(crop_file)[0] + ".txt"
@@ -412,11 +526,12 @@ class LegendMarkerPipeline:
                     "best_hamming": best_hamming,
                     "match_breakdown": breakdown,
                     "renamed": renamed,
+                    "match_method": match_method,   # "phash_db" | "legend" | None
                 }
             )
             LOGGER.info(
-                "Map icon %d: '%s' -> '%s' (score=%.3f, renamed=%s)",
-                idx, det.class_name, final_class, score, renamed,
+                "Map icon %d: '%s' -> '%s' (score=%.3f, renamed=%s, method=%s)",
+                idx, det.class_name, final_class, score, renamed, match_method,
             )
 
         self._timer.add("map: signatures + match", time.perf_counter() - _t_match)

@@ -88,21 +88,36 @@ def visualize_map(
     detections: List["Detection"],
     results: List[Dict[str, Any]],
 ) -> np.ndarray:
-    """Annotate the map: green box for renamed icons, orange for kept-as-is.
+    """Annotate the map with a colour per match method:
 
-    The label shows the final class plus the match score when renamed.
+    * blue   — renamed via the known-icon pHash database (JSON)
+    * green  — renamed via legend matching
+    * orange — kept original Roboflow class (no confident match)
+
+    The label shows the final class plus the match score when renamed via the
+    legend.
     """
     canvas = image.copy()
     font_scale, thickness = _scaled_font(canvas)
-    renamed_color = (0, 170, 0)    # green — successfully matched to legend.
-    kept_color = (0, 140, 255)     # orange — kept original Roboflow class.
+    phash_db_color = (255, 0, 0)    # blue (BGR) — matched via the pHash DB (JSON).
+    renamed_color = (0, 170, 0)     # green — successfully matched to legend.
+    kept_color = (0, 140, 255)      # orange — kept original Roboflow class.
 
     for det, res in zip(detections, results):
         renamed = res.get("renamed", False)
-        color = renamed_color if renamed else kept_color
+        method = res.get("match_method")
+        if method == "phash_db":
+            color = phash_db_color
+        elif renamed:
+            color = renamed_color
+        else:
+            color = kept_color
+
         label = res.get("class", det.class_name)
         score = res.get("match_score")
-        if renamed and score is not None:
+        # For legend matches show the score; pHash-DB matches are exact-ish so
+        # the score is not meaningful for them.
+        if method == "legend" and score is not None:
             label = f"{label} ({score:.2f})"
         draw_label(canvas, det.bbox, label, color, font_scale, thickness)
     return canvas

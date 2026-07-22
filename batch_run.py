@@ -41,7 +41,7 @@ CONFIG = {
     "INPUT_FOLDER":  "/home/nls34/Documents/POCs/legend_marker/temp",
     # "LEGEND_FOLDER": "/home/nls34/Downloads/Dataset_lengend_marker_viewer/Rotated_legends",
     'LEGEND_FOLDER':'/home/nls34/Documents/POCs/legend_marker/legend',
-    "OUTPUT_FOLDER": "/home/nls34/Documents/POCs/legend_marker/output/batch_13_easyocr_Rotated",
+    "OUTPUT_FOLDER": "/home/nls34/Documents/POCs/legend_marker/output/batch_14_easyocr_Rotated",
 
     # ---- Roboflow ---------------------------------------------------------
     "API_KEY":   "K06rVQD1zQ46eOFObJvi",
@@ -57,6 +57,12 @@ CONFIG = {
     "MATCH_THRESHOLD": 0.60,               # absolute floor to rename a map icon
     "MATCH_MARGIN":    0.08,               # best must beat 2nd-best by this
     "HASH_ALGORITHM":  "phash",
+
+    # ---- Known-icon pHash database ({phash_hex: classname}) --------------
+    # Checked BEFORE the legend; a matching map icon is renamed from the JSON
+    # (drawn blue in the viz).  "" disables.  MAX_HAMMING = match tolerance.
+    "PHASH_DB":            "/home/nls34/Documents/POCs/legend_marker/icons_phash_flat.json",
+    "PHASH_DB_MAX_HAMMING": 10,
 
     # ---- Auto-orientation -------------------------------------------------
     "AUTO_ROTATE":        True,            # correct sideways (90/180/270) inputs
@@ -144,6 +150,8 @@ def make_pipeline_config(output_dir: str) -> lm.PipelineConfig:
         save_visualization=bool(CONFIG["SAVE_VISUALIZATION"]),
         save_debug_json=bool(CONFIG["SAVE_DEBUG_JSON"]),
         auto_rotate=bool(CONFIG.get("AUTO_ROTATE", True)),
+        phash_db_path=CONFIG.get("PHASH_DB", ""),
+        phash_db_max_hamming=int(CONFIG.get("PHASH_DB_MAX_HAMMING", 0)),
     )
 
 

@@ -51,6 +51,14 @@ def build_arg_parser() -> argparse.ArgumentParser:
                    choices=["phash", "dhash", "ahash", "whash"], default="phash",
                    help="pHash variant used for the Hamming .txt reports.")
 
+    # Known-icon pHash database (JSON: {phash_hex: classname}, see save_phash.py).
+    p.add_argument("--phash-db", dest="phash_db_path", default="",
+                   help="Path to a {phash_hex: classname} JSON. Map detections "
+                        "whose glyph pHash matches an entry are renamed from it "
+                        "(priority over legend matching) and drawn in magenta.")
+    p.add_argument("--phash-db-max-hamming", type=int, default=0,
+                   help="Max Hamming distance for a pHash-DB hit (0 = exact).")
+
     # Output / misc
     p.add_argument("--output-dir", default="output",
                    help="Where crops/JSON artefacts are written.")
@@ -80,6 +88,8 @@ def config_from_args(args: argparse.Namespace) -> PipelineConfig:
         save_crops=not args.no_crops,
         save_visualization=not args.no_viz,
         auto_rotate=not args.no_auto_rotate,
+        phash_db_path=args.phash_db_path,
+        phash_db_max_hamming=args.phash_db_max_hamming,
     )
 
 

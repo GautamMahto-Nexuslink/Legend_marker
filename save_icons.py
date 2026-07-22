@@ -74,6 +74,14 @@ CONFIG = {
     "MATCH_MARGIN":    0.08,               # best must beat 2nd-best by this
     "HASH_ALGORITHM":  "phash",
 
+    # ---- Known-icon pHash database ({phash_hex: classname}) --------------
+    # Checked BEFORE the legend: a map icon whose glyph pHash matches an entry
+    # here is renamed from the JSON straight away (drawn blue in the viz).  Set
+    # PHASH_DB to "" to disable.  MAX_HAMMING is the match tolerance (0 = exact;
+    # a fresh map crop rarely equals a stored icon exactly, so allow some slack).
+    "PHASH_DB":            "/home/nls34/Documents/POCs/legend_marker/icons_phash_flat.json",
+    "PHASH_DB_MAX_HAMMING": 10,
+
     # ---- Auto-orientation -------------------------------------------------
     "AUTO_ROTATE":        True,            # correct sideways (90/180/270) inputs
 
@@ -155,6 +163,8 @@ def make_pipeline_config(output_dir: str) -> lm.PipelineConfig:
         save_visualization=False,   # not needed — icons only
         save_debug_json=False,      # not needed — icons only
         auto_rotate=bool(CONFIG.get("AUTO_ROTATE", True)),
+        phash_db_path=CONFIG.get("PHASH_DB", ""),
+        phash_db_max_hamming=int(CONFIG.get("PHASH_DB_MAX_HAMMING", 0)),
     )
 
 

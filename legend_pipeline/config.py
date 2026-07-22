@@ -112,6 +112,21 @@ class PipelineConfig:
     hash_algorithm: str = "phash"          # "phash" | "dhash" | "ahash" | "whash"
     hash_size: int = 16                    # 16 -> 256-bit hash (max Hamming 256).
 
+    # ---- Known-icon pHash database ({phash_hex: classname}) ------------
+    # A curated JSON mapping perceptual hashes to their final class name (see
+    # save_phash.py / icons_phash_flat.json).  Before the per-map legend
+    # matching, every map detection's crop is hashed and looked up here; a hit
+    # renames the detection to the stored class straight away (a high-confidence
+    # shortcut), and only the misses fall through to the legend/OCR matching.
+    # Empty path disables this stage entirely (original behaviour).
+    phash_db_path: str = "/home/nls34/Documents/POCs/legend_marker/icons_phash_flat.json"
+    # Max Hamming distance for a DB hit, compared against det.signature.phash_hex.
+    # 0 = exact match only; a small value (e.g. 6-10 for a 256-bit hash)
+    # tolerates minor rendering differences.  The DB MUST be generated with the
+    # same hash_algorithm / hash_size as the pipeline (save_phash.py reuses
+    # SignatureBuilder, so its default hash_size=16 already matches).
+    phash_db_max_hamming: int = 0
+
     # ---- Classical matching (multi-scale template + ORB) ---------------
     # Decision score = weighted mix of a scale-swept normalised template
     # correlation and an ORB ratio-test inlier fraction — both computed on the
