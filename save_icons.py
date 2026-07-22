@@ -43,6 +43,8 @@ import tempfile
 import time
 from typing import Dict, List, Optional, Tuple
 
+import cv2
+
 # Reuse the whole pipeline from the sibling module.
 import legend_marker as lm
 
@@ -164,12 +166,20 @@ def collate_icons(
     map_crops_dir: str,
     map_stem: str,
     output_root: str,
+    applied_angle: int = 0,
 ) -> int:
     """Copy each final-output crop into ``output_root/<class>/<mapstem>_N.png``.
 
     The pipeline writes map crops as ``<idx:03d>_<sanitized_class>.png`` in
     ``map_crops_dir`` (see ``process_map``), so we reconstruct each source name
     from its index and final class.  Numbering restarts at 1 per class, per map.
+
+    ``applied_angle`` is the clockwise rotation the pipeline applied to make the
+    map upright before cropping.  When it is non-zero the crops are in the
+    upright frame, so we rotate each one BACK by ``-applied_angle`` to save the
+    icon exactly as it appears in the ORIGINAL (rotated) map.  Right-angle
+    rotations are lossless, so this is pixel-exact.
+
     Returns the number of icons saved for this map.
     """
     per_class_counter: Dict[str, int] = {}
@@ -193,7 +203,16 @@ def collate_icons(
 
         class_dir = lm.ensure_dir(os.path.join(output_root, safe_class))
         dst = os.path.join(class_dir, f"{map_stem}_{n}.png")
-        shutil.copyfile(src, dst)
+
+        if applied_angle % 360 == 0:
+            # No rotation was applied — the crop already matches the original.
+            shutil.copyfile(src, dst)
+        else:
+            # Undo the pipeline's upright correction to restore the original
+            # (rotated) orientation of the icon.
+            crop = cv2.imread(src, cv2.IMREAD_UNCHANGED)
+            crop = lm.rotate_image(crop, -applied_angle)
+            cv2.imwrite(dst, crop)
         saved += 1
 
     return saved
@@ -254,11 +273,25 @@ def run_batch() -> int:
             try:
                 shared.config.output_dir = lm.ensure_dir(map_scratch)
                 results = shared.run(map_path, legend_path)
+
+                # The pipeline rotates a sideways map upright before cropping
+                # (auto_rotate) and, by default, the map reuses the legend's
+                # angle (share_legend_map_orientation).  That shared angle is
+                # left on the pipeline after run(); undo it so icons are saved
+                # in the ORIGINAL map orientation.  If orientation sharing is
+                # off we cannot recover the map's own angle, so leave crops as-is.
+                applied_angle = 0
+                if (shared.config.auto_rotate
+                        and shared.config.share_legend_map_orientation
+                        and shared._legend_angle):
+                    applied_angle = int(shared._legend_angle)
+
                 saved = collate_icons(
                     results,
                     os.path.join(map_scratch, "map_crops"),
                     map_stem,
                     output_root,
+                    applied_angle=applied_angle,
                 )
                 total_saved += saved
                 ok += 1
