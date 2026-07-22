@@ -20,7 +20,30 @@ class OcrEngine:
 
     def __init__(self, config: PipelineConfig) -> None:
         self.config = config
+        self._tune_cpu_threads()
         self._reader = self._build_reader()
+
+    def _tune_cpu_threads(self) -> None:
+        """Let the Torch-backed OCR engines use all cores (pure speed knob).
+
+        PyTorch on CPU often defaults to a subset of the available cores (e.g. 2
+        of 4), so OCR runs at half speed for no reason.  We raise the intra-op
+        thread count to ``config.ocr_cpu_threads`` (0 => os.cpu_count()).  Wrapped
+        defensively: it is a best-effort optimisation, never a hard dependency.
+        """
+        if self.config.ocr_engine.lower() not in ("easyocr", "paddleocr"):
+            return
+        try:
+            import os
+
+            import torch  # EasyOCR/PaddleOCR pull this in anyway.
+
+            want = self.config.ocr_cpu_threads or (os.cpu_count() or 1)
+            if want > 0 and want != torch.get_num_threads():
+                torch.set_num_threads(want)
+                LOGGER.info("Set Torch CPU threads to %d (was auto).", want)
+        except Exception as exc:  # Never fail OCR init over a tuning hint.
+            LOGGER.debug("Could not tune Torch CPU threads: %s", exc)
 
     def _build_reader(self) -> Any:
         engine = self.config.ocr_engine.lower()
@@ -254,7 +277,10 @@ class OcrEngine:
         # Emitting finer boxes lets the glyph become its own token that the
         # on-icon filter drops; a label's real words are re-joined later by
         # _contiguous_tokens / _merge_texts, so tighter splitting is safe.
-        detections = self._reader.readtext(image, width_ths=0.1, paragraph=False)
+        detections = self._reader.readtext(
+            image, width_ths=0.1, paragraph=False,
+            batch_size=max(1, self.config.easyocr_batch_size),
+        )
         out = []
         for box, text, conf in detections:
             xs = [p[0] for p in box]

@@ -59,7 +59,21 @@ class PipelineConfig:
     # long-side to save time (pass 2 keeps the accurate ocr_target_long_side).
     # Only applied when mask_icons_for_ocr is True (otherwise pass 1 IS the
     # labels).  Set 0 to run pass 1 at full resolution (old behaviour).
-    ocr_fp_scan_long_side: int = 1000
+    # Pass 1 is throwaway — only its text-box POSITIONS are used (to drop
+    # false-positive detections that sit on label text), never the recognised
+    # characters — so it can run at a coarse resolution to save time.
+    ocr_fp_scan_long_side: int = 768
+
+    # ---- OCR performance (CPU) -----------------------------------------
+    # EasyOCR/PaddleOCR run on PyTorch, which by default may use only a subset
+    # of the available cores.  0 = use every logical core (os.cpu_count());
+    # a positive value pins that many threads.  Pure speed knob — no effect on
+    # what text is read.  Roughly linear speed-up up to the core count.
+    ocr_cpu_threads: int = 0
+    # Recognition batch size for EasyOCR (default engine value is 1).  Batching
+    # the per-box recognition passes cuts overhead when a legend has many
+    # labels; also a pure speed knob.
+    easyocr_batch_size: int = 16
 
     # ---- False-positive detection filtering ----------------------------
     # The model sometimes fires a false-positive "icon" on a LETTER of a label
