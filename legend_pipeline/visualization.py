@@ -90,23 +90,29 @@ def visualize_map(
 ) -> np.ndarray:
     """Annotate the map with a colour per match method:
 
-    * blue   — renamed via the known-icon pHash database (JSON)
-    * green  — renamed via legend matching
-    * orange — kept original Roboflow class (no confident match)
+    * blue    — renamed from the known-icon pHash database (JSON) alone
+    * magenta — pHash hit whose class was then found in this map's legend, as
+                the same concept or a nearby one, and relabelled with the
+                legend's own wording ("Bicycling" -> "Motor Bike Trail")
+    * green   — renamed via legend/OCR text matching
+    * orange  — kept the original Roboflow class (no confident match)
 
-    The label shows the final class plus the match score when renamed via the
-    legend.
+    The label shows the final class plus the match score when the legend was
+    involved.
     """
     canvas = image.copy()
     font_scale, thickness = _scaled_font(canvas)
-    phash_db_color = (255, 0, 0)    # blue (BGR) — matched via the pHash DB (JSON).
-    renamed_color = (0, 170, 0)     # green — successfully matched to legend.
-    kept_color = (0, 140, 255)      # orange — kept original Roboflow class.
+    phash_db_color = (255, 0, 0)      # blue (BGR) — pHash DB only.
+    semantic_color = (200, 0, 200)    # magenta — pHash DB reconciled with legend.
+    renamed_color = (0, 170, 0)       # green — matched to the legend text.
+    kept_color = (0, 140, 255)        # orange — kept original Roboflow class.
 
     for det, res in zip(detections, results):
         renamed = res.get("renamed", False)
-        method = res.get("match_method")
-        if method == "phash_db":
+        method = res.get("match_method") or ""
+        if method.startswith("phash_db+") or method == "synonym_agree":
+            color = semantic_color
+        elif method == "phash_db":
             color = phash_db_color
         elif renamed:
             color = renamed_color
@@ -115,9 +121,9 @@ def visualize_map(
 
         label = res.get("class", det.class_name)
         score = res.get("match_score")
-        # For legend matches show the score; pHash-DB matches are exact-ish so
-        # the score is not meaningful for them.
-        if method == "legend" and score is not None:
+        # Show the score whenever the legend contributed; a pure pHash-DB hit is
+        # exact-ish, so its template score is not meaningful.
+        if method != "phash_db" and score is not None and renamed:
             label = f"{label} ({score:.2f})"
         draw_label(canvas, det.bbox, label, color, font_scale, thickness)
     return canvas

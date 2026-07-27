@@ -9,6 +9,7 @@ from typing import List, Optional, Sequence
 from .config import PipelineConfig
 from .deps import LOGGER
 from .pipeline import LegendMarkerPipeline
+from .synonyms import DEFAULT_SYNONYMS_PATH
 from .utils import setup_logging
 
 
@@ -59,6 +60,25 @@ def build_arg_parser() -> argparse.ArgumentParser:
     p.add_argument("--phash-db-max-hamming", type=int, default=0,
                    help="Max Hamming distance for a pHash-DB hit (0 = exact).")
 
+    # Semantic class reconciliation (icon_class_synonyms.json).
+    p.add_argument("--synonyms", dest="synonyms_path",
+                   default=DEFAULT_SYNONYMS_PATH,
+                   help="Path to {canonical: [synonyms]} JSON used to treat e.g. "
+                        "a pHash-DB 'observation area' and a legend 'Overlook' "
+                        "as the same class.")
+    p.add_argument("--no-synonyms", action="store_true",
+                   help="Disable semantic class reconciliation entirely.")
+    p.add_argument("--synonym-naming", choices=["legend", "canonical", "db"],
+                   default="legend",
+                   help="Which wording wins when the pHash DB and the legend "
+                        "agree semantically.")
+    p.add_argument("--no-synonym-rescue", action="store_true",
+                   help="Do not rename on a synonym agreement between a pHash-DB "
+                        "near-miss and a below-floor legend match.")
+    p.add_argument("--synonym-fuzzy-cutoff", type=float, default=0.88,
+                   help="difflib similarity for OCR noise ('0verlook'); "
+                        "1.0 = exact terms only.")
+
     # Output / misc
     p.add_argument("--output-dir", default="output",
                    help="Where crops/JSON artefacts are written.")
@@ -90,6 +110,10 @@ def config_from_args(args: argparse.Namespace) -> PipelineConfig:
         auto_rotate=not args.no_auto_rotate,
         phash_db_path=args.phash_db_path,
         phash_db_max_hamming=args.phash_db_max_hamming,
+        synonyms_path="" if args.no_synonyms else args.synonyms_path,
+        synonym_naming=args.synonym_naming,
+        synonym_rescue=not args.no_synonym_rescue,
+        synonym_fuzzy_cutoff=args.synonym_fuzzy_cutoff,
     )
 
 

@@ -41,7 +41,7 @@ CONFIG = {
     "INPUT_FOLDER":  "/home/nls34/Downloads/Dataset_lengend_marker_viewer/Map_Images_Renamed",
     # "LEGEND_FOLDER": "/home/nls34/Downloads/Dataset_lengend_marker_viewer/Rotated_legends",
     'LEGEND_FOLDER':'/home/nls34/Downloads/Dataset_lengend_marker_viewer/Legends',
-    "OUTPUT_FOLDER": "/home/nls34/Documents/POCs/legend_marker/output/batch_14_easyocr_inputs_pipeline_Full_images_278",
+    "OUTPUT_FOLDER": "/home/nls34/Documents/POCs/legend_marker/output/batch_16_easyocr_inputs_pipeline_Full_images_278",
 
     # ---- Roboflow ---------------------------------------------------------
     "API_KEY":   "K06rVQD1zQ46eOFObJvi",
@@ -63,6 +63,16 @@ CONFIG = {
     # (drawn blue in the viz).  "" disables.  MAX_HAMMING = match tolerance.
     "PHASH_DB":            "/home/nls34/Documents/POCs/legend_marker/icons_phash_flat.json",
     "PHASH_DB_MAX_HAMMING": 10,
+
+    # ---- Semantic class reconciliation ({canonical: [synonyms]}) ---------
+    # Lets a pHash-DB class and a legend label that mean the same thing
+    # ("Observation Area" vs "Overlook") count as an agreement instead of a
+    # conflict.  "" disables.  NAMING = whose wording the output uses:
+    # "legend" (this map's label) | "canonical" (group key) | "db".
+    "SYNONYMS":            "/home/nls34/Documents/POCs/legend_marker/icon_class_synonyms.json",
+    "SYNONYM_NAMING":      "legend",
+    "SYNONYM_RESCUE":      True,           # rename on DB near-miss + legend agreement
+    "SYNONYM_FUZZY_CUTOFF": 0.88,          # OCR noise tolerance; 1.0 = exact only
 
     # ---- Auto-orientation -------------------------------------------------
     "AUTO_ROTATE":        True,            # correct sideways (90/180/270) inputs
@@ -152,6 +162,10 @@ def make_pipeline_config(output_dir: str) -> lm.PipelineConfig:
         auto_rotate=bool(CONFIG.get("AUTO_ROTATE", True)),
         phash_db_path=CONFIG.get("PHASH_DB", ""),
         phash_db_max_hamming=int(CONFIG.get("PHASH_DB_MAX_HAMMING", 0)),
+        synonyms_path=CONFIG.get("SYNONYMS", ""),
+        synonym_naming=CONFIG.get("SYNONYM_NAMING", "legend"),
+        synonym_rescue=bool(CONFIG.get("SYNONYM_RESCUE", True)),
+        synonym_fuzzy_cutoff=float(CONFIG.get("SYNONYM_FUZZY_CUTOFF", 0.88)),
     )
 
 

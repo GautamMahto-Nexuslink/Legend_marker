@@ -23,6 +23,7 @@ from .ocr import OcrEngine
 from .orientation import detect_upright_rotation, rotate_image
 from .reporting import write_hamming_info
 from .signatures import SignatureBuilder, SignatureMatcher
+from .synonyms import SynonymMap
 from .timing import StepTimer
 from .utils import ensure_dir, load_image, sanitize_filename
 from .visualization import (
@@ -51,6 +52,20 @@ class LegendMarkerPipeline:
         # Known-icon pHash database ({phash_hex: classname}); loaded lazily from
         # config.phash_db_path on first use.  None = "not loaded yet".
         self._phash_db: Optional[List[Tuple[Any, str]]] = None
+        # Semantic class grouping ("Observation Area" == "Overlook"); loaded
+        # lazily from config.synonyms_path.  None = "not loaded yet".
+        self._synonyms: Optional[SynonymMap] = None
+
+    # -- Semantic class reconciliation ------------------------------------
+    @property
+    def synonyms(self) -> SynonymMap:
+        """Canonical-name lookup shared by the whole run (cached, never raises)."""
+        if self._synonyms is None:
+            self._synonyms = SynonymMap.load(
+                self.config.synonyms_path,
+                fuzzy_cutoff=self.config.synonym_fuzzy_cutoff,
+            )
+        return self._synonyms
 
     # -- Known-icon pHash database ---------------------------------------
     def _load_phash_db(self) -> List[Tuple[Any, str]]:
@@ -125,6 +140,146 @@ class LegendMarkerPipeline:
             else None
         )
         return matched_name, nearest_name, nearest_dist
+
+    # -- Final class decision ---------------------------------------------
+    def _find_semantic_legend(
+        self, class_name: Optional[str], rows: List[Dict[str, Any]]
+    ) -> Tuple[Optional[Dict[str, Any]], Optional[str]]:
+        """Find the legend entry that means (or nearly means) ``class_name``.
+
+        Searches EVERY legend name on this map, not just the best-scoring one:
+        a pHash class of "Bicycling" should find the legend's "Motor Bike Trail"
+        even when some unrelated glyph correlates better.  ``rows`` is already
+        sorted by match score, so the first hit at each strength is also the
+        visually closest one.
+
+        Returns ``(row, "same")`` for a synonym, ``(row, "related")`` for a
+        neighbouring concept, or ``(None, None)``.
+        """
+        syn = self.synonyms
+        if not syn or not class_name or not rows:
+            return None, None
+        related_hit: Optional[Dict[str, Any]] = None
+        for row in rows:
+            relation = syn.relation(class_name, row.get("name"))
+            if relation == "same":
+                return row, "same"
+            if relation == "related" and related_hit is None:
+                related_hit = row
+        if related_hit is not None:
+            return related_hit, "related"
+        return None, None
+
+    def _decide_class(
+        self,
+        original_class: str,
+        db_class: Optional[str],
+        db_nearest_name: Optional[str],
+        db_nearest_dist: Optional[int],
+        rows: Optional[List[Dict[str, Any]]] = None,
+    ) -> Dict[str, Any]:
+        """Reconcile the pHash DB and the legend, then pick the final label.
+
+        ``rows`` are the legend candidates ranked by visual score (best first).
+
+        Precedence:
+
+        1. **pHash DB hit** (Hamming <= ``phash_db_max_hamming``).  The class it
+           returns is then looked for in *this map's legend*: a same-meaning
+           label ("Observation Area" -> legend "Overlook") or, failing that, a
+           neighbouring one ("Bicycling" -> legend "Motor Bike Trail").  When
+           one is found the detection is renamed to the legend's wording
+           (``config.synonym_naming`` can override whose wording wins) and the
+           method becomes ``phash_db+legend`` / ``phash_db+related``.  With no
+           semantic legend entry the DB class is kept verbatim (``phash_db``).
+        2. **Legend match** clearing the score floor *and* the margin gate
+           (``legend``).
+        3. **Synonym rescue** (``config.synonym_rescue``) — the DB missed its
+           Hamming gate but its nearest class is a synonym of a legend entry.
+           Two independent weak signals pointing at one concept are treated as
+           one strong signal: the margin gate is waived and the floor drops to
+           ``synonym_rescue_min_score`` (``synonym_agree``).
+        4. Otherwise the original detector class is kept (no rename).
+
+        Returns every intermediate so the caller can log / report it.
+        """
+        syn = self.synonyms
+        rows = rows or []
+        top = rows[0] if rows else None
+        legend_name = top["name"] if top else None
+        score = top["score"] if top else -1.0
+        second_score = rows[1]["score"] if len(rows) > 1 else 0.0
+        margin = score - second_score
+
+        db_candidate = db_class or db_nearest_name
+        # The semantic search runs over all legend entries, so a DB class can
+        # find its legend twin even when that twin is not the top visual match.
+        sem_row, relation = self._find_semantic_legend(db_candidate, rows)
+        sem_name = sem_row["name"] if sem_row else None
+        sem_score = sem_row["score"] if sem_row else None
+        synonym_agree = relation is not None
+
+        passes_floor = (legend_name is not None
+                        and score >= self.config.match_score_threshold)
+        passes_margin = (len(rows) < 2) or (margin >= self.config.match_margin)
+        rescued = bool(
+            self.config.synonym_rescue
+            and db_class is None
+            and relation == "same"
+            and not (passes_floor and passes_margin)
+            and sem_score is not None
+            and sem_score >= self.config.synonym_rescue_min_score
+            and db_nearest_dist is not None
+            and db_nearest_dist <= self.config.synonym_rescue_max_hamming
+        )
+
+        final_class = original_class
+        renamed = False
+        match_method: Optional[str] = None
+        if db_class is not None:
+            final_class = (
+                syn.pick_label(self.config.synonym_naming, sem_name, db_class)
+                if relation else db_class
+            )
+            renamed = True
+            match_method = f"phash_db+{relation}" if relation else "phash_db"
+        elif passes_floor and passes_margin:
+            # The legend already won on its own; only re-word it when the DB's
+            # nearest class says the same thing.
+            final_class = (
+                syn.pick_label(self.config.synonym_naming, legend_name,
+                               db_nearest_name)
+                if relation == "same" and sem_name == legend_name else legend_name
+            )
+            renamed = True
+            match_method = ("legend+synonym"
+                            if relation == "same" and sem_name == legend_name
+                            else "legend")
+        elif rescued:
+            final_class = syn.pick_label(
+                self.config.synonym_naming, sem_name, db_nearest_name)
+            renamed = True
+            match_method = "synonym_agree"
+
+        return {
+            "final_class": final_class,
+            "renamed": renamed,
+            "match_method": match_method,
+            "relation": relation,               # "same" | "related" | None
+            "synonym_agree": synonym_agree,
+            "rescued": rescued,
+            "passes_floor": passes_floor,
+            "passes_margin": passes_margin,
+            "db_candidate": db_candidate,
+            "legend_name": legend_name,
+            "legend_score": score,
+            "legend_margin": margin,
+            "semantic_legend": sem_name,
+            "semantic_score": sem_score,
+            "canonical": (syn.canonical(final_class)
+                          or syn.canonical(db_candidate)
+                          or syn.canonical(legend_name)),
+        }
 
     @property
     def ocr(self) -> OcrEngine:
@@ -443,22 +598,27 @@ class LegendMarkerPipeline:
             second_score = rows[1]["score"] if len(rows) > 1 else 0.0
             margin = score - second_score
 
-            # Decision.  pHash DB wins first; otherwise rename only when the best
-            # legend match clears the absolute floor AND clearly beats the
-            # runner-up (margin gate) — never force a "least-bad" match.
-            final_class = det.class_name
-            renamed = False
-            match_method: Optional[str] = None
-            passes_floor = name is not None and score >= self.config.match_score_threshold
-            passes_margin = (len(rows) < 2) or (margin >= self.config.match_margin)
-            if db_class is not None:
-                final_class = db_class
-                renamed = True
-                match_method = "phash_db"
-            elif passes_floor and passes_margin:
-                final_class = name
-                renamed = True
-                match_method = "legend"
+            # Steps 5.6 + 6b: reconcile the two sources and decide the label.
+            decision = self._decide_class(
+                original_class=det.class_name,
+                db_class=db_class,
+                db_nearest_name=db_nearest_name,
+                db_nearest_dist=db_nearest_dist,
+                rows=rows,
+            )
+            syn = self.synonyms
+            final_class = decision["final_class"]
+            renamed = decision["renamed"]
+            match_method = decision["match_method"]
+            relation = decision["relation"]
+            synonym_agree = decision["synonym_agree"]
+            canonical_hint = decision["canonical"]
+            db_candidate = decision["db_candidate"]
+            sem_name = decision["semantic_legend"]
+            sem_score = decision["semantic_score"]
+            passes_floor = decision["passes_floor"]
+            passes_margin = decision["passes_margin"]
+            rescued = decision["rescued"]
 
             crop_file = f"{idx:03d}_{sanitize_filename(final_class)}.png"
             if self.config.save_crops and det.crop is not None and det.crop.size:
@@ -486,8 +646,33 @@ class LegendMarkerPipeline:
                         f"{self.config.phash_db_max_hamming}) — fell back to legend"
                     )
 
+                if not syn:
+                    syn_line = "Synonyms    : disabled (no synonym map loaded)"
+                elif relation == "same":
+                    syn_line = (
+                        f"Synonyms    : SAME — DB '{db_candidate}' == legend "
+                        f"'{sem_name}' (group '{canonical_hint}', legend "
+                        f"score={sem_score:.3f}) — naming="
+                        f"{self.config.synonym_naming}"
+                        f"{' — RESCUED below-gate match' if rescued else ''}"
+                    )
+                elif relation == "related":
+                    syn_line = (
+                        f"Synonyms    : RELATED — DB '{db_candidate}' "
+                        f"('{syn.canonical(db_candidate)}') ~ legend "
+                        f"'{sem_name}' ('{syn.canonical(sem_name)}', legend "
+                        f"score={sem_score:.3f}) — renamed to the legend wording"
+                    )
+                else:
+                    syn_line = (
+                        f"Synonyms    : no match — DB '{db_candidate}' group "
+                        f"'{syn.canonical(db_candidate)}' has no same/nearby "
+                        f"label among the {len(rows)} legend entrie(s)"
+                    )
+
                 footer = [
                     db_line,
+                    syn_line,
                     f"Best match  : {name}  (match score={score:.3f}, "
                     f"pHash hamming={best_hamming})",
                     f"Floor gate  : score {score:.3f} >= "
@@ -526,12 +711,24 @@ class LegendMarkerPipeline:
                     "best_hamming": best_hamming,
                     "match_breakdown": breakdown,
                     "renamed": renamed,
-                    "match_method": match_method,   # "phash_db" | "legend" | None
+                    # "phash_db" | "phash_db+same" | "phash_db+related" |
+                    # "legend" | "legend+synonym" | "synonym_agree" | None
+                    "match_method": match_method,
+                    # Semantic group of the final class — stable key for search
+                    # and for merging equivalent classes across maps.
+                    "canonical_class": canonical_hint,
+                    "db_class": db_candidate,
+                    "legend_class": name,
+                    "semantic_legend_class": sem_name,
+                    "semantic_relation": relation,   # "same" | "related" | None
+                    "synonym_agree": synonym_agree,
                 }
             )
             LOGGER.info(
-                "Map icon %d: '%s' -> '%s' (score=%.3f, renamed=%s, method=%s)",
+                "Map icon %d: '%s' -> '%s' (score=%.3f, renamed=%s, method=%s, "
+                "canonical=%s)",
                 idx, det.class_name, final_class, score, renamed, match_method,
+                canonical_hint,
             )
 
         self._timer.add("map: signatures + match", time.perf_counter() - _t_match)

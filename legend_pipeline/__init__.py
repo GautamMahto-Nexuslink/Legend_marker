@@ -56,6 +56,7 @@ from .matching import (
     match_icons_to_text,
 )
 from .signatures import SignatureBuilder, SignatureMatcher
+from .synonyms import SynonymMap, DEFAULT_SYNONYMS_PATH, normalize as normalize_class_name
 from .pipeline import LegendMarkerPipeline
 from .cli import build_arg_parser, config_from_args, validate, main
 
@@ -90,6 +91,9 @@ __all__ = [
     "match_icons_to_text",
     "SignatureBuilder",
     "SignatureMatcher",
+    "SynonymMap",
+    "DEFAULT_SYNONYMS_PATH",
+    "normalize_class_name",
     "LegendMarkerPipeline",
     "build_arg_parser",
     "config_from_args",

@@ -141,6 +141,30 @@ class PipelineConfig:
     # SignatureBuilder, so its default hash_size=16 already matches).
     phash_db_max_hamming: int = 0
 
+    # ---- Semantic class reconciliation (synonym map) -------------------
+    # The pHash DB and the legend OCR often name the same icon differently
+    # ("Observation Area" vs "Overlook").  icon_class_synonyms.json groups every
+    # such class under one canonical key (built by build_class_synonyms.py), so
+    # the two sources can be recognised as *agreeing* instead of conflicting.
+    # Empty path disables the whole stage (previous behaviour: DB always wins).
+    synonyms_path: str = "/home/nls34/Documents/POCs/legend_marker/icon_class_synonyms.json"
+    # Which wording the final class uses when both sources agree semantically:
+    #   "legend"    -> the map's own label from OCR   ("Overlook")      [default]
+    #   "canonical" -> the group key                  ("observation area")
+    #   "db"        -> the curated pHash-DB class     ("Observation Area")
+    synonym_naming: str = "legend"
+    # Accept a rename when the pHash DB *missed* its Hamming gate but its nearest
+    # class is a synonym of the best legend match — two weak, independent signals
+    # pointing at the same concept.  The legend score must still clear this
+    # (relaxed) floor; the margin gate is waived.
+    synonym_rescue: bool = True
+    synonym_rescue_min_score: float = 0.35
+    # Max Hamming distance the DB near-miss may have to still count as evidence.
+    synonym_rescue_max_hamming: int = 40
+    # difflib similarity a term must reach to absorb OCR character noise
+    # ("0verlook" -> "overlook").  1.0 disables fuzzy matching.
+    synonym_fuzzy_cutoff: float = 0.88
+
     # ---- Classical matching (multi-scale template + ORB) ---------------
     # Decision score = weighted mix of a scale-swept normalised template
     # correlation and an ORB ratio-test inlier fraction — both computed on the

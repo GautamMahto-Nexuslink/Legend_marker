@@ -1,0 +1,1186 @@
+{
+  "accessible": [
+    "accessible campsite",
+    "accessible fishing",
+    "accessible parking",
+    "elevator",
+    "restroom",
+    "stairs"
+  ],
+  "accessible parking": [
+    "accessible",
+    "parking",
+    "trailhead parking"
+  ],
+  "accessible campsite": [
+    "accessible",
+    "campground",
+    "rv camping"
+  ],
+  "accessible fishing": [
+    "accessible",
+    "fishing",
+    "fishing dock"
+  ],
+  "amphitheater": [
+    "box office",
+    "campfire",
+    "group picnic area",
+    "interpretive pavilion",
+    "outdoor classroom",
+    "picnic shelter",
+    "special event venue"
+  ],
+  "aquarium": [
+    "interpretive center",
+    "museum",
+    "visitor center",
+    "wildlife viewing"
+  ],
+  "barbecue": [
+    "campfire",
+    "campground",
+    "food services",
+    "group picnic area",
+    "picnic area",
+    "picnic shelter"
+  ],
+  "barn": [
+    "building",
+    "corral",
+    "equestrian center",
+    "historic site",
+    "maintenance"
+  ],
+  "basketball": [
+    "disc golf",
+    "horseshoes",
+    "playground",
+    "polo field",
+    "recreation area",
+    "volleyball"
+  ],
+  "bathhouse": [
+    "beach",
+    "campground",
+    "restroom",
+    "shower",
+    "swimming pool"
+  ],
+  "beach": [
+    "bathhouse",
+    "lifeguard station",
+    "scuba diving",
+    "shelling",
+    "shower",
+    "snorkeling",
+    "stairs",
+    "sunbathing",
+    "surfing",
+    "swimming",
+    "volleyball",
+    "wading only",
+    "windsurfing"
+  ],
+  "bench": [
+    "observation area",
+    "partial shade",
+    "picnic area",
+    "trailhead"
+  ],
+  "gate": [
+    "contact station",
+    "junction",
+    "parking",
+    "pay station",
+    "trailhead"
+  ],
+  "bicycle repair station": [
+    "bike rack",
+    "biking",
+    "mountain biking"
+  ],
+  "biking": [
+    "bicycle repair station",
+    "bike rack",
+    "healthy heart trail",
+    "hike and bike campground",
+    "hiking",
+    "horse trail",
+    "motorbike trail",
+    "mountain biking",
+    "nature trail",
+    "trailhead"
+  ],
+  "mountain biking": [
+    "bicycle repair station",
+    "bike rack",
+    "biking",
+    "hiking",
+    "motorbike trail",
+    "trailhead"
+  ],
+  "bike rack": [
+    "bicycle repair station",
+    "biking",
+    "mountain biking",
+    "parking"
+  ],
+  "birdwatching": [
+    "butterfly garden",
+    "nature trail",
+    "observation area",
+    "observation tower",
+    "wildlife viewing"
+  ],
+  "boat dock": [
+    "boat house",
+    "boat launch",
+    "boat tours",
+    "boating",
+    "fishing dock",
+    "marina",
+    "mooring buoys"
+  ],
+  "boat house": [
+    "boat dock",
+    "boat rentals",
+    "boating",
+    "marina"
+  ],
+  "boat launch": [
+    "boat dock",
+    "boat rentals",
+    "boating",
+    "fish cleaning station",
+    "fishing",
+    "marina",
+    "mooring buoys",
+    "paddling",
+    "row boat"
+  ],
+  "boating": [
+    "boat dock",
+    "boat house",
+    "boat launch",
+    "boat rentals",
+    "boat tours",
+    "fishing",
+    "marina",
+    "mooring buoys",
+    "paddling",
+    "row boat",
+    "scuba diving",
+    "windsurfing"
+  ],
+  "row boat": [
+    "boat launch",
+    "boat rentals",
+    "boating",
+    "paddling"
+  ],
+  "boat tours": [
+    "boat dock",
+    "boating",
+    "marina",
+    "special event venue"
+  ],
+  "box office": [
+    "amphitheater",
+    "contact station",
+    "food services",
+    "gift shop",
+    "information",
+    "pay station",
+    "special event venue"
+  ],
+  "bridge": [
+    "dam",
+    "hiking",
+    "junction",
+    "nature trail",
+    "stairs",
+    "trailhead"
+  ],
+  "butterfly garden": [
+    "birdwatching",
+    "flower garden",
+    "nature trail",
+    "outdoor classroom",
+    "wildlife viewing"
+  ],
+  "cabin": [
+    "building",
+    "campground",
+    "group campground",
+    "lodge",
+    "pets overnight",
+    "primitive camping",
+    "rv camping",
+    "yurt"
+  ],
+  "camp host": [
+    "campground",
+    "contact station",
+    "ranger station",
+    "rv camping"
+  ],
+  "campfire": [
+    "amphitheater",
+    "barbecue",
+    "campground",
+    "group campground",
+    "picnic area"
+  ],
+  "campground": [
+    "accessible campsite",
+    "barbecue",
+    "bathhouse",
+    "cabin",
+    "camp host",
+    "campfire",
+    "drinking water",
+    "dump station",
+    "equestrian camping",
+    "group campground",
+    "hike and bike campground",
+    "lodge",
+    "partial shade",
+    "pay station",
+    "pets overnight",
+    "picnic area",
+    "primitive camping",
+    "recycling",
+    "restroom",
+    "rv camping",
+    "shower",
+    "stargazing",
+    "trash",
+    "youth camping",
+    "yurt"
+  ],
+  "group campground": [
+    "cabin",
+    "campfire",
+    "campground",
+    "group picnic area",
+    "rv camping",
+    "youth camping",
+    "yurt"
+  ],
+  "hike and bike campground": [
+    "biking",
+    "campground",
+    "hiking",
+    "primitive camping",
+    "trailhead"
+  ],
+  "equestrian camping": [
+    "campground",
+    "corral",
+    "equestrian center",
+    "equestrian staging area",
+    "horse trail"
+  ],
+  "primitive camping": [
+    "cabin",
+    "campground",
+    "hike and bike campground",
+    "hiking",
+    "yurt"
+  ],
+  "yurt": [
+    "cabin",
+    "campground",
+    "group campground",
+    "lodge",
+    "primitive camping"
+  ],
+  "youth camping": [
+    "campground",
+    "group campground",
+    "outdoor classroom"
+  ],
+  "rv camping": [
+    "accessible campsite",
+    "cabin",
+    "camp host",
+    "campground",
+    "dump station",
+    "group campground",
+    "parking"
+  ],
+  "boat rentals": [
+    "boat house",
+    "boat launch",
+    "boating",
+    "gift shop",
+    "marina",
+    "paddling",
+    "row boat",
+    "tubing"
+  ],
+  "paddling": [
+    "boat launch",
+    "boat rentals",
+    "boating",
+    "fishing",
+    "row boat",
+    "surfing",
+    "tubing",
+    "windsurfing"
+  ],
+  "cemetery": [
+    "fort",
+    "historic site",
+    "mine",
+    "museum"
+  ],
+  "food services": [
+    "barbecue",
+    "box office",
+    "drinking water",
+    "gas station",
+    "gift shop",
+    "lodge",
+    "picnic area",
+    "visitor center"
+  ],
+  "contact station": [
+    "box office",
+    "camp host",
+    "gate",
+    "information",
+    "park headquarters",
+    "pay station",
+    "ranger station",
+    "visitor center"
+  ],
+  "cornell cooperative extension": [
+    "interpretive center",
+    "outdoor classroom",
+    "park headquarters",
+    "visitor center"
+  ],
+  "corral": [
+    "barn",
+    "equestrian camping",
+    "equestrian center",
+    "equestrian staging area",
+    "horse trail"
+  ],
+  "county highway": [
+    "highway exit",
+    "interstate highway",
+    "junction",
+    "state highway"
+  ],
+  "state highway": [
+    "county highway",
+    "highway exit",
+    "interstate highway",
+    "junction"
+  ],
+  "interstate highway": [
+    "county highway",
+    "highway exit",
+    "junction",
+    "state highway"
+  ],
+  "highway exit": [
+    "county highway",
+    "interstate highway",
+    "junction",
+    "parking",
+    "state highway"
+  ],
+  "police": [
+    "fire station",
+    "first aid",
+    "hospital",
+    "park headquarters",
+    "ranger station"
+  ],
+  "dam": [
+    "bridge",
+    "fishing",
+    "marina",
+    "waterfall"
+  ],
+  "disc golf": [
+    "basketball",
+    "golf driving range",
+    "playground",
+    "recreation area"
+  ],
+  "golf driving range": [
+    "disc golf",
+    "polo field",
+    "recreation area"
+  ],
+  "scuba diving": [
+    "beach",
+    "boating",
+    "snorkeling",
+    "swimming"
+  ],
+  "snorkeling": [
+    "beach",
+    "scuba diving",
+    "shelling",
+    "swimming"
+  ],
+  "dog park": [
+    "dogs allowed on leash",
+    "no dogs allowed",
+    "pets overnight",
+    "playground",
+    "recreation area"
+  ],
+  "dogs allowed on leash": [
+    "dog park",
+    "no dogs allowed",
+    "pets overnight"
+  ],
+  "no dogs allowed": [
+    "dog park",
+    "dogs allowed on leash",
+    "pets overnight"
+  ],
+  "pets overnight": [
+    "cabin",
+    "campground",
+    "dog park",
+    "dogs allowed on leash",
+    "no dogs allowed"
+  ],
+  "drinking water": [
+    "campground",
+    "fish cleaning station",
+    "food services",
+    "picnic area",
+    "restroom",
+    "shower"
+  ],
+  "dump station": [
+    "campground",
+    "gas station",
+    "maintenance",
+    "restroom",
+    "rv camping",
+    "trash"
+  ],
+  "trash": [
+    "campground",
+    "dump station",
+    "maintenance",
+    "picnic area",
+    "recycling"
+  ],
+  "recycling": [
+    "campground",
+    "picnic area",
+    "trash"
+  ],
+  "interpretive center": [
+    "aquarium",
+    "cornell cooperative extension",
+    "information",
+    "interpretive exhibit",
+    "interpretive pavilion",
+    "museum",
+    "nature trail",
+    "outdoor classroom",
+    "visitor center",
+    "wildlife viewing"
+  ],
+  "visitor center": [
+    "aquarium",
+    "bus stop",
+    "contact station",
+    "cornell cooperative extension",
+    "food services",
+    "gift shop",
+    "information",
+    "interpretive center",
+    "lodge",
+    "museum",
+    "park headquarters",
+    "ranger station",
+    "tram stop",
+    "wifi"
+  ],
+  "elevator": [
+    "accessible",
+    "building",
+    "stairs"
+  ],
+  "horse trail": [
+    "biking",
+    "corral",
+    "equestrian camping",
+    "equestrian center",
+    "equestrian staging area",
+    "hiking",
+    "motorbike trail",
+    "trailhead"
+  ],
+  "equestrian staging area": [
+    "corral",
+    "equestrian camping",
+    "equestrian center",
+    "horse trail",
+    "parking",
+    "trailhead",
+    "trailhead parking"
+  ],
+  "equestrian center": [
+    "barn",
+    "corral",
+    "equestrian camping",
+    "equestrian staging area",
+    "horse trail",
+    "polo field"
+  ],
+  "interpretive exhibit": [
+    "historic site",
+    "information",
+    "interpretive center",
+    "interpretive pavilion",
+    "museum",
+    "nature trail",
+    "point of interest"
+  ],
+  "interpretive pavilion": [
+    "amphitheater",
+    "interpretive center",
+    "interpretive exhibit",
+    "outdoor classroom",
+    "picnic shelter"
+  ],
+  "fire station": [
+    "first aid",
+    "hospital",
+    "police",
+    "ranger station"
+  ],
+  "first aid": [
+    "fire station",
+    "hospital",
+    "lifeguard station",
+    "police",
+    "ranger station",
+    "telephone"
+  ],
+  "hospital": [
+    "fire station",
+    "first aid",
+    "police"
+  ],
+  "fish cleaning station": [
+    "boat launch",
+    "drinking water",
+    "fishing",
+    "fishing dock",
+    "marina"
+  ],
+  "fishing": [
+    "accessible fishing",
+    "boat launch",
+    "boating",
+    "dam",
+    "fish cleaning station",
+    "fishing dock",
+    "marina",
+    "paddling"
+  ],
+  "fishing dock": [
+    "accessible fishing",
+    "boat dock",
+    "fish cleaning station",
+    "fishing",
+    "marina"
+  ],
+  "flower garden": [
+    "butterfly garden",
+    "nature trail",
+    "outdoor classroom",
+    "wildlife viewing"
+  ],
+  "park headquarters": [
+    "building",
+    "contact station",
+    "cornell cooperative extension",
+    "information",
+    "maintenance",
+    "police",
+    "post office",
+    "ranger station",
+    "visitor center"
+  ],
+  "fort": [
+    "building",
+    "cemetery",
+    "historic site",
+    "mine",
+    "museum"
+  ],
+  "gas station": [
+    "dump station",
+    "food services",
+    "gift shop",
+    "parking"
+  ],
+  "geocaching": [
+    "compass course",
+    "hiking",
+    "nature trail",
+    "point of interest"
+  ],
+  "gift shop": [
+    "boat rentals",
+    "box office",
+    "food services",
+    "gas station",
+    "museum",
+    "post office",
+    "visitor center"
+  ],
+  "healthy heart trail": [
+    "biking",
+    "hiking",
+    "nature trail",
+    "trailhead"
+  ],
+  "hiking": [
+    "biking",
+    "bridge",
+    "compass course",
+    "geocaching",
+    "healthy heart trail",
+    "hike and bike campground",
+    "horse trail",
+    "junction",
+    "mohican mohawk trail",
+    "motorbike trail",
+    "mountain biking",
+    "mountain summit",
+    "nature trail",
+    "primitive camping",
+    "snowmobile",
+    "stairs",
+    "trailhead",
+    "trailhead parking",
+    "waterfall"
+  ],
+  "nature trail": [
+    "biking",
+    "birdwatching",
+    "bridge",
+    "butterfly garden",
+    "flower garden",
+    "geocaching",
+    "healthy heart trail",
+    "hiking",
+    "interpretive center",
+    "interpretive exhibit",
+    "mohican mohawk trail",
+    "trailhead",
+    "waterfall",
+    "wildlife viewing"
+  ],
+  "trailhead": [
+    "bench",
+    "biking",
+    "bridge",
+    "compass course",
+    "equestrian staging area",
+    "gate",
+    "healthy heart trail",
+    "hike and bike campground",
+    "hiking",
+    "horse trail",
+    "information",
+    "junction",
+    "mohican mohawk trail",
+    "motorbike trail",
+    "mountain biking",
+    "nature trail",
+    "snowmobile",
+    "trailhead parking"
+  ],
+  "trailhead parking": [
+    "accessible parking",
+    "equestrian staging area",
+    "hiking",
+    "parking",
+    "trailhead"
+  ],
+  "historic site": [
+    "barn",
+    "building",
+    "cemetery",
+    "fort",
+    "interpretive exhibit",
+    "lighthouse",
+    "mine",
+    "museum",
+    "point of interest"
+  ],
+  "horseshoes": [
+    "basketball",
+    "picnic area",
+    "playground",
+    "recreation area",
+    "volleyball"
+  ],
+  "building": [
+    "barn",
+    "cabin",
+    "elevator",
+    "fort",
+    "historic site",
+    "lodge",
+    "maintenance",
+    "park headquarters",
+    "picnic shelter",
+    "radio tower"
+  ],
+  "lodge": [
+    "building",
+    "cabin",
+    "campground",
+    "food services",
+    "visitor center",
+    "wifi",
+    "yurt"
+  ],
+  "information": [
+    "box office",
+    "bus stop",
+    "contact station",
+    "interpretive center",
+    "interpretive exhibit",
+    "park headquarters",
+    "pay station",
+    "point of interest",
+    "post office",
+    "ranger station",
+    "telephone",
+    "trailhead",
+    "visitor center",
+    "wifi"
+  ],
+  "junction": [
+    "bridge",
+    "county highway",
+    "gate",
+    "highway exit",
+    "hiking",
+    "interstate highway",
+    "point of interest",
+    "state highway",
+    "trailhead"
+  ],
+  "lifeguard station": [
+    "beach",
+    "first aid",
+    "observation tower",
+    "swimming",
+    "swimming pool",
+    "wading only"
+  ],
+  "lighthouse": [
+    "historic site",
+    "marina",
+    "mooring buoys",
+    "observation tower",
+    "point of interest"
+  ],
+  "maintenance": [
+    "barn",
+    "building",
+    "dump station",
+    "park headquarters",
+    "radio tower",
+    "trash"
+  ],
+  "marina": [
+    "boat dock",
+    "boat house",
+    "boat launch",
+    "boat rentals",
+    "boat tours",
+    "boating",
+    "dam",
+    "fish cleaning station",
+    "fishing",
+    "fishing dock",
+    "lighthouse",
+    "mooring buoys"
+  ],
+  "bus stop": [
+    "information",
+    "parking",
+    "tram stop",
+    "visitor center"
+  ],
+  "tram stop": [
+    "bus stop",
+    "parking",
+    "visitor center"
+  ],
+  "mine": [
+    "cemetery",
+    "fort",
+    "historic site",
+    "museum"
+  ],
+  "mohican mohawk trail": [
+    "hiking",
+    "nature trail",
+    "trailhead"
+  ],
+  "mooring buoys": [
+    "boat dock",
+    "boat launch",
+    "boating",
+    "lighthouse",
+    "marina"
+  ],
+  "motorbike trail": [
+    "biking",
+    "hiking",
+    "horse trail",
+    "mountain biking",
+    "snowmobile",
+    "trailhead"
+  ],
+  "mountain summit": [
+    "hiking",
+    "observation area",
+    "observation tower",
+    "point of interest",
+    "stargazing"
+  ],
+  "museum": [
+    "aquarium",
+    "cemetery",
+    "fort",
+    "gift shop",
+    "historic site",
+    "interpretive center",
+    "interpretive exhibit",
+    "mine",
+    "visitor center"
+  ],
+  "observation area": [
+    "bench",
+    "birdwatching",
+    "mountain summit",
+    "observation tower",
+    "point of interest",
+    "stargazing",
+    "waterfall",
+    "wildlife viewing"
+  ],
+  "observation tower": [
+    "birdwatching",
+    "lifeguard station",
+    "lighthouse",
+    "mountain summit",
+    "observation area",
+    "radio tower",
+    "stairs",
+    "wildlife viewing"
+  ],
+  "radio tower": [
+    "building",
+    "maintenance",
+    "observation tower"
+  ],
+  "outdoor classroom": [
+    "amphitheater",
+    "butterfly garden",
+    "compass course",
+    "cornell cooperative extension",
+    "flower garden",
+    "group picnic area",
+    "interpretive center",
+    "interpretive pavilion",
+    "special event venue",
+    "stargazing",
+    "youth camping"
+  ],
+  "parking": [
+    "accessible parking",
+    "bike rack",
+    "bus stop",
+    "equestrian staging area",
+    "gas station",
+    "gate",
+    "highway exit",
+    "pay station",
+    "rc air field",
+    "rv camping",
+    "snowmobile",
+    "trailhead parking",
+    "tram stop"
+  ],
+  "telephone": [
+    "first aid",
+    "information",
+    "post office",
+    "wifi"
+  ],
+  "pay station": [
+    "box office",
+    "campground",
+    "contact station",
+    "gate",
+    "information",
+    "parking"
+  ],
+  "picnic area": [
+    "barbecue",
+    "bench",
+    "campfire",
+    "campground",
+    "drinking water",
+    "food services",
+    "group picnic area",
+    "horseshoes",
+    "partial shade",
+    "picnic shelter",
+    "playground",
+    "recreation area",
+    "recycling",
+    "restroom",
+    "trash"
+  ],
+  "group picnic area": [
+    "amphitheater",
+    "barbecue",
+    "group campground",
+    "outdoor classroom",
+    "picnic area",
+    "picnic shelter",
+    "recreation area",
+    "special event venue"
+  ],
+  "picnic shelter": [
+    "amphitheater",
+    "barbecue",
+    "building",
+    "group picnic area",
+    "interpretive pavilion",
+    "partial shade",
+    "picnic area",
+    "special event venue"
+  ],
+  "partial shade": [
+    "bench",
+    "campground",
+    "picnic area",
+    "picnic shelter"
+  ],
+  "playground": [
+    "basketball",
+    "disc golf",
+    "dog park",
+    "horseshoes",
+    "picnic area",
+    "recreation area",
+    "volleyball"
+  ],
+  "point of interest": [
+    "geocaching",
+    "historic site",
+    "information",
+    "interpretive exhibit",
+    "junction",
+    "lighthouse",
+    "mountain summit",
+    "observation area",
+    "waterfall"
+  ],
+  "polo field": [
+    "basketball",
+    "equestrian center",
+    "golf driving range",
+    "recreation area"
+  ],
+  "post office": [
+    "gift shop",
+    "information",
+    "park headquarters",
+    "telephone"
+  ],
+  "restroom": [
+    "accessible",
+    "bathhouse",
+    "campground",
+    "drinking water",
+    "dump station",
+    "picnic area",
+    "shower"
+  ],
+  "shower": [
+    "bathhouse",
+    "beach",
+    "campground",
+    "drinking water",
+    "restroom",
+    "swimming pool"
+  ],
+  "rc air field": [
+    "parking",
+    "recreation area",
+    "special event venue"
+  ],
+  "ranger station": [
+    "camp host",
+    "contact station",
+    "fire station",
+    "first aid",
+    "information",
+    "park headquarters",
+    "police",
+    "visitor center"
+  ],
+  "recreation area": [
+    "basketball",
+    "disc golf",
+    "dog park",
+    "golf driving range",
+    "group picnic area",
+    "horseshoes",
+    "picnic area",
+    "playground",
+    "polo field",
+    "rc air field",
+    "swimming pool",
+    "volleyball"
+  ],
+  "shelling": [
+    "beach",
+    "snorkeling",
+    "sunbathing",
+    "wildlife viewing"
+  ],
+  "snowmobile": [
+    "hiking",
+    "motorbike trail",
+    "parking",
+    "trailhead"
+  ],
+  "special event venue": [
+    "amphitheater",
+    "boat tours",
+    "box office",
+    "group picnic area",
+    "outdoor classroom",
+    "picnic shelter",
+    "rc air field"
+  ],
+  "stairs": [
+    "accessible",
+    "beach",
+    "bridge",
+    "elevator",
+    "hiking",
+    "observation tower"
+  ],
+  "stargazing": [
+    "campground",
+    "mountain summit",
+    "observation area",
+    "outdoor classroom"
+  ],
+  "sunbathing": [
+    "beach",
+    "shelling",
+    "swimming",
+    "wading only"
+  ],
+  "surfing": [
+    "beach",
+    "paddling",
+    "swimming",
+    "windsurfing"
+  ],
+  "windsurfing": [
+    "beach",
+    "boating",
+    "paddling",
+    "surfing"
+  ],
+  "swimming": [
+    "beach",
+    "lifeguard station",
+    "scuba diving",
+    "snorkeling",
+    "sunbathing",
+    "surfing",
+    "swimming pool",
+    "tubing",
+    "wading only"
+  ],
+  "swimming pool": [
+    "bathhouse",
+    "lifeguard station",
+    "recreation area",
+    "shower",
+    "swimming"
+  ],
+  "wading only": [
+    "beach",
+    "lifeguard station",
+    "sunbathing",
+    "swimming",
+    "tubing"
+  ],
+  "tubing": [
+    "boat rentals",
+    "paddling",
+    "swimming",
+    "wading only"
+  ],
+  "volleyball": [
+    "basketball",
+    "beach",
+    "horseshoes",
+    "playground",
+    "recreation area"
+  ],
+  "waterfall": [
+    "dam",
+    "hiking",
+    "nature trail",
+    "observation area",
+    "point of interest"
+  ],
+  "wifi": [
+    "information",
+    "lodge",
+    "telephone",
+    "visitor center"
+  ],
+  "wildlife viewing": [
+    "aquarium",
+    "birdwatching",
+    "butterfly garden",
+    "flower garden",
+    "interpretive center",
+    "nature trail",
+    "observation area",
+    "observation tower",
+    "shelling"
+  ],
+  "compass course": [
+    "geocaching",
+    "hiking",
+    "outdoor classroom",
+    "trailhead"
+  ]
+}
