@@ -21,7 +21,7 @@ from .matching import (
 )
 from .ocr import OcrEngine
 from .orientation import detect_upright_rotation, rotate_image
-from .reporting import write_hamming_info
+from .reporting import stage_report_lines, write_hamming_info
 from .signatures import SignatureBuilder, SignatureMatcher
 from .synonyms import SynonymMap
 from .timing import StepTimer
@@ -502,8 +502,15 @@ class LegendMarkerPipeline:
                 info_path = os.path.join(
                     crop_dir, f"{k:03d}_{sanitize_filename(names[k])}.txt"
                 )
+                syn = self.synonyms
+                canonical = syn.canonical(names[k])
                 footer = [
                     f"This legend icon : '{names[k]}'",
+                    # Which semantic group this label lands in decides whether a
+                    # pHash class can be renamed to it later, so record it here.
+                    f"Semantic group   : {canonical or '(unmapped)'}",
+                    f"Nearby groups    : "
+                    f"{', '.join(sorted(syn.related(names[k]))) or '-'}",
                     "Note: distances are to OTHER legend icons "
                     "(a nearest-neighbour of 0 would mean a duplicate icon).",
                 ]
@@ -624,64 +631,41 @@ class LegendMarkerPipeline:
             if self.config.save_crops and det.crop is not None and det.crop.size:
                 cv2.imwrite(os.path.join(crop_dir, crop_file), det.crop)
 
-                # Per-crop report .txt right beside the image.  Note the score
-                # is the template+ORB match score; the hamming column is pHash
-                # (informational only).
-                # Step 5.5 report line — ALWAYS shown first, so it is clear the
-                # JSON DB is consulted before the legend.  Describes what the DB
-                # lookup found (hit / nearest miss / disabled).
-                if not self._load_phash_db():
-                    db_line = "pHash DB    : disabled (no --phash-db configured)"
-                elif db_class is not None:
-                    db_line = (
-                        f"pHash DB    : HIT -> '{db_class}' "
-                        f"(hamming={db_nearest_dist} <= "
-                        f"{self.config.phash_db_max_hamming}) — wins, "
-                        f"legend match ignored"
-                    )
-                else:
-                    db_line = (
-                        f"pHash DB    : miss (nearest '{db_nearest_name}' "
-                        f"hamming={db_nearest_dist} > "
-                        f"{self.config.phash_db_max_hamming}) — fell back to legend"
-                    )
-
-                if not syn:
-                    syn_line = "Synonyms    : disabled (no synonym map loaded)"
-                elif relation == "same":
-                    syn_line = (
-                        f"Synonyms    : SAME — DB '{db_candidate}' == legend "
-                        f"'{sem_name}' (group '{canonical_hint}', legend "
-                        f"score={sem_score:.3f}) — naming="
-                        f"{self.config.synonym_naming}"
-                        f"{' — RESCUED below-gate match' if rescued else ''}"
-                    )
-                elif relation == "related":
-                    syn_line = (
-                        f"Synonyms    : RELATED — DB '{db_candidate}' "
-                        f"('{syn.canonical(db_candidate)}') ~ legend "
-                        f"'{sem_name}' ('{syn.canonical(sem_name)}', legend "
-                        f"score={sem_score:.3f}) — renamed to the legend wording"
-                    )
-                else:
-                    syn_line = (
-                        f"Synonyms    : no match — DB '{db_candidate}' group "
-                        f"'{syn.canonical(db_candidate)}' has no same/nearby "
-                        f"label among the {len(rows)} legend entrie(s)"
-                    )
-
-                footer = [
-                    db_line,
-                    syn_line,
-                    f"Best match  : {name}  (match score={score:.3f}, "
+                # Per-crop report .txt right beside the image: what every stage
+                # called this icon, colour-coded exactly like the annotated map,
+                # followed by the gate details.  The score is the template+ORB
+                # match score; the hamming column is pHash (informational only).
+                footer = stage_report_lines(
+                    original_class=det.class_name,
+                    final_class=final_class,
+                    renamed=renamed,
+                    match_method=match_method,
+                    db_enabled=bool(self._load_phash_db()),
+                    db_class=db_class,
+                    db_nearest_name=db_nearest_name,
+                    db_nearest_dist=db_nearest_dist,
+                    db_max_hamming=self.config.phash_db_max_hamming,
+                    legend_name=name,
+                    legend_score=score,
+                    legend_margin=margin,
+                    passes_floor=passes_floor,
+                    passes_margin=passes_margin,
+                    score_threshold=self.config.match_score_threshold,
+                    margin_threshold=self.config.match_margin,
+                    syn_enabled=bool(syn),
+                    relation=relation,
+                    semantic_legend=sem_name,
+                    semantic_score=sem_score,
+                    canonical=canonical_hint,
+                    naming=self.config.synonym_naming,
+                    rescued=rescued,
+                    n_legend_entries=len(rows),
+                )
+                footer += [
+                    "",
+                    f"Best legend match : {name}  (score={score:.3f}, "
                     f"pHash hamming={best_hamming})",
-                    f"Floor gate  : score {score:.3f} >= "
-                    f"{self.config.match_score_threshold} -> "
-                    f"{'PASS' if passes_floor else 'FAIL'}",
-                    f"Margin gate : best-2nd = {margin:.3f} >= "
-                    f"{self.config.match_margin} -> "
-                    f"{'PASS' if passes_margin else 'FAIL'}",
-                    f"Decision    : {'RENAMED' if renamed else 'KEPT'}  "
+                    f"Decision          : {'RENAMED' if renamed else 'KEPT'}  "
                     f"'{det.class_name}' -> '{final_class}'"
                     f"{f' (via {match_method})' if match_method else ''}",
                 ]

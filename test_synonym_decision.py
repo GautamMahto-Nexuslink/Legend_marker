@@ -199,5 +199,82 @@ for method, want in METHOD_COLOR.items():
              for px in out.reshape(-1, 3) if tuple(px) != (0, 0, 0)}
     check(f"method={method!r}", want in drawn, True)
 
+# --------------------------------------------------------------------------- #
+# 6. per-crop .txt stage block
+# --------------------------------------------------------------------------- #
+print("\n== stage_report_lines ==")
+from legend_pipeline.reporting import stage_report_lines  # noqa: E402
+from legend_pipeline.visualization import color_for_method  # noqa: E402
+
+
+def report(**kw):
+    """Run a decision, render its stage block, return (lines, decision)."""
+    d = pipe._decide_class(original_class=kw["original_class"],
+                           db_class=kw["db_class"],
+                           db_nearest_name=kw["db_nearest_name"],
+                           db_nearest_dist=kw["db_nearest_dist"],
+                           rows=kw["rows"])
+    lines = stage_report_lines(
+        original_class=kw["original_class"], final_class=d["final_class"],
+        renamed=d["renamed"], match_method=d["match_method"], db_enabled=True,
+        db_class=kw["db_class"], db_nearest_name=kw["db_nearest_name"],
+        db_nearest_dist=kw["db_nearest_dist"], db_max_hamming=10,
+        legend_name=d["legend_name"], legend_score=d["legend_score"],
+        legend_margin=d["legend_margin"], passes_floor=d["passes_floor"],
+        passes_margin=d["passes_margin"], score_threshold=0.60,
+        margin_threshold=0.08, syn_enabled=True, relation=d["relation"],
+        semantic_legend=d["semantic_legend"], semantic_score=d["semantic_score"],
+        canonical=d["canonical"], naming="legend", rescued=d["rescued"],
+        n_legend_entries=len(kw["rows"]))
+    return lines, d
+
+
+def stage_value(lines, colour):
+    """The class name a given colour's stage line reports."""
+    for line in lines:
+        if line.strip().startswith(colour):
+            return line.split(":", 1)[1].strip().split("  ")[0].strip()
+    return None
+
+
+SCENARIOS = {
+    "blue (hash hit, legend unrelated)": dict(
+        original_class="Parking", db_class="Marina", db_nearest_name="Marina",
+        db_nearest_dist=3, rows=legend(("Restrooms", 0.42), ("Playground", 0.31))),
+    "magenta (hash hit, same class in legend)": dict(
+        original_class="Parking", db_class="Marina", db_nearest_name="Marina",
+        db_nearest_dist=3, rows=legend(("Harbor", 0.71), ("Restrooms", 0.30))),
+    "green (hash miss, legend text wins)": dict(
+        original_class="Parking", db_class=None, db_nearest_name="Boat Dock",
+        db_nearest_dist=47, rows=legend(("Marina", 0.78), ("Restrooms", 0.40))),
+    "orange (nothing matches)": dict(
+        original_class="Parking", db_class=None, db_nearest_name="Boat Dock",
+        db_nearest_dist=61, rows=legend(("Restrooms", 0.41), ("Playground", 0.39))),
+}
+EXPECTED = {
+    "blue (hash hit, legend unrelated)":
+        {"orange": "Parking", "blue": "Marina", "green": "Restrooms",
+         "magenta": "-", "final": "Marina", "colour": "blue"},
+    "magenta (hash hit, same class in legend)":
+        {"orange": "Parking", "blue": "Marina", "green": "Harbor",
+         "magenta": "Harbor", "final": "Harbor", "colour": "magenta"},
+    "green (hash miss, legend text wins)":
+        {"orange": "Parking", "blue": "-", "green": "Marina",
+         "magenta": "Marina", "final": "Marina", "colour": "green"},
+    "orange (nothing matches)":
+        {"orange": "Parking", "blue": "-", "green": "Restrooms",
+         "magenta": "-", "final": "Parking", "colour": "orange"},
+}
+for title, kw in SCENARIOS.items():
+    lines, d = report(**kw)
+    want = EXPECTED[title]
+    got = {c: stage_value(lines, c) for c in ("orange", "blue", "green", "magenta")}
+    got["final"] = stage_value(lines, "FINAL")
+    got["colour"] = color_for_method(d["match_method"], d["renamed"])[0]
+    check(title, got, want)
+    # exactly one stage is marked as the winner
+    check(f"  one FINAL marker in {title}",
+          sum("<== FINAL" in ln for ln in lines), 1)
+
 print(f"\n{'ALL PASSED' if not FAILURES else str(FAILURES) + ' FAILURE(S)'}")
 sys.exit(1 if FAILURES else 0)

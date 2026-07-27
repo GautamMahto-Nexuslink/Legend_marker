@@ -39,13 +39,15 @@ from .orientation import (
     detect_upright_rotation,
 )
 from .visualization import (
+    METHOD_COLORS,
+    color_for_method,
     draw_label,
     visualize_legend,
     visualize_map,
     visualize_detections,
     visualize_ocr_text,
 )
-from .reporting import write_hamming_info
+from .reporting import write_hamming_info, stage_report_lines, COLOR_LEGEND
 from .detector import RoboflowDetector
 from .ocr import OcrEngine
 from .matching import (
@@ -82,6 +84,10 @@ __all__ = [
     "visualize_detections",
     "visualize_ocr_text",
     "write_hamming_info",
+    "stage_report_lines",
+    "COLOR_LEGEND",
+    "METHOD_COLORS",
+    "color_for_method",
     "RoboflowDetector",
     "OcrEngine",
     "filter_text_zone_false_positives",

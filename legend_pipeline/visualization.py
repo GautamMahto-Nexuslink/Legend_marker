@@ -9,6 +9,34 @@ from .containers import Detection, OcrText
 from .deps import cv2
 
 
+#: ``match_method`` -> (human colour name, BGR).  Single source of truth shared
+#: by the map visualization and the per-crop .txt reports, so the colour a box
+#: is drawn in always matches the colour named in the report.
+METHOD_COLORS: Dict[Optional[str], Tuple[str, Tuple[int, int, int]]] = {
+    "phash_db":         ("blue",    (255, 0, 0)),
+    "phash_db+same":    ("magenta", (200, 0, 200)),
+    "phash_db+related": ("magenta", (200, 0, 200)),
+    "synonym_agree":    ("magenta", (200, 0, 200)),
+    "legend":           ("green",   (0, 170, 0)),
+    "legend+synonym":   ("green",   (0, 170, 0)),
+    None:               ("orange",  (0, 140, 255)),
+}
+
+
+def color_for_method(
+    method: Optional[str], renamed: bool = True
+) -> Tuple[str, Tuple[int, int, int]]:
+    """Return ``(colour name, BGR)`` for a match method.
+
+    A detection that was not renamed is always the "kept original" colour,
+    whatever method string it carries; an unknown method falls back to the
+    generic renamed colour rather than silently looking like a failure.
+    """
+    if not renamed or method is None:
+        return METHOD_COLORS[None]
+    return METHOD_COLORS.get(method, METHOD_COLORS["legend"])
+
+
 def _scaled_font(image: np.ndarray) -> Tuple[float, int]:
     """Pick a font scale / thickness proportional to the image size.
 
@@ -102,22 +130,11 @@ def visualize_map(
     """
     canvas = image.copy()
     font_scale, thickness = _scaled_font(canvas)
-    phash_db_color = (255, 0, 0)      # blue (BGR) — pHash DB only.
-    semantic_color = (200, 0, 200)    # magenta — pHash DB reconciled with legend.
-    renamed_color = (0, 170, 0)       # green — matched to the legend text.
-    kept_color = (0, 140, 255)        # orange — kept original Roboflow class.
 
     for det, res in zip(detections, results):
         renamed = res.get("renamed", False)
-        method = res.get("match_method") or ""
-        if method.startswith("phash_db+") or method == "synonym_agree":
-            color = semantic_color
-        elif method == "phash_db":
-            color = phash_db_color
-        elif renamed:
-            color = renamed_color
-        else:
-            color = kept_color
+        method = res.get("match_method")
+        _, color = color_for_method(method, renamed)
 
         label = res.get("class", det.class_name)
         score = res.get("match_score")
