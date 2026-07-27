@@ -1,0 +1,580 @@
+{
+  "accessible": [
+    "Accessibility",
+    "Accessible",
+    "Accessible Area",
+    "Accessible Feature",
+    "Handicap Accessible",
+    "Wheelchair Accessible"
+  ],
+  "accessible parking": [
+    "Accessible Parking"
+  ],
+  "accessible campsite": [
+    "Accessible Campsite",
+    "Accessible Site"
+  ],
+  "accessible fishing": [
+    "Accessible Fishing"
+  ],
+  "amphitheater": [
+    "Amphitheater"
+  ],
+  "aquarium": [
+    "Aquarium"
+  ],
+  "barbecue": [
+    "Barbecue Pits"
+  ],
+  "barn": [
+    "Barn"
+  ],
+  "basketball": [
+    "Basketball"
+  ],
+  "bathhouse": [
+    "Bathhouse"
+  ],
+  "beach": [
+    "Beach",
+    "Beach Access",
+    "Beaches"
+  ],
+  "bench": [
+    "Bench"
+  ],
+  "gate": [
+    "Beyond Gate",
+    "Chain Gate",
+    "Closed Gate",
+    "Gate",
+    "Locked Gate",
+    "Seasonal Gate"
+  ],
+  "bicycle repair station": [
+    "Bicycle Repair Pump"
+  ],
+  "biking": [
+    "Bicycling",
+    "Biking"
+  ],
+  "mountain biking": [
+    "Mountain Biking"
+  ],
+  "bike rack": [
+    "Bike Rack"
+  ],
+  "birdwatching": [
+    "Birding",
+    "Birdwatching"
+  ],
+  "boat dock": [
+    "Boat Dock",
+    "Dock Pier"
+  ],
+  "boat house": [
+    "Boat House"
+  ],
+  "boat launch": [
+    "Boat Launch",
+    "Boat Launch : Hand",
+    "Boat Launch : Vehicle",
+    "Boat Ramp",
+    "Canoe Launch",
+    "Hand Launch"
+  ],
+  "boating": [
+    "Boating"
+  ],
+  "row boat": [
+    "Row Boat"
+  ],
+  "boat tours": [
+    "Boat Tours",
+    "River Cruise"
+  ],
+  "box office": [
+    "Box Office"
+  ],
+  "bridge": [
+    "Bridge",
+    "Bridge Boardwalks"
+  ],
+  "butterfly garden": [
+    "Butterfly Garden"
+  ],
+  "cabin": [
+    "Cabin",
+    "Cabins",
+    "Campground Cabin",
+    "Log Cabin"
+  ],
+  "camp host": [
+    "Camp Host"
+  ],
+  "campfire": [
+    "Campfire",
+    "Campfire Center"
+  ],
+  "campground": [
+    "Camp Trail",
+    "Campground",
+    "Camping",
+    "Camping Area",
+    "Campsite",
+    "Campsites",
+    "Developed Camping",
+    "Full Camping",
+    "Ground Camping",
+    "Tent Campsites",
+    "Unpowered"
+  ],
+  "group campground": [
+    "Campground Group",
+    "Campground Group RV",
+    "Group Campground",
+    "Group Campsite"
+  ],
+  "hike and bike campground": [
+    "Campground Hike & Bike",
+    "Campground Hike and Bike",
+    "Hike and Bike",
+    "Hike Bike Campground",
+    "Hike Bike Campsite"
+  ],
+  "equestrian camping": [
+    "Campground Horse",
+    "Equestrian Camping"
+  ],
+  "primitive camping": [
+    "Campground Primitive",
+    "Environmental Camping",
+    "Primitive Camping",
+    "Wilderness Camping"
+  ],
+  "yurt": [
+    "Campground Yurt",
+    "Yurt",
+    "Yurts"
+  ],
+  "youth camping": [
+    "Camping-youth",
+    "Youth Camping",
+    "Youth camping"
+  ],
+  "rv camping": [
+    "Recreational Vehicle",
+    "RV Sites"
+  ],
+  "boat rentals": [
+    "Canoe Rentals",
+    "Paddlecraft Rentals",
+    "Paddlingcraft Rentals"
+  ],
+  "paddling": [
+    "Canoeing",
+    "Kayaking",
+    "Paddling"
+  ],
+  "cemetery": [
+    "Cemetery"
+  ],
+  "food services": [
+    "Bat Cove Cafe",
+    "Concession",
+    "Food Services",
+    "Restaurant",
+    "Snack Bar"
+  ],
+  "contact station": [
+    "Contact Station",
+    "Contact_Station",
+    "Entrance Station"
+  ],
+  "cornell cooperative extension": [
+    "Cornell Cooperative Extension"
+  ],
+  "corral": [
+    "Corral"
+  ],
+  "county highway": [
+    "County Highway"
+  ],
+  "state highway": [
+    "State Highway"
+  ],
+  "interstate highway": [
+    "Interstate Highway"
+  ],
+  "highway exit": [
+    "Highway Exit"
+  ],
+  "police": [
+    "County Sheriff",
+    "Park Police"
+  ],
+  "dam": [
+    "Dam"
+  ],
+  "disc golf": [
+    "Disc Golf"
+  ],
+  "golf driving range": [
+    "Driving Range"
+  ],
+  "scuba diving": [
+    "Diving",
+    "Scuba",
+    "Scuba Diving"
+  ],
+  "snorkeling": [
+    "Snorkeling"
+  ],
+  "dog park": [
+    "Dog Park"
+  ],
+  "dogs allowed on leash": [
+    "Dogs Allowed on Leash"
+  ],
+  "no dogs allowed": [
+    "No Dogs Allowed"
+  ],
+  "pets overnight": [
+    "Pets Overnight"
+  ],
+  "drinking water": [
+    "Drinking Water",
+    "Potable Water",
+    "Water",
+    "Water Faucet",
+    "Well Water"
+  ],
+  "dump station": [
+    "Dump Station",
+    "RV Dump Station",
+    "RV Sanitation Center",
+    "RV Sanitation Station",
+    "Sanitary Disposal Station",
+    "Trailer Dump Station"
+  ],
+  "trash": [
+    "Dumpster",
+    "Trash",
+    "Trash Can"
+  ],
+  "recycling": [
+    "Dumpster Recycling",
+    "Recycling Bin",
+    "Trash Recycle bin"
+  ],
+  "interpretive center": [
+    "Education Center",
+    "Envrironmental Interpretive Center",
+    "Interpretive Center",
+    "Nature Center"
+  ],
+  "visitor center": [
+    "Visitor Center",
+    "Welcome Center"
+  ],
+  "elevator": [
+    "Elevator"
+  ],
+  "horse trail": [
+    "Equestrain Trail",
+    "Horse Trail",
+    "Horseback Riding"
+  ],
+  "equestrian staging area": [
+    "Equestrain Staging Area",
+    "Equestrian Trailhead",
+    "Horse Staging Area"
+  ],
+  "equestrian center": [
+    "Equestrian Center"
+  ],
+  "interpretive exhibit": [
+    "Exhibils",
+    "Interpretive Exhibit",
+    "Interpretive Panel",
+    "Interpretive Sign"
+  ],
+  "interpretive pavilion": [
+    "Interpretive Pavilion",
+    "Interpretive Pavillon"
+  ],
+  "fire station": [
+    "Fire Stations"
+  ],
+  "first aid": [
+    "First Aid",
+    "First Aid Station"
+  ],
+  "hospital": [
+    "Hospital"
+  ],
+  "fish cleaning station": [
+    "Fish Cleaning Station"
+  ],
+  "fishing": [
+    "Fishing",
+    "Fishing Site"
+  ],
+  "fishing dock": [
+    "Fishing Dock"
+  ],
+  "flower garden": [
+    "Flower Fields",
+    "Flower Garden"
+  ],
+  "park headquarters": [
+    "Forest Headquarters",
+    "Office",
+    "Park Headquarters",
+    "Park Headquaters",
+    "Park Office",
+    "Regional Office"
+  ],
+  "fort": [
+    "Fort"
+  ],
+  "gas station": [
+    "Gas Station"
+  ],
+  "geocaching": [
+    "Geo-seeking"
+  ],
+  "gift shop": [
+    "General Store-Rentals",
+    "Gift Shop",
+    "Market",
+    "Supplies"
+  ],
+  "healthy heart trail": [
+    "Healthy Heart Trail"
+  ],
+  "hiking": [
+    "Hiking"
+  ],
+  "nature trail": [
+    "Nature Trail"
+  ],
+  "trailhead": [
+    "Hiking Trailhead",
+    "Trailhead"
+  ],
+  "trailhead parking": [
+    "Trailhead Parking"
+  ],
+  "historic site": [
+    "Historic Building",
+    "Historic Site",
+    "Historic Structure"
+  ],
+  "horseshoes": [
+    "Horseshoe Pit",
+    "Horseshoes"
+  ],
+  "building": [
+    "House",
+    "Park Building",
+    "Structure"
+  ],
+  "lodge": [
+    "Lodge"
+  ],
+  "information": [
+    "Information",
+    "Information Kiosk",
+    "Kiosk"
+  ],
+  "junction": [
+    "Junction"
+  ],
+  "lifeguard station": [
+    "Lifeguard_Station"
+  ],
+  "lighthouse": [
+    "Lighthouse"
+  ],
+  "maintenance": [
+    "Mainetance Garden",
+    "Maintenance",
+    "Maintenance Barn"
+  ],
+  "marina": [
+    "Marina"
+  ],
+  "bus stop": [
+    "Metro Bus Stop"
+  ],
+  "tram stop": [
+    "Tram Station",
+    "Tram Stop"
+  ],
+  "mine": [
+    "Mine"
+  ],
+  "mohican mohawk trail": [
+    "Mohican Mohawk Trail"
+  ],
+  "mooring buoys": [
+    "Morning Buoys"
+  ],
+  "motorbike trail": [
+    "Motor Bike Trail",
+    "Motor bike trailhead"
+  ],
+  "mountain summit": [
+    "Mountain Summit",
+    "Peak"
+  ],
+  "museum": [
+    "Museum"
+  ],
+  "observation area": [
+    "Observation Area",
+    "Overlook",
+    "Scenic  Vista",
+    "Scenic View",
+    "View",
+    "Viewpoint"
+  ],
+  "observation tower": [
+    "Tower"
+  ],
+  "radio tower": [
+    "Radio Tower"
+  ],
+  "outdoor classroom": [
+    "Outdoor Classroom"
+  ],
+  "parking": [
+    "Parking",
+    "Parking Area",
+    "Parking Lot"
+  ],
+  "telephone": [
+    "Pay Phone",
+    "Telephone"
+  ],
+  "pay station": [
+    "Pay Station",
+    "Paybox",
+    "Self Registration"
+  ],
+  "picnic area": [
+    "Picnic",
+    "Picnic Area",
+    "Picnic Site",
+    "Picnic Table",
+    "Picnicking"
+  ],
+  "group picnic area": [
+    "Group Area",
+    "Group Picnic Area",
+    "Group Ramada",
+    "Picnic Area Group"
+  ],
+  "picnic shelter": [
+    "Gazebo",
+    "Pavilion",
+    "Pavilions",
+    "Picnic Pavilion",
+    "Picnic Ramada",
+    "Picnic Shelter",
+    "Rain Shelter",
+    "Ramada",
+    "Shelter"
+  ],
+  "partial shade": [
+    "Partial shade"
+  ],
+  "playground": [
+    "Playground"
+  ],
+  "point of interest": [
+    "Point of Interest"
+  ],
+  "polo field": [
+    "Polo Field"
+  ],
+  "post office": [
+    "Post Office"
+  ],
+  "restroom": [
+    "Public Restroom",
+    "Restroom",
+    "Restrooms"
+  ],
+  "shower": [
+    "Outdoor Showers",
+    "Pay Showers",
+    "Rinse Station",
+    "Shower",
+    "Showers"
+  ],
+  "rc air field": [
+    "R C Air Field"
+  ],
+  "ranger station": [
+    "Ranger Station"
+  ],
+  "recreation area": [
+    "Recreation Area"
+  ],
+  "shelling": [
+    "Shelling"
+  ],
+  "snowmobile": [
+    "Snowmobile Marker"
+  ],
+  "special event venue": [
+    "Special Event Venue"
+  ],
+  "stairs": [
+    "Stairs",
+    "Steps"
+  ],
+  "stargazing": [
+    "Stargazing"
+  ],
+  "sunbathing": [
+    "Sunbathing"
+  ],
+  "surfing": [
+    "Surfing"
+  ],
+  "windsurfing": [
+    "Windsurfing"
+  ],
+  "swimming": [
+    "Swimming",
+    "Swimming Area"
+  ],
+  "swimming pool": [
+    "Swimming Pool"
+  ],
+  "wading only": [
+    "Wading Only"
+  ],
+  "tubing": [
+    "Tubing"
+  ],
+  "volleyball": [
+    "Volleyball"
+  ],
+  "waterfall": [
+    "Waterfall"
+  ],
+  "wifi": [
+    "Wi-Fi",
+    "WiFi"
+  ],
+  "wildlife viewing": [
+    "Wildlife Viewing"
+  ],
+  "compass course": [
+    "Compass Course"
+  ]
+}
