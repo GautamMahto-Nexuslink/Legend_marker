@@ -41,7 +41,7 @@ CONFIG = {
     "INPUT_FOLDER":  "/home/nls34/Downloads/Dataset_lengend_marker_viewer/Map_Images_Renamed",
     # "LEGEND_FOLDER": "/home/nls34/Downloads/Dataset_lengend_marker_viewer/Rotated_legends",
     'LEGEND_FOLDER':'/home/nls34/Downloads/Dataset_lengend_marker_viewer/Legends',
-    "OUTPUT_FOLDER": "/home/nls34/Documents/POCs/legend_marker/output/batch_17_easyocr_inputs_pipeline_Full_images_278",
+    "OUTPUT_FOLDER": "/home/nls34/Documents/POCs/legend_marker/output/batch_18_easyocr_inputs_pipeline_Full_images_278",
 
     # ---- Roboflow ---------------------------------------------------------
     "API_KEY":   "K06rVQD1zQ46eOFObJvi",
@@ -54,7 +54,7 @@ CONFIG = {
     "OCR_GPU":    False,
 
     # ---- Matching thresholds ---------------------------------------------
-    "MATCH_THRESHOLD": 0.60,               # absolute floor to rename a map icon
+    "MATCH_THRESHOLD": 0.50,               # absolute floor to rename a map icon
     "MATCH_MARGIN":    0.08,               # best must beat 2nd-best by this
     "HASH_ALGORITHM":  "phash",
 
@@ -73,6 +73,11 @@ CONFIG = {
     "SYNONYM_NAMING":      "legend",
     "SYNONYM_RESCUE":      True,           # rename on DB near-miss + legend agreement
     "SYNONYM_FUZZY_CUTOFF": 0.88,          # OCR noise tolerance; 1.0 = exact only
+    # A merely RELATED legend label ("Trash" -> legend's "Campground") changes
+    # what the icon means, so it may only override a pHash hit when it is also
+    # the best legend match AND clears the score/margin gates.  False = allow
+    # weak related renames (unsafe).
+    "SYNONYM_RELATED_NEEDS_WIN": True,
 
     # ---- Auto-orientation -------------------------------------------------
     "AUTO_ROTATE":        True,            # correct sideways (90/180/270) inputs
@@ -166,6 +171,8 @@ def make_pipeline_config(output_dir: str) -> lm.PipelineConfig:
         synonym_naming=CONFIG.get("SYNONYM_NAMING", "legend"),
         synonym_rescue=bool(CONFIG.get("SYNONYM_RESCUE", True)),
         synonym_fuzzy_cutoff=float(CONFIG.get("SYNONYM_FUZZY_CUTOFF", 0.88)),
+        synonym_related_requires_legend_win=bool(
+            CONFIG.get("SYNONYM_RELATED_NEEDS_WIN", True)),
     )
 
 

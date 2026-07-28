@@ -35,6 +35,8 @@ def stage_report_lines(
     naming: str,
     rescued: bool,
     n_legend_entries: int,
+    found_relation: Optional[str] = None,
+    relation_rejected: Optional[str] = None,
 ) -> List[str]:
     """The per-stage summary block: what each stage would have named this icon.
 
@@ -92,6 +94,12 @@ def stage_report_lines(
     if not syn_enabled:
         lines.append(stage("magenta", "hash class in legend", "-",
                            "disabled (no synonym map)"))
+    elif relation is None and relation_rejected:
+        # A nearby label was found but refused: it would have changed the icon's
+        # meaning without enough visual evidence to justify it.
+        lines.append(stage("magenta", "hash class in legend", "-",
+                           f"REJECTED {found_relation} '{semantic_legend}' — "
+                           f"{relation_rejected}"))
     elif relation is None:
         lines.append(stage("magenta", "hash class in legend", "-",
                            f"no same/nearby label among {n_legend_entries} "

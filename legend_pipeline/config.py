@@ -159,6 +159,13 @@ class PipelineConfig:
     # (relaxed) floor; the margin gate is waived.
     synonym_rescue: bool = True
     synonym_rescue_min_score: float = 0.35
+    # A *related* (not identical) legend label changes what the icon MEANS
+    # ("Trash" -> "Campground"), so it may only override a pHash hit when the
+    # legend entry wins on its own visual evidence: it must be the best-scoring
+    # legend candidate AND clear the normal floor + margin gates.  Renaming to a
+    # *same-group* label is only a change of wording, so it needs no such proof.
+    # Set False to let any nearby legend label win (the old, unsafe behaviour).
+    synonym_related_requires_legend_win: bool = True
     # Max Hamming distance the DB near-miss may have to still count as evidence.
     synonym_rescue_max_hamming: int = 40
     # difflib similarity a term must reach to absorb OCR character noise

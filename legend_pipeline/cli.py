@@ -75,6 +75,10 @@ def build_arg_parser() -> argparse.ArgumentParser:
     p.add_argument("--no-synonym-rescue", action="store_true",
                    help="Do not rename on a synonym agreement between a pHash-DB "
                         "near-miss and a below-floor legend match.")
+    p.add_argument("--weak-related-ok", action="store_true",
+                   help="Let a merely RELATED legend label override a pHash class "
+                        "without winning the score/margin gates. Unsafe: an exact "
+                        "'Trash' hit can become the legend's 'Campground'.")
     p.add_argument("--synonym-fuzzy-cutoff", type=float, default=0.88,
                    help="difflib similarity for OCR noise ('0verlook'); "
                         "1.0 = exact terms only.")
@@ -114,6 +118,7 @@ def config_from_args(args: argparse.Namespace) -> PipelineConfig:
         synonym_naming=args.synonym_naming,
         synonym_rescue=not args.no_synonym_rescue,
         synonym_fuzzy_cutoff=args.synonym_fuzzy_cutoff,
+        synonym_related_requires_legend_win=not args.weak_related_ok,
     )
 
 

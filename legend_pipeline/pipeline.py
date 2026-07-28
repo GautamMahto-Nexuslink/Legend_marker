@@ -190,8 +190,14 @@ class LegendMarkerPipeline:
            neighbouring one ("Bicycling" -> legend "Motor Bike Trail").  When
            one is found the detection is renamed to the legend's wording
            (``config.synonym_naming`` can override whose wording wins) and the
-           method becomes ``phash_db+legend`` / ``phash_db+related``.  With no
+           method becomes ``phash_db+same`` / ``phash_db+related``.  With no
            semantic legend entry the DB class is kept verbatim (``phash_db``).
+
+           A *related* label is only allowed to win when it also wins visually
+           (best legend candidate, floor + margin passed) — it renames the icon
+           to a different concept, so a weak correlation must not turn an exact
+           hash hit for "Trash" into the legend's "Campground".  A *same* label
+           needs no such proof: it is the same concept, differently worded.
         2. **Legend match** clearing the score floor *and* the margin gate
            (``legend``).
         3. **Synonym rescue** (``config.synonym_rescue``) — the DB missed its
@@ -214,14 +220,39 @@ class LegendMarkerPipeline:
         db_candidate = db_class or db_nearest_name
         # The semantic search runs over all legend entries, so a DB class can
         # find its legend twin even when that twin is not the top visual match.
-        sem_row, relation = self._find_semantic_legend(db_candidate, rows)
+        sem_row, found_relation = self._find_semantic_legend(db_candidate, rows)
         sem_name = sem_row["name"] if sem_row else None
         sem_score = sem_row["score"] if sem_row else None
-        synonym_agree = relation is not None
 
         passes_floor = (legend_name is not None
                         and score >= self.config.match_score_threshold)
         passes_margin = (len(rows) < 2) or (margin >= self.config.match_margin)
+
+        # A *related* label means something different from the DB class, so it
+        # may only override it with real visual evidence — otherwise an exact
+        # hash hit ("Trash", hamming=0) gets renamed to whatever nearby word the
+        # legend happens to contain ("Campground" at 0.477, floor FAILED).
+        # A *same* label is only a change of wording and needs no such proof.
+        relation = found_relation
+        relation_rejected: Optional[str] = None
+        if (found_relation == "related"
+                and self.config.synonym_related_requires_legend_win):
+            if not rows or sem_row is not rows[0]:
+                relation_rejected = (
+                    f"'{sem_name}' is not the best legend match "
+                    f"(best is '{legend_name}')")
+            elif not passes_floor:
+                relation_rejected = (
+                    f"legend score {sem_score:.3f} < floor "
+                    f"{self.config.match_score_threshold}")
+            elif not passes_margin:
+                relation_rejected = (
+                    f"legend margin {margin:.3f} < "
+                    f"{self.config.match_margin}")
+            if relation_rejected:
+                relation = None
+        synonym_agree = relation is not None
+
         rescued = bool(
             self.config.synonym_rescue
             and db_class is None
@@ -266,6 +297,8 @@ class LegendMarkerPipeline:
             "renamed": renamed,
             "match_method": match_method,
             "relation": relation,               # "same" | "related" | None
+            "found_relation": found_relation,   # before the evidence gate
+            "relation_rejected": relation_rejected,
             "synonym_agree": synonym_agree,
             "rescued": rescued,
             "passes_floor": passes_floor,
@@ -618,6 +651,8 @@ class LegendMarkerPipeline:
             renamed = decision["renamed"]
             match_method = decision["match_method"]
             relation = decision["relation"]
+            found_relation = decision["found_relation"]
+            relation_rejected = decision["relation_rejected"]
             synonym_agree = decision["synonym_agree"]
             canonical_hint = decision["canonical"]
             db_candidate = decision["db_candidate"]
@@ -654,6 +689,8 @@ class LegendMarkerPipeline:
                     margin_threshold=self.config.match_margin,
                     syn_enabled=bool(syn),
                     relation=relation,
+                    found_relation=found_relation,
+                    relation_rejected=relation_rejected,
                     semantic_legend=sem_name,
                     semantic_score=sem_score,
                     canonical=canonical_hint,
@@ -705,6 +742,10 @@ class LegendMarkerPipeline:
                     "legend_class": name,
                     "semantic_legend_class": sem_name,
                     "semantic_relation": relation,   # "same" | "related" | None
+                    # What the synonym map found before the evidence gate, and
+                    # why a "related" candidate was refused (None = accepted).
+                    "semantic_relation_found": found_relation,
+                    "semantic_relation_rejected": relation_rejected,
                     "synonym_agree": synonym_agree,
                 }
             )

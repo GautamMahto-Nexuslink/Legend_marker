@@ -102,16 +102,51 @@ check("DB hit + synonymous legend -> legend wording",
              rows=legend(("Overlook ", 0.71), ("Parking", 0.30))),
       ("Overlook", "phash_db+same", "observation area"))
 
-# the second reported case: hash says Bicycling, legend only has Motor Bike Trail
-check("DB hit + NEARBY legend class -> legend wording",
+# the second reported case: hash says Bicycling, legend has Motor Bike Trail —
+# allowed because that legend entry is also the best visual match and passes.
+check("DB hit + NEARBY legend class that wins visually -> legend wording",
       decide(db_class="Bicycling", db_nearest_dist=0,
-             rows=legend(("Restrooms", 0.62), ("Motor Bike Trail", 0.41))),
+             rows=legend(("Motor Bike Trail", 0.81), ("Restrooms", 0.42))),
       ("Motor Bike Trail", "phash_db+related", "motorbike trail"))
 
 check("same-concept legend beats a nearby one even when it scores lower",
       decide(db_class="Bicycling", db_nearest_dist=0,
              rows=legend(("Motor Bike Trail", 0.66), ("Biking", 0.31))),
       ("Biking", "phash_db+same", "biking"))
+
+print("\n-- related needs visual evidence (regression: 002_Campground) --")
+# Exact hash hit for Trash; legend's only nearby word is Campground at 0.477,
+# which already FAILED its own floor gate.  Must not rename.
+TRASH_ROWS = legend(("Campground", 0.477), ("Ramada", 0.380), ("Parking", 0.352))
+check("weak related label cannot override an exact hash hit",
+      decide(original_class="litter_receptacle", db_class="Trash",
+             db_nearest_dist=0, rows=TRASH_ROWS),
+      ("Trash", "phash_db", "trash"))
+
+check("related rejected when it is not the best legend match",
+      decide(db_class="Bicycling", db_nearest_dist=0,
+             rows=legend(("Restrooms", 0.72), ("Motor Bike Trail", 0.65))),
+      ("Bicycling", "phash_db", "biking"))
+
+check("related rejected when the margin gate fails",
+      decide(db_class="Bicycling", db_nearest_dist=0,
+             rows=legend(("Motor Bike Trail", 0.72), ("Restrooms", 0.70))),
+      ("Bicycling", "phash_db", "biking"))
+
+_d = pipe._decide_class(original_class="litter_receptacle", db_class="Trash",
+                        db_nearest_name="Trash", db_nearest_dist=0, rows=TRASH_ROWS)
+check("rejection reason is recorded",
+      (_d["found_relation"], _d["relation"],
+       "0.477" in (_d["relation_rejected"] or "")),
+      ("related", None, True))
+
+_weak = make_pipeline(synonym_related_requires_legend_win=False)
+_dw = _weak._decide_class(original_class="litter_receptacle", db_class="Trash",
+                          db_nearest_name="Trash", db_nearest_dist=0,
+                          rows=TRASH_ROWS)
+check("--weak-related-ok restores the permissive behaviour",
+      (_dw["final_class"], _dw["match_method"]),
+      ("Campground", "phash_db+related"))
 
 check("DB hit + unrelated legend -> DB class (unchanged behaviour)",
       decide(db_class="observation area", db_nearest_dist=0,
@@ -223,6 +258,8 @@ def report(**kw):
         legend_margin=d["legend_margin"], passes_floor=d["passes_floor"],
         passes_margin=d["passes_margin"], score_threshold=0.60,
         margin_threshold=0.08, syn_enabled=True, relation=d["relation"],
+        found_relation=d["found_relation"],
+        relation_rejected=d["relation_rejected"],
         semantic_legend=d["semantic_legend"], semantic_score=d["semantic_score"],
         canonical=d["canonical"], naming="legend", rescued=d["rescued"],
         n_legend_entries=len(kw["rows"]))
@@ -250,6 +287,10 @@ SCENARIOS = {
     "orange (nothing matches)": dict(
         original_class="Parking", db_class=None, db_nearest_name="Boat Dock",
         db_nearest_dist=61, rows=legend(("Restrooms", 0.41), ("Playground", 0.39))),
+    "blue (weak related rejected: 002_Campground)": dict(
+        original_class="litter_receptacle", db_class="Trash",
+        db_nearest_name="Trash", db_nearest_dist=0,
+        rows=legend(("Campground", 0.477), ("Ramada", 0.380))),
 }
 EXPECTED = {
     "blue (hash hit, legend unrelated)":
@@ -264,6 +305,9 @@ EXPECTED = {
     "orange (nothing matches)":
         {"orange": "Parking", "blue": "-", "green": "Restrooms",
          "magenta": "-", "final": "Parking", "colour": "orange"},
+    "blue (weak related rejected: 002_Campground)":
+        {"orange": "litter_receptacle", "blue": "Trash", "green": "Campground",
+         "magenta": "-", "final": "Trash", "colour": "blue"},
 }
 for title, kw in SCENARIOS.items():
     lines, d = report(**kw)
