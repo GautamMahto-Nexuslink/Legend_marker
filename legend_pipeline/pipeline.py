@@ -10,8 +10,9 @@ import numpy as np
 
 from .config import PipelineConfig
 from .containers import Detection, OcrText, VisualSignature
-from .deps import LOGGER, cv2, imagehash
+from .deps import LOGGER, cv2
 from .detector import RoboflowDetector
+from .icon_db import IconDatabase, IconDbMatch
 from .matching import (
     detection_inside_text,
     filter_text_on_icons,
@@ -49,9 +50,9 @@ class LegendMarkerPipeline:
         self._legend_angle: Optional[int] = None
         # Per-step timing for the current run(); (re)created at the top of run().
         self._timer: StepTimer = StepTimer(LOGGER)
-        # Known-icon pHash database ({phash_hex: classname}); loaded lazily from
-        # config.phash_db_path on first use.  None = "not loaded yet".
-        self._phash_db: Optional[List[Tuple[Any, str]]] = None
+        # Known-icon database (glyphs + hashes); loaded lazily from
+        # config.icon_db_path on first use.  None = "not loaded yet".
+        self._icon_db: Optional[IconDatabase] = None
         # Semantic class grouping ("Observation Area" == "Overlook"); loaded
         # lazily from config.synonyms_path.  None = "not loaded yet".
         self._synonyms: Optional[SynonymMap] = None
@@ -67,79 +68,55 @@ class LegendMarkerPipeline:
             )
         return self._synonyms
 
-    # -- Known-icon pHash database ---------------------------------------
-    def _load_phash_db(self) -> List[Tuple[Any, str]]:
-        """Load & parse the {phash_hex: classname} JSON into (ImageHash, name).
+    # -- Known-icon database (the "blue" stage) ---------------------------
+    @property
+    def icon_db(self) -> IconDatabase:
+        """The known-icon database, loaded once per run (never raises).
 
-        Cached after the first call.  Returns an empty list when no path is
-        configured, the file is missing, or imagehash is unavailable — the
-        pipeline then behaves exactly as before (no DB stage).
+        Prefers ``config.icon_db_path`` (an ``icons_glyph_db.npz`` built by
+        ``build_icon_db.py``, which stores each icon's glyph so candidates can be
+        re-scored properly) and falls back to the legacy
+        ``config.phash_db_path`` JSON, where only the hash prefilter is possible.
         """
-        if self._phash_db is not None:
-            return self._phash_db
+        if self._icon_db is not None:
+            return self._icon_db
 
-        db: List[Tuple[Any, str]] = []
-        path = self.config.phash_db_path
-        if path and imagehash is not None and os.path.isfile(path):
-            try:
-                with open(path, "r", encoding="utf-8") as fh:
-                    raw = json.load(fh)
-                for phash_hex, class_name in raw.items():
-                    try:
-                        db.append((imagehash.hex_to_hash(phash_hex), class_name))
-                    except Exception as exc:
-                        LOGGER.warning("Bad pHash entry '%s' in %s: %s",
-                                       phash_hex, path, exc)
-                LOGGER.info("Loaded %d known-icon pHash entrie(s) from %s.",
-                            len(db), path)
-            except Exception as exc:
-                LOGGER.warning("Failed to load pHash DB %s: %s", path, exc)
-        elif path and imagehash is None:
-            LOGGER.warning("phash_db_path set but imagehash is unavailable — "
-                           "pHash DB stage disabled.")
-        elif path:
-            LOGGER.warning("phash_db_path '%s' not found — pHash DB stage "
-                           "disabled.", path)
+        path = self.config.icon_db_path
+        if not path or not os.path.isfile(path):
+            if path:
+                LOGGER.warning("icon_db_path '%s' not found — falling back to "
+                               "the hash-only DB '%s'.",
+                               path, self.config.phash_db_path)
+            path = self.config.phash_db_path
 
-        self._phash_db = db
-        return db
-
-    def _match_phash_db(
-        self, sig: VisualSignature
-    ) -> Tuple[Optional[str], Optional[str], Optional[int]]:
-        """Look a detection's pHash up in the known-icon DB.
-
-        Compares the detection's ``phash`` (computed by SignatureBuilder, so
-        identical to how the DB was generated) against every DB entry.
-
-        Returns ``(matched_name, nearest_name, nearest_dist)``:
-          * ``matched_name`` — the class when the nearest entry is within
-            ``config.phash_db_max_hamming`` Hamming distance, else ``None``.
-          * ``nearest_name`` / ``nearest_dist`` — the closest entry regardless of
-            the threshold, so the report can show how close the DB got even on a
-            miss (helps calibrate the threshold).  ``(None, None)`` if the DB is
-            empty or the detection has no pHash.
-        """
-        db = self._load_phash_db()
-        if not db or sig is None or sig.phash is None:
-            return None, None, None
-
-        nearest_name: Optional[str] = None
-        nearest_dist: Optional[int] = None
-        for db_hash, name in db:
-            dist = int(sig.phash - db_hash)      # Hamming distance
-            if nearest_dist is None or dist < nearest_dist:
-                nearest_dist, nearest_name = dist, name
-                if dist == 0:
-                    break                        # perfect hit — can't do better
-
-        matched_name = (
-            nearest_name
-            if nearest_dist is not None
-            and nearest_dist <= self.config.phash_db_max_hamming
-            else None
+        self._icon_db = IconDatabase.load(
+            path,
+            prefilter_k=self.config.icon_db_prefilter_k,
+            min_score=self.config.icon_db_min_score,
+            margin=self.config.icon_db_margin,
+            hash_weight=self.config.icon_db_hash_weight,
+            votes_per_class=self.config.icon_db_votes_per_class,
+            hash_shortcut_hamming=self.config.icon_db_hash_shortcut_hamming,
+            synonyms=(self.synonyms if self.config.icon_db_group_vote else None),
         )
-        return matched_name, nearest_name, nearest_dist
+        return self._icon_db
+
+    def _match_icon_db(self, sig: VisualSignature) -> IconDbMatch:
+        """Identify a detection against the known-icon database.
+
+        Hash prefilter -> glyph re-scoring with the pipeline's own matcher ->
+        per-group vote -> floor + runner-up margin.  See
+        :mod:`legend_pipeline.icon_db` for why this replaced the fixed Hamming
+        cutoff, which identified ~3% of icons where this identifies ~86%.
+        """
+        db = self.icon_db
+        if not db or sig is None or sig.glyph is None:
+            return IconDbMatch()
+        try:
+            return db.match(sig, self.matcher)
+        except Exception as exc:
+            LOGGER.warning("Icon DB lookup failed: %s", exc)
+            return IconDbMatch()
 
     # -- Final class decision ---------------------------------------------
     def _find_semantic_legend(
@@ -618,13 +595,15 @@ class LegendMarkerPipeline:
         for idx, det in enumerate(detections):
             det.signature = self.sig_builder.build(det.crop)
 
-            # Step 5.5: known-icon pHash DB lookup FIRST (priority shortcut).  If
-            # this detection's glyph pHash matches a curated entry, rename it
-            # straight away — the DB is a cross-map, human-verified source of
-            # truth.  We also keep the nearest entry (even on a miss) so the
-            # report shows the DB was consulted first and how close it got.
-            db_class, db_nearest_name, db_nearest_dist = self._match_phash_db(
-                det.signature)
+            # Step 5.5: known-icon DB lookup FIRST (priority shortcut).  The DB
+            # is a cross-map, human-verified source of truth, so a confident
+            # identification renames the detection straight away.  The nearest
+            # entry is kept even on a miss so the report can show how close it
+            # got (and why a candidate was refused).
+            db_match = self._match_icon_db(det.signature)
+            db_class = db_match.name
+            db_nearest_name = db_match.nearest_name
+            db_nearest_dist = db_match.nearest_hamming
 
             # Step 6: rank the detection against every legend signature.  We
             # still compute this for the report even when the DB already
@@ -675,11 +654,16 @@ class LegendMarkerPipeline:
                     final_class=final_class,
                     renamed=renamed,
                     match_method=match_method,
-                    db_enabled=bool(self._load_phash_db()),
+                    db_enabled=bool(self.icon_db),
                     db_class=db_class,
                     db_nearest_name=db_nearest_name,
                     db_nearest_dist=db_nearest_dist,
                     db_max_hamming=self.config.phash_db_max_hamming,
+                    db_score=db_match.score if db_match.method != "none" else None,
+                    db_margin=db_match.margin,
+                    db_votes=db_match.votes,
+                    db_rejected=db_match.rejected,
+                    db_rows=db_match.rows,
                     legend_name=name,
                     legend_score=score,
                     legend_margin=margin,
@@ -739,6 +723,14 @@ class LegendMarkerPipeline:
                     # and for merging equivalent classes across maps.
                     "canonical_class": canonical_hint,
                     "db_class": db_candidate,
+                    # Icon-DB evidence behind the blue stage.
+                    "db_score": round(db_match.score, 4),
+                    "db_margin": round(db_match.margin, 4),
+                    "db_votes": db_match.votes,
+                    "db_group": db_match.group,
+                    "db_nearest": db_nearest_name,
+                    "db_nearest_hamming": db_nearest_dist,
+                    "db_rejected": db_match.rejected,
                     "legend_class": name,
                     "semantic_legend_class": sem_name,
                     "semantic_relation": relation,   # "same" | "related" | None

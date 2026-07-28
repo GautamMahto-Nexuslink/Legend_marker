@@ -49,6 +49,7 @@ from .visualization import (
 )
 from .reporting import write_hamming_info, stage_report_lines, COLOR_LEGEND
 from .detector import RoboflowDetector
+from .icon_db import IconDatabase, IconDbMatch
 from .ocr import OcrEngine
 from .matching import (
     filter_text_zone_false_positives,
@@ -89,6 +90,8 @@ __all__ = [
     "METHOD_COLORS",
     "color_for_method",
     "RoboflowDetector",
+    "IconDatabase",
+    "IconDbMatch",
     "OcrEngine",
     "filter_text_zone_false_positives",
     "mask_icons_in_image",

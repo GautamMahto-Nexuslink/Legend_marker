@@ -141,6 +141,43 @@ class PipelineConfig:
     # SignatureBuilder, so its default hash_size=16 already matches).
     phash_db_max_hamming: int = 0
 
+    # ---- Known-icon database, glyph edition (the "blue" stage) ---------
+    # A single pHash under a fixed Hamming cutoff is a poor identifier for
+    # rendered symbols: at hash_size=16 a cutoff of 10 demands 96% identical
+    # bits, so a rescaled/re-antialiased icon misses (measured: it answers ~3%
+    # of icons), while raising the cutoff starts inventing wrong hits because a
+    # lone distance cannot say how much better the winner is than its rivals.
+    # icons_glyph_db.npz (build_icon_db.py) stores the 64x64 glyph plus three
+    # hashes per icon, so the stage can instead: prefilter on hashes, re-score
+    # the shortlist with the SAME template+ORB matcher the legend stage uses,
+    # let a class's exemplars vote, and accept only a clear winner.
+    # Measured leave-one-out over 4894 icons: 3% -> 86% of icons identified,
+    # at 97% accuracy.  Falls back to phash_db_path when this file is absent.
+    icon_db_path: str = "/home/nls34/Documents/POCs/legend_marker/icons_glyph_db.npz"
+    # Candidates kept by the hash prefilter and re-scored on their glyph.  More
+    # is slower and, past ~24, no more accurate.
+    icon_db_prefilter_k: int = 24
+    # Absolute floor and runner-up margin on the voted score.  The MARGIN is the
+    # real safety gate ("much better than anything else"), so trade coverage for
+    # precision here: 0.04 ~ 89% coverage / 96% accuracy, 0.06 ~ 86% / 97%,
+    # 0.08 ~ 85% / 98%.
+    icon_db_min_score: float = 0.55
+    icon_db_margin: float = 0.06
+    # How much of the final score comes from hash similarity rather than the
+    # glyph match — a small tie-break between glyphs the template rates equally.
+    icon_db_hash_weight: float = 0.20
+    # Exemplars averaged per group (best N).  Two agreeing exemplars are much
+    # stronger evidence than one lucky one.
+    icon_db_votes_per_class: int = 2
+    # Aggregate votes per SEMANTIC GROUP (icon_class_synonyms.json) instead of
+    # per raw class name.  "Restroom"/"Restrooms"/"Public Restroom" are one icon
+    # with three names; letting them compete splits their votes and the margin
+    # gate then reads the result as ambiguous.  Measured: 65% -> 86% coverage at
+    # equal accuracy.  Needs synonyms_path; ignored without it.
+    icon_db_group_vote: bool = True
+    # A pHash this close is accepted outright (cheap shortcut, hash-only DBs).
+    icon_db_hash_shortcut_hamming: int = 6
+
     # ---- Semantic class reconciliation (synonym map) -------------------
     # The pHash DB and the legend OCR often name the same icon differently
     # ("Observation Area" vs "Overlook").  icon_class_synonyms.json groups every

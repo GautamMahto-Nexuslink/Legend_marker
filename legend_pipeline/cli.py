@@ -12,6 +12,9 @@ from .pipeline import LegendMarkerPipeline
 from .synonyms import DEFAULT_SYNONYMS_PATH
 from .utils import setup_logging
 
+#: Shown as the --icon-db default; kept in one place (the config dataclass).
+DEFAULT_ICON_DB = PipelineConfig.icon_db_path
+
 
 def build_arg_parser() -> argparse.ArgumentParser:
     p = argparse.ArgumentParser(
@@ -58,7 +61,26 @@ def build_arg_parser() -> argparse.ArgumentParser:
                         "whose glyph pHash matches an entry are renamed from it "
                         "(priority over legend matching) and drawn in magenta.")
     p.add_argument("--phash-db-max-hamming", type=int, default=0,
-                   help="Max Hamming distance for a pHash-DB hit (0 = exact).")
+                   help="Max Hamming distance for a legacy pHash-DB hit "
+                        "(0 = exact). Unused by the glyph icon DB below.")
+
+    # Known-icon database (glyph edition) — the "blue" stage.
+    p.add_argument("--icon-db", dest="icon_db_path", default=DEFAULT_ICON_DB,
+                   help="icons_glyph_db.npz from build_icon_db.py: stores each "
+                        "icon's glyph so candidates are re-scored with template"
+                        "+ORB instead of a fixed Hamming cutoff. Falls back to "
+                        "--phash-db when missing.")
+    p.add_argument("--icon-db-margin", type=float, default=0.06,
+                   help="Winner must beat the runner-up group by this. Lower = "
+                        "more icons identified, more mistakes (0.04/0.06/0.08 "
+                        "~ 89/86/85%% coverage at 96/97/98%% accuracy).")
+    p.add_argument("--icon-db-min-score", type=float, default=0.55,
+                   help="Absolute floor on the voted icon-DB score.")
+    p.add_argument("--icon-db-prefilter-k", type=int, default=24,
+                   help="Hash-prefiltered candidates re-scored per detection.")
+    p.add_argument("--icon-db-no-group-vote", action="store_true",
+                   help="Vote per raw class instead of per semantic group "
+                        "(splits 'Restroom'/'Restrooms' and loses coverage).")
 
     # Semantic class reconciliation (icon_class_synonyms.json).
     p.add_argument("--synonyms", dest="synonyms_path",
@@ -114,6 +136,11 @@ def config_from_args(args: argparse.Namespace) -> PipelineConfig:
         auto_rotate=not args.no_auto_rotate,
         phash_db_path=args.phash_db_path,
         phash_db_max_hamming=args.phash_db_max_hamming,
+        icon_db_path=args.icon_db_path,
+        icon_db_margin=args.icon_db_margin,
+        icon_db_min_score=args.icon_db_min_score,
+        icon_db_prefilter_k=args.icon_db_prefilter_k,
+        icon_db_group_vote=not args.icon_db_no_group_vote,
         synonyms_path="" if args.no_synonyms else args.synonyms_path,
         synonym_naming=args.synonym_naming,
         synonym_rescue=not args.no_synonym_rescue,

@@ -41,7 +41,7 @@ CONFIG = {
     "INPUT_FOLDER":  "/home/nls34/Downloads/Dataset_lengend_marker_viewer/Map_Images_Renamed",
     # "LEGEND_FOLDER": "/home/nls34/Downloads/Dataset_lengend_marker_viewer/Rotated_legends",
     'LEGEND_FOLDER':'/home/nls34/Downloads/Dataset_lengend_marker_viewer/Legends',
-    "OUTPUT_FOLDER": "/home/nls34/Documents/POCs/legend_marker/output/batch_18_easyocr_inputs_pipeline_Full_images_278",
+    "OUTPUT_FOLDER": "/home/nls34/Documents/POCs/legend_marker/output/batch_21_easyocr_inputs_pipeline_Full_images_278",
 
     # ---- Roboflow ---------------------------------------------------------
     "API_KEY":   "K06rVQD1zQ46eOFObJvi",
@@ -63,6 +63,20 @@ CONFIG = {
     # (drawn blue in the viz).  "" disables.  MAX_HAMMING = match tolerance.
     "PHASH_DB":            "/home/nls34/Documents/POCs/legend_marker/icons_phash_flat.json",
     "PHASH_DB_MAX_HAMMING": 10,
+
+    # ---- Known-icon database, glyph edition (the "blue" stage) -----------
+    # icons_glyph_db.npz (build_icon_db.py) stores each icon's 64x64 glyph, so a
+    # detection is identified by hash prefilter -> template+ORB re-scoring ->
+    # per-semantic-group vote -> floor + runner-up margin, instead of a fixed
+    # Hamming cutoff.  Measured over 4894 icons: 3% -> 86% of icons identified
+    # at 97% accuracy.  "" falls back to PHASH_DB above.
+    # MARGIN trades coverage for precision: 0.04/0.06/0.08 ~ 89/86/85% coverage
+    # at 96/97/98% accuracy.
+    "ICON_DB":            "/home/nls34/Documents/POCs/legend_marker/icons_glyph_db.npz",
+    "ICON_DB_MARGIN":      0.06,
+    "ICON_DB_MIN_SCORE":   0.55,
+    "ICON_DB_PREFILTER_K": 24,
+    "ICON_DB_GROUP_VOTE":  True,
 
     # ---- Semantic class reconciliation ({canonical: [synonyms]}) ---------
     # Lets a pHash-DB class and a legend label that mean the same thing
@@ -167,6 +181,11 @@ def make_pipeline_config(output_dir: str) -> lm.PipelineConfig:
         auto_rotate=bool(CONFIG.get("AUTO_ROTATE", True)),
         phash_db_path=CONFIG.get("PHASH_DB", ""),
         phash_db_max_hamming=int(CONFIG.get("PHASH_DB_MAX_HAMMING", 0)),
+        icon_db_path=CONFIG.get("ICON_DB", ""),
+        icon_db_margin=float(CONFIG.get("ICON_DB_MARGIN", 0.06)),
+        icon_db_min_score=float(CONFIG.get("ICON_DB_MIN_SCORE", 0.55)),
+        icon_db_prefilter_k=int(CONFIG.get("ICON_DB_PREFILTER_K", 24)),
+        icon_db_group_vote=bool(CONFIG.get("ICON_DB_GROUP_VOTE", True)),
         synonyms_path=CONFIG.get("SYNONYMS", ""),
         synonym_naming=CONFIG.get("SYNONYM_NAMING", "legend"),
         synonym_rescue=bool(CONFIG.get("SYNONYM_RESCUE", True)),

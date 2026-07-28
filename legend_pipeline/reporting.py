@@ -37,6 +37,12 @@ def stage_report_lines(
     n_legend_entries: int,
     found_relation: Optional[str] = None,
     relation_rejected: Optional[str] = None,
+    # icon-DB evidence (glyph re-scoring); None on a legacy hash-only DB
+    db_score: Optional[float] = None,
+    db_margin: Optional[float] = None,
+    db_votes: Optional[int] = None,
+    db_rejected: Optional[str] = None,
+    db_rows: Optional[List[Dict[str, Any]]] = None,
 ) -> List[str]:
     """The per-stage summary block: what each stage would have named this icon.
 
@@ -45,10 +51,10 @@ def stage_report_lines(
     marina icon reads:
 
         orange  original detector class : Parking
-        blue    pHash DB (icon hashes)  : Marina        HIT hamming=3 <= 10
-        green   legend / OCR text       : Marina        score=0.71 PASS
-        magenta hash class in legend    : Marina        same as legend 'Marina'
-        FINAL   -> Marina               colour=magenta  method=phash_db+same
+        blue    icon DB (known icons)   : Marina    HIT score=0.81 votes=3
+        green   legend / OCR text       : Marina    score=0.71 PASS
+        magenta hash class in legend    : Marina    same as legend 'Marina'
+        FINAL   -> Marina                           colour=magenta
     """
     def stage(colour: str, label: str, value: str, note: str = "",
               won: bool = False) -> str:
@@ -63,19 +69,27 @@ def stage_report_lines(
                        "kept when no stage below wins",
                        won=not renamed))
 
-    # -- blue: known-icon pHash database --------------------------------------
+    # -- blue: known-icon database --------------------------------------------
     if not db_enabled:
-        lines.append(stage("blue", "pHash DB (icon hashes)", "-",
-                           "disabled (no pHash DB configured)"))
+        lines.append(stage("blue", "icon DB (known icons)", "-",
+                           "disabled (no icon DB configured)"))
     elif db_class is not None:
-        lines.append(stage("blue", "pHash DB (icon hashes)", db_class,
-                           f"HIT hamming={db_nearest_dist} <= {db_max_hamming}",
+        note = (f"HIT score={db_score:.3f} margin={db_margin:.3f} "
+                f"votes={db_votes} hamming={db_nearest_dist}"
+                if db_score is not None else
+                f"HIT hamming={db_nearest_dist} <= {db_max_hamming}")
+        lines.append(stage("blue", "icon DB (known icons)", db_class, note,
                            won=match_method == "phash_db"))
     else:
         nearest = db_nearest_name or "-"
-        lines.append(stage("blue", "pHash DB (icon hashes)", "-",
-                           f"miss (nearest '{nearest}' "
-                           f"hamming={db_nearest_dist} > {db_max_hamming})"))
+        note = (f"no confident match — {db_rejected}" if db_rejected else
+                f"miss (nearest '{nearest}' hamming={db_nearest_dist})")
+        lines.append(stage("blue", "icon DB (known icons)", "-", note))
+    # The runners-up explain a refusal far better than a single distance does.
+    for row in (db_rows or [])[:3]:
+        lines.append(f"  {'':8}{'  candidate':<26}: {row['name']:<30}"
+                     f"score={row['score']:.3f} votes={row['votes']}"
+                     f"{'  group=' + row['group'] if row.get('group') else ''}")
 
     # -- green: legend / OCR text ---------------------------------------------
     if legend_name is None:
