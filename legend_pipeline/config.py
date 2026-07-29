@@ -52,6 +52,24 @@ class PipelineConfig:
     # that abut the icon box.
     mask_icons_for_ocr: bool = True
     icon_mask_shrink: int = 1             # px eroded from each icon box edge
+    # Keep the label's own pixels out of that mask.  A detection box that reaches
+    # into its label — the model boxing the "P" of "Parking Area", or just a box
+    # a few pixels too wide — would otherwise erase the first letter, and the
+    # masked pass would read "arking Area".  The protected regions are the real
+    # label boxes found by OCR pass 1 (those NOT sitting on an icon), so the
+    # icon's own glyph is still hidden.
+    protect_label_text_from_mask: bool = True
+    # A token with at most this fraction of its area inside an icon box counts as
+    # real label text worth protecting.  A glyph read as text is ~100% inside its
+    # icon; a label clipped by an over-wide detection box still has most of its
+    # word outside.  (filter_text_on_icons' own 0.5 is too strict here: the very
+    # overlap that damages a label would push it past 0.5 and refuse protection.)
+    protect_max_inside_icon: float = 0.70
+    # Second line of defence: if the masked pass still read a label only
+    # partially, rebuild it from the unmasked pass — accepted only when the
+    # masked reading is a strict truncation of the unmasked one, so a label can
+    # get longer but never change meaning.
+    repair_truncated_labels: bool = True
     # OCR runs twice on the legend: pass 1 (unmasked) locates label text so
     # false-positive detections can be dropped, then pass 2 (masked) reads the
     # real labels.  Pass 1's recognised TEXT is discarded — only its box

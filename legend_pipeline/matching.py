@@ -92,6 +92,7 @@ def mask_icons_in_image(
     image: np.ndarray,
     icons: List[Detection],
     shrink: int = 1,
+    protect: Optional[List[OcrText]] = None,
 ) -> np.ndarray:
     """Return a copy of ``image`` with every icon box painted over.
 
@@ -102,6 +103,16 @@ def mask_icons_in_image(
     edge is not clipped.  The fill is the image's median border colour so the
     patch blends into the legend background (usually white) instead of adding a
     hard-edged rectangle that the detector could latch onto.
+
+    ``protect`` lists text boxes whose pixels must survive — the real label text
+    found by the unmasked OCR pass.  A detection box that reaches into its label
+    (the model boxing the "P" of "Parking Area", or simply a box drawn a few
+    pixels too wide) would otherwise erase the label's first letter, and the
+    masked pass would read "arking Area".  Those pixels are re-instated after
+    the fill, so the label always reads whole while the icon glyph still goes.
+    Only text that is NOT itself sitting on an icon may be protected — pass the
+    output of :func:`filter_text_on_icons`, or the glyph-as-text tokens would
+    protect the very glyph this function exists to hide.
     """
     if not icons:
         return image
@@ -126,6 +137,22 @@ def mask_icons_in_image(
         y2 = min(h, int(y2) - shrink)
         if x2 > x1 and y2 > y1:
             masked[y1:y2, x1:x2] = fill
+
+    # Put the label pixels back wherever a mask overlapped real text.
+    restored = 0
+    for text in protect or ():
+        tx1, ty1, tx2, ty2 = (int(v) for v in text.bbox)
+        tx1, ty1 = max(0, tx1), max(0, ty1)
+        tx2, ty2 = min(w, tx2), min(h, ty2)
+        if tx2 <= tx1 or ty2 <= ty1:
+            continue
+        if not np.array_equal(masked[ty1:ty2, tx1:tx2], image[ty1:ty2, tx1:tx2]):
+            masked[ty1:ty2, tx1:tx2] = image[ty1:ty2, tx1:tx2]
+            restored += 1
+            LOGGER.info("Mask overlapped label %r — label pixels restored so it "
+                        "is not read truncated.", text.text)
+    if restored:
+        LOGGER.info("Protected %d label(s) from icon masking.", restored)
     return masked
 
 
@@ -180,6 +207,100 @@ def filter_text_on_icons(
         LOGGER.info("Dropped %d OCR token(s) sitting on icons (glyph-as-text).",
                     dropped)
     return kept
+
+
+def label_text_to_protect(
+    texts: List[OcrText],
+    icons: List[Detection],
+    config: PipelineConfig,
+) -> List[OcrText]:
+    """Pick the text boxes whose pixels must survive icon masking.
+
+    This is a deliberately more permissive test than
+    :func:`filter_text_on_icons`.  That one asks "is this token the icon's glyph
+    misread as text?" and answers yes at 50% containment — but a detection box
+    that reaches into its label pushes the label itself past 50%, so using it
+    here would refuse to protect the very label being damaged.
+
+    A label is protected when a meaningful part of it lies OUTSIDE every icon
+    box: a glyph read as text is essentially all inside its icon (~100%), while
+    a clipped label still has most of its word out in the open.  Tokens too
+    short to be a word are never protected — "P", "=", "4" are exactly what
+    masking is meant to remove.
+    """
+    if not icons:
+        return list(texts)
+    kept: List[OcrText] = []
+    for text in texts:
+        letters = sum(ch.isalpha() for ch in text.text)
+        if letters < config.text_min_letters:
+            continue                       # too short to be a real label
+        inside = max((_fraction_inside(text.bbox, ic.bbox) for ic in icons),
+                     default=0.0)
+        if inside <= config.protect_max_inside_icon:
+            kept.append(text)
+    return kept
+
+
+def _text_key(text: str) -> str:
+    """Lowercased, whitespace-collapsed form for comparing two OCR readings."""
+    return " ".join((text or "").lower().split())
+
+
+def _is_truncation_of(partial: str, full: str) -> bool:
+    """True when ``partial`` looks like ``full`` with characters missing.
+
+    Guards the repair below: we only ever replace a label with a *longer*
+    reading that contains it, so a wrong row or a misread can never be
+    substituted in.  "arking area" / "ing area" / "area" are all accepted
+    against "parking area"; "scenic view" is not.
+    """
+    a, b = _text_key(partial), _text_key(full)
+    if not a or not b or a == b:
+        return False
+    if sum(ch.isalpha() for ch in b) <= sum(ch.isalpha() for ch in a):
+        return False
+    return a in b
+
+
+def repair_truncated_labels(
+    matches: Dict[int, Optional[OcrText]],
+    icons: List[Detection],
+    unmasked_texts: List[OcrText],
+    config: PipelineConfig,
+) -> Dict[int, Optional[OcrText]]:
+    """Restore labels the masked OCR pass read only partially.
+
+    Second line of defence behind the mask protection: when a detection box
+    covers so much of a word that the masked pass cannot read it whole
+    ("Parking Area" -> "Area"), the *unmasked* pass 1 still holds the complete
+    reading.  For every matched label we rebuild the same row from pass 1 and
+    adopt it only if the masked reading is a strict truncation of it, so the
+    repair can lengthen a label but never change what it says.
+    """
+    if not config.repair_truncated_labels or not unmasked_texts:
+        return matches
+    for idx, merged in matches.items():
+        if merged is None or idx >= len(icons):
+            continue
+        icon = icons[idx]
+        height = max(merged.bbox[3] - merged.bbox[1], 1)
+        slack = config.max_word_gap_factor * height
+        row = [
+            t for t in unmasked_texts
+            if _vertical_overlap_ratio(merged.bbox, t.bbox) >= 0.5
+            and t.bbox[2] > icon.bbox[0]          # not another column's label
+            and t.bbox[0] < merged.bbox[2] + slack
+        ]
+        if not row:
+            continue
+        candidate = _merge_texts(row)
+        if _is_truncation_of(merged.text, candidate.text):
+            LOGGER.info("Icon %d: label %r was truncated by masking — restored "
+                        "to %r from the unmasked pass.",
+                        idx, merged.text, candidate.text)
+            matches[idx] = candidate
+    return matches
 
 
 def _vertical_overlap_ratio(a: Sequence[int], b: Sequence[int]) -> float:

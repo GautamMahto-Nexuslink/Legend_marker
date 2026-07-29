@@ -17,8 +17,10 @@ from .matching import (
     detection_inside_text,
     filter_text_on_icons,
     filter_text_zone_false_positives,
+    label_text_to_protect,
     mask_icons_in_image,
     match_icons_to_text,
+    repair_truncated_labels,
 )
 from .ocr import OcrEngine
 from .orientation import detect_upright_rotation, rotate_image
@@ -406,7 +408,17 @@ class LegendMarkerPipeline:
         # remain intact.  When masking is off, reuse the first pass.
         if self.config.mask_icons_for_ocr:
             with self._timer.step("legend: ocr pass2 (masked)"):
-                ocr_img = mask_icons_in_image(legend_img, icons, self.config.icon_mask_shrink)
+                # Protect the real label text (pass 1, minus the tokens sitting
+                # on icons) from the mask: a detection box that reaches into its
+                # label would otherwise erase the first letter and pass 2 would
+                # read "arking Area" instead of "Parking Area".
+                protect = (
+                    label_text_to_protect(texts_pass1, icons, self.config)
+                    if self.config.protect_label_text_from_mask else None
+                )
+                ocr_img = mask_icons_in_image(
+                    legend_img, icons, self.config.icon_mask_shrink,
+                    protect=protect)
                 texts = self.ocr.read(ocr_img)
         else:
             texts = texts_pass1
@@ -433,8 +445,11 @@ class LegendMarkerPipeline:
                         dropped_inside)
         icons = kept
 
-        # Step 3: spatially match icon -> text.
+        # Step 3: spatially match icon -> text, then restore any label the mask
+        # read only partially ("Parking Area" -> "arking Area").
         icon_text = match_icons_to_text(icons, texts, self.config)
+        icon_text = repair_truncated_labels(
+            icon_text, icons, texts_pass1, self.config)
 
         # Step 4: signatures keyed by OCR name.  We keep ONLY icons that have a
         # nearby text label; those without one are skipped entirely (no hash).

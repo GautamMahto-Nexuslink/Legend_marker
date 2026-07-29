@@ -41,7 +41,7 @@ CONFIG = {
     "INPUT_FOLDER":  "/home/nls34/Downloads/Dataset_lengend_marker_viewer/Map_Images_Renamed",
     # "LEGEND_FOLDER": "/home/nls34/Downloads/Dataset_lengend_marker_viewer/Rotated_legends",
     'LEGEND_FOLDER':'/home/nls34/Downloads/Dataset_lengend_marker_viewer/Legends',
-    "OUTPUT_FOLDER": "/home/nls34/Documents/POCs/legend_marker/output/batch_21_easyocr_inputs_pipeline_Full_images_278",
+    "OUTPUT_FOLDER": "/home/nls34/Documents/POCs/legend_marker/output/batch_23_easyocr_inputs_pipeline_Full_images_278",
 
     # ---- Roboflow ---------------------------------------------------------
     "API_KEY":   "K06rVQD1zQ46eOFObJvi",
@@ -54,7 +54,7 @@ CONFIG = {
     "OCR_GPU":    False,
 
     # ---- Matching thresholds ---------------------------------------------
-    "MATCH_THRESHOLD": 0.50,               # absolute floor to rename a map icon
+    "MATCH_THRESHOLD": 0.55,               # absolute floor to rename a map icon
     "MATCH_MARGIN":    0.08,               # best must beat 2nd-best by this
     "HASH_ALGORITHM":  "phash",
 

@@ -193,7 +193,7 @@ def main(argv=None) -> int:
     parser.add_argument("--match-threshold", type=float, default=0.60,
                         help="Absolute score floor to accept a match "
                              "(default: 0.60, same as the pipeline).")
-    parser.add_argument("--match-margin", type=float, default=0.02,
+    parser.add_argument("--match-margin", type=float, default=0.08,
                         help="Best must beat 2nd-best by this margin "
                              "(default: 0.08, same as the pipeline).")
     parser.add_argument("--copy", action="store_true",

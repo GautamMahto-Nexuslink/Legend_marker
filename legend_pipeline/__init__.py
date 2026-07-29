@@ -57,6 +57,8 @@ from .matching import (
     detection_inside_text,
     filter_text_on_icons,
     match_icons_to_text,
+    label_text_to_protect,
+    repair_truncated_labels,
 )
 from .signatures import SignatureBuilder, SignatureMatcher
 from .synonyms import SynonymMap, DEFAULT_SYNONYMS_PATH, normalize as normalize_class_name
@@ -98,6 +100,8 @@ __all__ = [
     "detection_inside_text",
     "filter_text_on_icons",
     "match_icons_to_text",
+    "label_text_to_protect",
+    "repair_truncated_labels",
     "SignatureBuilder",
     "SignatureMatcher",
     "SynonymMap",
