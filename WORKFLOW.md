@@ -103,13 +103,24 @@ python3 batch_run.py
 The blue stage gets better the more curated icons it has. The loop:
 
 ```bash
-python3 save_icons.py                  # harvest final icons into <Class>/ folders
-python3 sort_icons_by_phash.py <folder of loose icons> --ref-folder Save_icons_modified -v
-python3 icons_to_pdf.py <folder> --out icons_report.pdf     # eyeball the result
-# ... fix any mis-sorted icons by hand ...
-python3 build_icon_db.py <crops folder> -v                  # rebuild the DB
-python3 benchmark_icon_db.py --limit 800                    # confirm it improved
+python3 save_icons.py                          # harvest final icons into <Class>/ folders
+
+# file the loose ones against the database — dry run first, always
+python3 sort_icons_by_db.py <folder of loose icons> --out sorted_icons --dry-run
+python3 sort_icons_by_db.py <folder of loose icons> --out sorted_icons \
+        --copy --unmatched-dir needs_review
+
+python3 icons_to_pdf.py sorted_icons --out icons_report.pdf   # eyeball the result
+# ... fix any mis-sorted icons by hand, and label needs_review/ ...
+python3 build_icon_db.py <crops folder> -v                    # rebuild the DB
+python3 benchmark_icon_db.py --limit 800                      # confirm it improved
 ```
+
+`sort_icons_by_db.py` uses the same identification as the pipeline, so an icon
+lands under the name the pipeline would give it. `--margin` is the dial: raise it
+to sort fewer icons but misfile fewer of them, and send the rest to
+`--unmatched-dir` for a human. Measured on 26 icons distorted to imitate fresh
+map crops: **85% sorted, all of them correctly**, 4 left for review.
 
 `benchmark_icon_db.py` is the arbiter for any threshold change. Current
 baseline, leave-one-out on the 7537-icon / 364-class database:
