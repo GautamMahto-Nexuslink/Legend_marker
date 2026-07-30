@@ -89,6 +89,7 @@ manages 2%. Re-measure any time with `python3 benchmark_icon_db.py`.
 | **`sort_icons_by_db.py`** | **Preferred sorter.** Files loose icons into per-class folders by identifying them against `icons_glyph_db.npz` — the pipeline's own blue stage, so an icon lands under the name the pipeline would give it. Instant startup, votes across exemplars, and every refusal comes with a reason. `--dry-run` first, then `--copy`. |
 | **`sort_icons_by_phash.py`** | The older sorter: same template+ORB decision, but it re-reads and re-hashes a whole `--ref-folder` of example icons on every run. Keep it for sorting against a reference set that is *not* in the database yet. |
 | **`split_folders_alpha.py`** | Splits an icon tree into `A-H` / `I-P` / `Q-Z` groups by filename, keeping the sub-folder structure — for sharing review work out. |
+| **`move_common_icons.py`** | Given two icon trees, collects the icons present in **both** into a third folder, keeping each icon's sub-folder path. The inverse of the split above: use it to pull out the icons two reviewers (or two runs) agree on. `--dry-run` first. |
 | **`change_name_imagee.py`** | Turns a Roboflow export name (`Alamo lake_jpg.rf.HkJN0….jpg`) back into its clean original (`Alamo_lake.jpg`). |
 | **`icons_to_pdf.py`** | Builds a PDF contact sheet of icon crops grouped by source image then class — for eyeballing a whole dataset quickly. |
 
