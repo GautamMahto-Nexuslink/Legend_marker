@@ -3,12 +3,17 @@
     "accessible campsite",
     "accessible fishing",
     "accessible parking",
+    "accessible picnic area",
+    "accessible restroom",
+    "accessible trail",
+    "cross slope exceeds 8%",
     "elevator",
     "restroom",
     "stairs"
   ],
   "accessible parking": [
     "accessible",
+    "accessible picnic area",
     "parking",
     "trailhead parking"
   ],
@@ -49,18 +54,23 @@
     "building",
     "corral",
     "equestrian center",
+    "farm",
     "historic site",
     "maintenance"
   ],
   "basketball": [
+    "baseball field",
     "disc golf",
     "horseshoes",
     "playground",
+    "playing field",
     "polo field",
     "recreation area",
+    "tennis",
     "volleyball"
   ],
   "bathhouse": [
+    "accessible restroom",
     "beach",
     "campground",
     "restroom",
@@ -109,7 +119,9 @@
     "horse trail",
     "motorbike trail",
     "mountain biking",
+    "multi use trail",
     "nature trail",
+    "road crossing",
     "trailhead"
   ],
   "mountain biking": [
@@ -128,9 +140,12 @@
   ],
   "birdwatching": [
     "butterfly garden",
+    "hummingbird garden",
     "nature trail",
+    "nest platform",
     "observation area",
     "observation tower",
+    "wetland",
     "wildlife viewing"
   ],
   "boat dock": [
@@ -183,7 +198,8 @@
     "boat dock",
     "boating",
     "marina",
-    "special event venue"
+    "special event venue",
+    "train ride"
   ],
   "box office": [
     "amphitheater",
@@ -205,6 +221,7 @@
   "butterfly garden": [
     "birdwatching",
     "flower garden",
+    "hummingbird garden",
     "nature trail",
     "outdoor classroom",
     "wildlife viewing"
@@ -222,6 +239,7 @@
   "camp host": [
     "campground",
     "contact station",
+    "firewood",
     "ranger station",
     "rv camping"
   ],
@@ -229,6 +247,7 @@
     "amphitheater",
     "barbecue",
     "campground",
+    "firewood",
     "group campground",
     "picnic area"
   ],
@@ -241,15 +260,21 @@
     "campfire",
     "drinking water",
     "dump station",
+    "environmental campsite",
     "equestrian camping",
+    "firewood",
+    "full shade",
     "group campground",
     "hike and bike campground",
+    "lean to",
+    "light",
     "lodge",
     "partial shade",
     "pay station",
     "pets overnight",
     "picnic area",
     "primitive camping",
+    "primitive group camping",
     "recycling",
     "restroom",
     "rv camping",
@@ -264,6 +289,7 @@
     "campfire",
     "campground",
     "group picnic area",
+    "primitive group camping",
     "rv camping",
     "youth camping",
     "yurt"
@@ -271,7 +297,9 @@
   "hike and bike campground": [
     "biking",
     "campground",
+    "environmental campsite",
     "hiking",
+    "lean to",
     "primitive camping",
     "trailhead"
   ],
@@ -285,8 +313,11 @@
   "primitive camping": [
     "cabin",
     "campground",
+    "environmental campsite",
     "hike and bike campground",
     "hiking",
+    "lean to",
+    "primitive group camping",
     "yurt"
   ],
   "yurt": [
@@ -298,8 +329,10 @@
   ],
   "youth camping": [
     "campground",
+    "environmental campsite",
     "group campground",
-    "outdoor classroom"
+    "outdoor classroom",
+    "primitive group camping"
   ],
   "rv camping": [
     "accessible campsite",
@@ -318,7 +351,8 @@
     "marina",
     "paddling",
     "row boat",
-    "tubing"
+    "tubing",
+    "watersports"
   ],
   "paddling": [
     "boat launch",
@@ -328,6 +362,7 @@
     "row boat",
     "surfing",
     "tubing",
+    "watersports",
     "windsurfing"
   ],
   "cemetery": [
@@ -367,7 +402,9 @@
     "equestrian camping",
     "equestrian center",
     "equestrian staging area",
-    "horse trail"
+    "farm",
+    "horse trail",
+    "kennel"
   ],
   "county highway": [
     "highway exit",
@@ -432,6 +469,7 @@
   ],
   "dog park": [
     "dogs allowed on leash",
+    "kennel",
     "no dogs allowed",
     "pets overnight",
     "playground",
@@ -439,6 +477,7 @@
   ],
   "dogs allowed on leash": [
     "dog park",
+    "kennel",
     "no dogs allowed",
     "pets overnight"
   ],
@@ -452,20 +491,25 @@
     "campground",
     "dog park",
     "dogs allowed on leash",
+    "kennel",
     "no dogs allowed"
   ],
   "drinking water": [
     "campground",
     "fish cleaning station",
     "food services",
+    "non potable water",
     "picnic area",
     "restroom",
-    "shower"
+    "shower",
+    "spring",
+    "water tower"
   ],
   "dump station": [
     "campground",
     "gas station",
     "maintenance",
+    "non potable water",
     "restroom",
     "rv camping",
     "trash"
@@ -484,10 +528,12 @@
   ],
   "interpretive center": [
     "aquarium",
+    "college or university",
     "cornell cooperative extension",
     "information",
     "interpretive exhibit",
     "interpretive pavilion",
+    "library",
     "museum",
     "nature trail",
     "outdoor classroom",
@@ -503,10 +549,12 @@
     "gift shop",
     "information",
     "interpretive center",
+    "library",
     "lodge",
     "museum",
     "park headquarters",
     "ranger station",
+    "train ride",
     "tram stop",
     "wifi"
   ],
@@ -523,6 +571,7 @@
     "equestrian staging area",
     "hiking",
     "motorbike trail",
+    "multi use trail",
     "trailhead"
   ],
   "equestrian staging area": [
@@ -543,6 +592,7 @@
     "polo field"
   ],
   "interpretive exhibit": [
+    "farm",
     "historic site",
     "information",
     "interpretive center",
@@ -603,6 +653,7 @@
   ],
   "flower garden": [
     "butterfly garden",
+    "hummingbird garden",
     "nature trail",
     "outdoor classroom",
     "wildlife viewing"
@@ -616,6 +667,7 @@
     "police",
     "post office",
     "ranger station",
+    "village center",
     "visitor center"
   ],
   "fort": [
@@ -640,6 +692,7 @@
   "gift shop": [
     "boat rentals",
     "box office",
+    "firewood",
     "food services",
     "gas station",
     "museum",
@@ -653,27 +706,37 @@
     "trailhead"
   ],
   "hiking": [
+    "accessible trail",
     "biking",
     "bridge",
     "compass course",
+    "cross country skiing",
+    "cross slope exceeds 8%",
     "geocaching",
+    "grade exceeds 20%",
     "healthy heart trail",
     "hike and bike campground",
     "horse trail",
     "junction",
+    "mile marker",
     "mohican mohawk trail",
     "motorbike trail",
     "mountain biking",
     "mountain summit",
+    "multi use trail",
     "nature trail",
     "primitive camping",
+    "road crossing",
+    "rocks over 5 high",
     "snowmobile",
     "stairs",
+    "trail name",
     "trailhead",
     "trailhead parking",
     "waterfall"
   ],
   "nature trail": [
+    "accessible trail",
     "biking",
     "birdwatching",
     "bridge",
@@ -685,15 +748,20 @@
     "interpretive center",
     "interpretive exhibit",
     "mohican mohawk trail",
+    "multi use trail",
     "trailhead",
+    "tree cluster",
     "waterfall",
+    "wetland",
     "wildlife viewing"
   ],
   "trailhead": [
+    "accessible trail",
     "bench",
     "biking",
     "bridge",
     "compass course",
+    "cross country skiing",
     "equestrian staging area",
     "gate",
     "healthy heart trail",
@@ -702,11 +770,16 @@
     "horse trail",
     "information",
     "junction",
+    "lean to",
+    "mile marker",
     "mohican mohawk trail",
     "motorbike trail",
     "mountain biking",
+    "multi use trail",
     "nature trail",
+    "road crossing",
     "snowmobile",
+    "trail name",
     "trailhead parking"
   ],
   "trailhead parking": [
@@ -720,12 +793,15 @@
     "barn",
     "building",
     "cemetery",
+    "coulter",
+    "farm",
     "fort",
     "interpretive exhibit",
     "lighthouse",
     "mine",
     "museum",
-    "point of interest"
+    "point of interest",
+    "village center"
   ],
   "horseshoes": [
     "basketball",
@@ -737,9 +813,13 @@
   "building": [
     "barn",
     "cabin",
+    "college or university",
+    "coulter",
     "elevator",
     "fort",
+    "gas well",
     "historic site",
+    "light",
     "lodge",
     "maintenance",
     "park headquarters",
@@ -756,18 +836,23 @@
     "yurt"
   ],
   "information": [
+    "airport",
     "box office",
     "bus stop",
     "contact station",
     "interpretive center",
     "interpretive exhibit",
+    "library",
+    "palm glove locations",
     "park headquarters",
     "pay station",
     "point of interest",
     "post office",
     "ranger station",
     "telephone",
+    "trail name",
     "trailhead",
+    "village center",
     "visitor center",
     "wifi"
   ],
@@ -778,8 +863,10 @@
     "highway exit",
     "hiking",
     "interstate highway",
+    "mile marker",
     "point of interest",
     "state highway",
+    "trail name",
     "trailhead"
   ],
   "lifeguard station": [
@@ -801,11 +888,14 @@
     "barn",
     "building",
     "dump station",
+    "gas well",
     "park headquarters",
     "radio tower",
-    "trash"
+    "trash",
+    "water tower"
   ],
   "marina": [
+    "airport",
     "boat dock",
     "boat house",
     "boat launch",
@@ -820,6 +910,7 @@
     "mooring buoys"
   ],
   "bus stop": [
+    "airport",
     "information",
     "parking",
     "tram stop",
@@ -871,6 +962,7 @@
     "historic site",
     "interpretive center",
     "interpretive exhibit",
+    "library",
     "mine",
     "visitor center"
   ],
@@ -878,10 +970,13 @@
     "bench",
     "birdwatching",
     "mountain summit",
+    "nest platform",
     "observation tower",
     "point of interest",
+    "spring",
     "stargazing",
     "waterfall",
+    "wetland",
     "wildlife viewing"
   ],
   "observation tower": [
@@ -892,16 +987,19 @@
     "observation area",
     "radio tower",
     "stairs",
+    "water tower",
     "wildlife viewing"
   ],
   "radio tower": [
     "building",
     "maintenance",
-    "observation tower"
+    "observation tower",
+    "water tower"
   ],
   "outdoor classroom": [
     "amphitheater",
     "butterfly garden",
+    "college or university",
     "compass course",
     "cornell cooperative extension",
     "flower garden",
@@ -914,14 +1012,17 @@
   ],
   "parking": [
     "accessible parking",
+    "airport",
     "bike rack",
     "bus stop",
     "equestrian staging area",
     "gas station",
     "gate",
     "highway exit",
+    "light",
     "pay station",
     "rc air field",
+    "road crossing",
     "rv camping",
     "snowmobile",
     "trailhead parking",
@@ -942,6 +1043,7 @@
     "parking"
   ],
   "picnic area": [
+    "accessible picnic area",
     "barbecue",
     "bench",
     "campfire",
@@ -956,9 +1058,11 @@
     "recreation area",
     "recycling",
     "restroom",
-    "trash"
+    "trash",
+    "tree cluster"
   ],
   "group picnic area": [
+    "accessible picnic area",
     "amphitheater",
     "barbecue",
     "group campground",
@@ -969,11 +1073,14 @@
     "special event venue"
   ],
   "picnic shelter": [
+    "accessible picnic area",
     "amphitheater",
     "barbecue",
     "building",
+    "full shade",
     "group picnic area",
     "interpretive pavilion",
+    "lean to",
     "partial shade",
     "picnic area",
     "special event venue"
@@ -981,8 +1088,10 @@
   "partial shade": [
     "bench",
     "campground",
+    "full shade",
     "picnic area",
-    "picnic shelter"
+    "picnic shelter",
+    "tree cluster"
   ],
   "playground": [
     "basketball",
@@ -990,10 +1099,13 @@
     "dog park",
     "horseshoes",
     "picnic area",
+    "playing field",
     "recreation area",
     "volleyball"
   ],
   "point of interest": [
+    "coulter",
+    "gas well",
     "geocaching",
     "historic site",
     "information",
@@ -1002,6 +1114,9 @@
     "lighthouse",
     "mountain summit",
     "observation area",
+    "palm glove locations",
+    "train ride",
+    "village center",
     "waterfall"
   ],
   "polo field": [
@@ -1018,18 +1133,23 @@
   ],
   "restroom": [
     "accessible",
+    "accessible restroom",
     "bathhouse",
     "campground",
     "drinking water",
     "dump station",
+    "light",
+    "non potable water",
     "picnic area",
     "shower"
   ],
   "shower": [
+    "accessible restroom",
     "bathhouse",
     "beach",
     "campground",
     "drinking water",
+    "non potable water",
     "restroom",
     "swimming pool"
   ],
@@ -1049,17 +1169,24 @@
     "visitor center"
   ],
   "recreation area": [
+    "baseball field",
     "basketball",
     "disc golf",
     "dog park",
     "golf driving range",
     "group picnic area",
     "horseshoes",
+    "ice rink",
     "picnic area",
     "playground",
+    "playing field",
     "polo field",
     "rc air field",
+    "sledding",
+    "soccer",
+    "softball field",
     "swimming pool",
+    "tennis",
     "volleyball"
   ],
   "shelling": [
@@ -1069,9 +1196,11 @@
     "wildlife viewing"
   ],
   "snowmobile": [
+    "cross country skiing",
     "hiking",
     "motorbike trail",
     "parking",
+    "sledding",
     "trailhead"
   ],
   "special event venue": [
@@ -1079,15 +1208,18 @@
     "boat tours",
     "box office",
     "group picnic area",
+    "ice rink",
     "outdoor classroom",
     "picnic shelter",
-    "rc air field"
+    "rc air field",
+    "train ride"
   ],
   "stairs": [
     "accessible",
     "beach",
     "bridge",
     "elevator",
+    "grade exceeds 20%",
     "hiking",
     "observation tower"
   ],
@@ -1107,13 +1239,15 @@
     "beach",
     "paddling",
     "swimming",
+    "watersports",
     "windsurfing"
   ],
   "windsurfing": [
     "beach",
     "boating",
     "paddling",
-    "surfing"
+    "surfing",
+    "watersports"
   ],
   "swimming": [
     "beach",
@@ -1124,7 +1258,8 @@
     "surfing",
     "swimming pool",
     "tubing",
-    "wading only"
+    "wading only",
+    "watersports"
   ],
   "swimming pool": [
     "bathhouse",
@@ -1144,21 +1279,26 @@
     "boat rentals",
     "paddling",
     "swimming",
-    "wading only"
+    "wading only",
+    "watersports"
   ],
   "volleyball": [
     "basketball",
     "beach",
     "horseshoes",
     "playground",
-    "recreation area"
+    "playing field",
+    "recreation area",
+    "soccer",
+    "tennis"
   ],
   "waterfall": [
     "dam",
     "hiking",
     "nature trail",
     "observation area",
-    "point of interest"
+    "point of interest",
+    "spring"
   ],
   "wifi": [
     "information",
@@ -1171,16 +1311,296 @@
     "birdwatching",
     "butterfly garden",
     "flower garden",
+    "hummingbird garden",
     "interpretive center",
     "nature trail",
+    "nest platform",
     "observation area",
     "observation tower",
-    "shelling"
+    "shelling",
+    "wetland"
   ],
   "compass course": [
     "geocaching",
     "hiking",
     "outdoor classroom",
     "trailhead"
+  ],
+  "accessible picnic area": [
+    "accessible",
+    "accessible parking",
+    "group picnic area",
+    "picnic area",
+    "picnic shelter"
+  ],
+  "accessible restroom": [
+    "accessible",
+    "bathhouse",
+    "restroom",
+    "shower"
+  ],
+  "accessible trail": [
+    "accessible",
+    "cross slope exceeds 8%",
+    "grade exceeds 20%",
+    "hiking",
+    "multi use trail",
+    "nature trail",
+    "rocks over 5 high",
+    "trailhead"
+  ],
+  "airport": [
+    "bus stop",
+    "information",
+    "marina",
+    "parking"
+  ],
+  "baseball field": [
+    "basketball",
+    "playing field",
+    "recreation area",
+    "soccer",
+    "softball field"
+  ],
+  "softball field": [
+    "baseball field",
+    "playing field",
+    "recreation area"
+  ],
+  "soccer": [
+    "baseball field",
+    "playing field",
+    "recreation area",
+    "volleyball"
+  ],
+  "playing field": [
+    "baseball field",
+    "basketball",
+    "playground",
+    "recreation area",
+    "soccer",
+    "softball field",
+    "tennis",
+    "volleyball"
+  ],
+  "tennis": [
+    "basketball",
+    "playing field",
+    "recreation area",
+    "volleyball"
+  ],
+  "environmental campsite": [
+    "campground",
+    "hike and bike campground",
+    "primitive camping",
+    "youth camping"
+  ],
+  "primitive group camping": [
+    "campground",
+    "group campground",
+    "primitive camping",
+    "youth camping"
+  ],
+  "college or university": [
+    "building",
+    "interpretive center",
+    "library",
+    "outdoor classroom"
+  ],
+  "coulter": [
+    "building",
+    "historic site",
+    "point of interest"
+  ],
+  "cross slope exceeds 8%": [
+    "accessible",
+    "accessible trail",
+    "grade exceeds 20%",
+    "hiking",
+    "rocks over 5 high"
+  ],
+  "grade exceeds 20%": [
+    "accessible trail",
+    "cross slope exceeds 8%",
+    "hiking",
+    "rocks over 5 high",
+    "stairs"
+  ],
+  "rocks over 5 high": [
+    "accessible trail",
+    "cross slope exceeds 8%",
+    "grade exceeds 20%",
+    "hiking"
+  ],
+  "road crossing": [
+    "biking",
+    "hiking",
+    "multi use trail",
+    "parking",
+    "trailhead"
+  ],
+  "firewood": [
+    "camp host",
+    "campfire",
+    "campground",
+    "gift shop"
+  ],
+  "full shade": [
+    "campground",
+    "partial shade",
+    "picnic shelter",
+    "tree cluster"
+  ],
+  "gas well": [
+    "building",
+    "maintenance",
+    "point of interest"
+  ],
+  "farm": [
+    "barn",
+    "corral",
+    "historic site",
+    "interpretive exhibit"
+  ],
+  "hummingbird garden": [
+    "birdwatching",
+    "butterfly garden",
+    "flower garden",
+    "wildlife viewing"
+  ],
+  "ice rink": [
+    "cross country skiing",
+    "recreation area",
+    "sledding",
+    "special event venue"
+  ],
+  "kennel": [
+    "corral",
+    "dog park",
+    "dogs allowed on leash",
+    "pets overnight"
+  ],
+  "lean to": [
+    "campground",
+    "hike and bike campground",
+    "picnic shelter",
+    "primitive camping",
+    "trailhead"
+  ],
+  "library": [
+    "college or university",
+    "information",
+    "interpretive center",
+    "museum",
+    "visitor center"
+  ],
+  "light": [
+    "building",
+    "campground",
+    "parking",
+    "restroom"
+  ],
+  "wetland": [
+    "birdwatching",
+    "nature trail",
+    "nest platform",
+    "observation area",
+    "spring",
+    "wildlife viewing"
+  ],
+  "mile marker": [
+    "hiking",
+    "junction",
+    "multi use trail",
+    "trail name",
+    "trailhead"
+  ],
+  "trail name": [
+    "hiking",
+    "information",
+    "junction",
+    "mile marker",
+    "multi use trail",
+    "trailhead"
+  ],
+  "multi use trail": [
+    "accessible trail",
+    "biking",
+    "hiking",
+    "horse trail",
+    "mile marker",
+    "nature trail",
+    "road crossing",
+    "trail name",
+    "trailhead"
+  ],
+  "nest platform": [
+    "birdwatching",
+    "observation area",
+    "wetland",
+    "wildlife viewing"
+  ],
+  "non potable water": [
+    "drinking water",
+    "dump station",
+    "restroom",
+    "shower",
+    "spring"
+  ],
+  "palm glove locations": [
+    "information",
+    "point of interest"
+  ],
+  "cross country skiing": [
+    "hiking",
+    "ice rink",
+    "sledding",
+    "snowmobile",
+    "trailhead"
+  ],
+  "sledding": [
+    "cross country skiing",
+    "ice rink",
+    "recreation area",
+    "snowmobile"
+  ],
+  "spring": [
+    "drinking water",
+    "non potable water",
+    "observation area",
+    "waterfall",
+    "wetland"
+  ],
+  "train ride": [
+    "boat tours",
+    "point of interest",
+    "special event venue",
+    "visitor center"
+  ],
+  "tree cluster": [
+    "full shade",
+    "nature trail",
+    "partial shade",
+    "picnic area"
+  ],
+  "village center": [
+    "historic site",
+    "information",
+    "park headquarters",
+    "point of interest"
+  ],
+  "water tower": [
+    "drinking water",
+    "maintenance",
+    "observation tower",
+    "radio tower"
+  ],
+  "watersports": [
+    "boat rentals",
+    "paddling",
+    "surfing",
+    "swimming",
+    "tubing",
+    "windsurfing"
   ]
 }

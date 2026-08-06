@@ -4,6 +4,7 @@ ICON_CLASS_SYNONYMS = {
         "handicap accessible", "wheelchair accessible", "wheelchair", "ada",
         "ada accessible", "disabled access", "handicapped", "barrier free",
         "universal access", "access", "mobility impaired", "all abilities",
+        "wheelchair access",
     ],
     "accessible parking": [
         "accessible parking", "handicap parking", "disabled parking",
@@ -13,7 +14,7 @@ ICON_CLASS_SYNONYMS = {
     "accessible campsite": [
         "accessible campsite", "accessible site", "accessible camping",
         "ada campsite", "wheelchair accessible campsite", "handicap campsite",
-        "barrier free campsite", "accessible camp",
+        "barrier free campsite", "accessible camp", "campsite accessible",
     ],
     "accessible fishing": [
         "accessible fishing", "ada fishing", "wheelchair accessible fishing",
@@ -23,7 +24,7 @@ ICON_CLASS_SYNONYMS = {
     "amphitheater": [
         "amphitheater", "amphitheatre", "outdoor theater", "outdoor theatre",
         "stage", "arena", "performance area", "campfire theater",
-        "amphitheater seating", "concert venue",
+        "amphitheater seating", "concert venue", "theater", "theatre",
     ],
     "aquarium": [
         "aquarium", "fish tank", "marine exhibit", "sea life center",
@@ -54,7 +55,7 @@ ICON_CLASS_SYNONYMS = {
     ],
     "bench": [
         "bench", "seating", "seat", "park bench", "rest bench", "sitting area",
-        "resting spot",
+        "resting spot", "covered bench",
     ],
     "gate": [
         "gate", "beyond gate", "chain gate", "closed gate", "locked gate",
@@ -69,11 +70,12 @@ ICON_CLASS_SYNONYMS = {
     "biking": [
         "biking", "bicycling", "bike", "bicycle", "cycling", "bike trail",
         "bicycle trail", "bike route", "bike path", "cyclist", "bikeway",
-        "bike riding",
+        "bike riding", "bicycling trails", "biking trails", "bicycle trails",
     ],
     "mountain biking": [
         "mountain biking", "mountain bike", "mtb", "off road cycling",
         "single track", "mountain bike trail", "trail biking",
+        "mountain bike trailhead",
     ],
     "bike rack": [
         "bike rack", "bicycle rack", "bike parking", "bicycle parking",
@@ -86,7 +88,7 @@ ICON_CLASS_SYNONYMS = {
     ],
     "boat dock": [
         "boat dock", "dock pier", "dock", "pier", "jetty", "wharf",
-        "mooring dock", "floating dock", "boat pier", "landing",
+        "mooring dock", "floating dock", "boat pier", "landing", "pier dock",
     ],
     "boat house": [
         "boat house", "boathouse", "boat storage", "boat shed",
@@ -97,6 +99,8 @@ ICON_CLASS_SYNONYMS = {
         "boat ramp", "hand launch", "canoe launch", "kayak launch",
         "launch ramp", "put in", "hand carry launch", "car top launch",
         "trailer boat launch", "slipway", "watercraft launch", "paddle launch",
+        "boat launch hand", "boat launch vehicle", "canoe kayak launch",
+        "canoe ramp", "gravel boat ramp", "gravel ramp",
     ],
     "boating": [
         "boating", "boat", "motor boat", "powerboat", "watercraft", "sailing",
@@ -107,9 +111,9 @@ ICON_CLASS_SYNONYMS = {
         "dinghy", "skiff",
     ],
     "boat tours": [
-        "boat tours", "river cruise", "boat tour", "cruise", "sightseeing cruise",
-        "tour boat", "excursion boat", "ferry ride", "scenic boat ride",
-        "paddle wheel boat",
+        "boat tours", "river cruise", "boat tour", "cruise",
+        "sightseeing cruise", "tour boat", "excursion boat", "ferry ride",
+        "scenic boat ride", "paddle wheel boat", "maid of the mist",
     ],
     "box office": [
         "box office", "ticket office", "tickets", "ticket booth",
@@ -140,32 +144,33 @@ ICON_CLASS_SYNONYMS = {
     ],
     "campground": [
         "campground", "camping", "camping area", "campsite", "campsites",
-        "developed camping", "full camping", "ground camping", "tent campsites",
-        "camp trail", "unpowered", "camp", "tent camping", "tent site",
-        "family campground", "overnight camping", "tent", "camping site",
-        "unpowered site", "no hookup camping",
+        "developed camping", "full camping", "ground camping",
+        "tent campsites", "camp trail", "unpowered", "camp", "tent camping",
+        "tent site", "family campground", "overnight camping", "tent",
+        "camping site", "unpowered site", "no hookup camping", "tent campsite",
     ],
     "group campground": [
         "group campground", "group campsite", "campground group",
         "campground group rv", "group camping", "group camp", "group site",
-        "group rv camping", "organized group camping",
+        "group rv camping", "organized group camping", "camping group",
     ],
     "hike and bike campground": [
-        "hike and bike campground", "hike and bike", "hike bike campground", "hike bike campsite",
-        "campground hike & bike", "campground hike and bike",
-        "hike in campsite", "bike in campsite", "walk in campsite",
-        "backpacker campsite", "hiker biker site",
+        "hike and bike campground", "hike and bike", "hike bike campground",
+        "hike bike campsite", "campground hike & bike",
+        "campground hike and bike", "hike in campsite", "bike in campsite",
+        "walk in campsite", "backpacker campsite", "hiker biker site",
+        "campsite hike bike",
     ],
     "equestrian camping": [
         "equestrian camping", "campground horse", "horse camping",
         "horse camp", "equestrian campground", "horse campsite",
-        "camping with horses",
+        "camping with horses", "horse campground",
     ],
     "primitive camping": [
         "primitive camping", "campground primitive", "wilderness camping",
         "environmental camping", "backcountry camping", "dispersed camping",
-        "rustic camping", "backpack camping", "remote campsite",
-        "trail camp", "no facilities camping",
+        "rustic camping", "backpack camping", "remote campsite", "trail camp",
+        "no facilities camping", "camping primitive",
     ],
     "yurt": [
         "yurt", "yurts", "campground yurt", "ger", "tent cabin",
@@ -174,31 +179,35 @@ ICON_CLASS_SYNONYMS = {
     "youth camping": [
         "youth camping", "camping-youth", "youth group camping",
         "scout camping", "youth camp", "kids camping", "school group camping",
+        "camping youth", "scout area", "scout camp area",
     ],
     "rv camping": [
         "rv sites", "recreational vehicle", "rv", "rv camping", "rv park",
-        "motorhome", "trailer camping", "camper", "rv hookups",
-        "caravan", "rv campground", "trailer site",
+        "motorhome", "trailer camping", "camper", "rv hookups", "caravan",
+        "rv campground", "trailer site", "electric rv", "rv electric",
     ],
     "boat rentals": [
         "canoe rentals", "paddlecraft rentals", "paddlingcraft rentals",
         "boat rentals", "kayak rentals", "watercraft rentals", "rentals",
         "rental", "canoe rental", "paddle boat rental", "boat hire",
+        "paddling rentals",
     ],
     "paddling": [
         "paddling", "canoeing", "kayaking", "canoe", "kayak", "paddle sports",
         "paddlecraft", "water trail", "stand up paddleboard", "sup",
-        "non motorized boating", "rafting",
+        "non motorized boating", "rafting", "canoe access", "canoe kayaking",
+        "canoes kayaks", "canoe and kayak",
     ],
     "cemetery": [
         "cemetery", "graveyard", "burial ground", "graves", "historic cemetery",
         "tombstones", "memorial ground",
     ],
     "food services": [
-        "food services", "restaurant", "snack bar", "concession", "bat cove cafe",
-        "cafe", "cafeteria", "dining", "food", "eatery", "grill",
-        "refreshments", "concessions", "food court", "diner", "coffee shop",
-        "snacks", "food service",
+        "food services", "restaurant", "snack bar", "concession",
+        "bat cove cafe", "cafe", "cafeteria", "dining", "food", "eatery",
+        "grill", "refreshments", "concessions", "food court", "diner",
+        "coffee shop", "snacks", "food service", "bat cave cafe",
+        "concession stand",
     ],
     "contact station": [
         "contact station", "contact_station", "entrance station",
@@ -212,7 +221,7 @@ ICON_CLASS_SYNONYMS = {
     ],
     "corral": [
         "corral", "horse corral", "paddock", "stock pen", "livestock pen",
-        "stable yard", "holding pen", "hitching area",
+        "stable yard", "holding pen", "hitching area", "equestrian paddock",
     ],
     "county highway": [
         "county highway", "county road", "county route", "county road marker",
@@ -231,9 +240,10 @@ ICON_CLASS_SYNONYMS = {
         "freeway exit", "exit number",
     ],
     "police": [
-        "county sheriff", "park police", "police", "sheriff", "law enforcement",
-        "security", "ranger law enforcement", "police station", "trooper",
-        "public safety",
+        "county sheriff", "park police", "police", "sheriff",
+        "law enforcement", "security", "ranger law enforcement",
+        "police station", "trooper", "public safety", "local police",
+        "state police",
     ],
     "dam": [
         "dam", "spillway", "reservoir dam", "levee", "impoundment",
@@ -249,7 +259,7 @@ ICON_CLASS_SYNONYMS = {
     ],
     "scuba diving": [
         "scuba diving", "scuba", "diving", "dive", "dive site", "divers",
-        "underwater diving", "dive flag", "skin diving",
+        "underwater diving", "dive flag", "skin diving", "dive feature",
     ],
     "snorkeling": [
         "snorkeling", "snorkel", "snorkelling", "mask and snorkel",
@@ -283,6 +293,7 @@ ICON_CLASS_SYNONYMS = {
         "rv sanitation station", "rv sanitation center",
         "sanitary disposal station", "sanitary dump", "sewage disposal",
         "waste disposal rv", "holding tank disposal", "sani dump",
+        "dumping station",
     ],
     "trash": [
         "trash", "trash can", "dumpster", "garbage", "waste", "rubbish",
@@ -313,6 +324,7 @@ ICON_CLASS_SYNONYMS = {
         "horse trail", "equestrain trail", "equestrian trail",
         "horseback riding", "bridle path", "horse riding", "riding trail",
         "horses", "equestrian", "horseback", "bridle trail",
+        "equestrian trails",
     ],
     "equestrian staging area": [
         "equestrian staging area", "equestrain staging area",
@@ -367,8 +379,10 @@ ICON_CLASS_SYNONYMS = {
     "park headquarters": [
         "park headquarters", "park headquaters", "forest headquarters",
         "headquarters", "park office", "office", "regional office",
-        "administration", "admin building", "main office", "park administration",
-        "district office",
+        "administration", "admin building", "main office",
+        "park administration", "district office", "reservation headquaters",
+        "reservation headquarters", "west district headquarters",
+        "district headquarters",
     ],
     "fort": [
         "fort", "fortress", "fortification", "historic fort", "battery",
@@ -386,7 +400,8 @@ ICON_CLASS_SYNONYMS = {
         "gift shop", "market", "supplies", "general store-rentals",
         "general store", "store", "souvenirs", "shopping", "camp store",
         "shop", "convenience store", "merchandise", "bookstore", "groceries",
-        "provisions",
+        "provisions", "general store rentals", "park store", "souvenir store",
+        "souvenir shop", "concession rentals",
     ],
     "healthy heart trail": [
         "healthy heart trail", "fitness trail", "heart healthy trail",
@@ -395,6 +410,7 @@ ICON_CLASS_SYNONYMS = {
     "hiking": [
         "hiking", "hike", "walking", "foot trail", "trail", "hiking trail",
         "footpath", "trekking", "pedestrian trail", "walking path", "hiker",
+        "hiking trails",
     ],
     "nature trail": [
         "nature trail", "interpretive trail", "self guided trail",
@@ -412,7 +428,8 @@ ICON_CLASS_SYNONYMS = {
         "historic site", "historic building", "historic structure",
         "historical site", "heritage site", "historic landmark", "historical",
         "heritage building", "historic point", "landmark", "ruins",
-        "historic marker",
+        "historic marker", "historic cultural site",
+        "historic and cultural site",
     ],
     "horseshoes": [
         "horseshoes", "horseshoe pit", "horseshoe", "horseshoe court",
@@ -425,7 +442,7 @@ ICON_CLASS_SYNONYMS = {
     ],
     "lodge": [
         "lodge", "inn", "hotel", "lodging", "guest lodge", "accommodations",
-        "overnight lodging", "resort", "hostel",
+        "overnight lodging", "resort", "hostel", "lodge fee",
     ],
     "information": [
         "information", "information kiosk", "kiosk", "info", "info kiosk",
@@ -439,7 +456,8 @@ ICON_CLASS_SYNONYMS = {
     "lifeguard station": [
         "lifeguard_station", "lifeguard station", "lifeguard", "life guard",
         "lifeguard tower", "guarded beach", "lifeguard on duty",
-        "water safety",
+        "water safety", "lifeguard first aid station",
+        "lifeguard and first aid station",
     ],
     "lighthouse": [
         "lighthouse", "light house", "beacon", "navigation light",
@@ -449,11 +467,11 @@ ICON_CLASS_SYNONYMS = {
         "maintenance", "maintenance barn", "mainetance garden",
         "maintenance garden", "maintenance area", "maintenance yard",
         "service area", "shop", "works yard", "maintenance shop",
-        "utility area", "staff area",
+        "utility area", "staff area", "maintenance garage",
     ],
     "marina": [
-        "marina", "harbor", "harbour", "boat basin", "yacht harbor",
-        "moorage", "boat slips", "port",
+        "marina", "harbor", "harbour", "boat basin", "yacht harbor", "moorage",
+        "boat slips", "port", "seaports", "seaport",
     ],
     "bus stop": [
         "metro bus stop", "bus stop", "bus", "transit stop", "bus station",
@@ -468,8 +486,8 @@ ICON_CLASS_SYNONYMS = {
         "mine entrance", "adit",
     ],
     "mohican mohawk trail": [
-        "mohican mohawk trail", "mohican trail", "mohawk trail",
-        "named trail", "long distance trail", "heritage trail",
+        "mohican mohawk trail", "mohican trail", "mohawk trail", "named trail",
+        "long distance trail", "heritage trail", "mahican mohawk trail",
     ],
     "mooring buoys": [
         "morning buoys", "mooring buoys", "mooring buoy", "buoy", "buoys",
@@ -490,9 +508,9 @@ ICON_CLASS_SYNONYMS = {
     ],
     "observation area": [
         "observation area", "overlook", "scenic view", "scenic  vista",
-        "scenic vista", "view", "viewpoint", "vista", "lookout", "scenic overlook",
-        "viewing area", "panorama", "scenic point", "observation point",
-        "photo point", "sightseeing",
+        "scenic vista", "view", "viewpoint", "vista", "lookout",
+        "scenic overlook", "viewing area", "panorama", "scenic point",
+        "observation point", "photo point", "sightseeing", "scenic feature",
     ],
     "observation tower": [
         "tower", "observation tower", "lookout tower", "fire tower",
@@ -508,17 +526,20 @@ ICON_CLASS_SYNONYMS = {
         "group learning space",
     ],
     "parking": [
-        "parking", "parking area", "parking lot", "car park", "vehicle parking",
-        "park and ride", "parking space", "lot", "auto parking",
+        "parking", "parking area", "parking lot", "car park",
+        "vehicle parking", "park and ride", "parking space", "lot",
+        "auto parking", "extra parking", "overflow parking",
     ],
     "telephone": [
         "telephone", "pay phone", "payphone", "phone", "public phone",
         "emergency phone", "call box", "telephone booth",
+        "emergency telephone",
     ],
     "pay station": [
-        "pay station", "paybox", "pay box", "self registration",
-        "fee station", "self pay", "iron ranger", "fee tube", "permit station",
+        "pay station", "paybox", "pay box", "self registration", "fee station",
+        "self pay", "iron ranger", "fee tube", "permit station",
         "registration", "self service pay", "fee collection",
+        "self pay station",
     ],
     "picnic area": [
         "picnic area", "picnic", "picnicking", "picnic site", "picnic table",
@@ -549,8 +570,7 @@ ICON_CLASS_SYNONYMS = {
         "notable place", "marker", "highlight",
     ],
     "polo field": [
-        "polo field", "polo", "polo grounds", "playing field", "sports field",
-        "athletic field",
+        "polo field", "polo", "polo grounds", "polo pitch", "polo ground",
     ],
     "post office": [
         "post office", "mail", "postal service", "mailbox", "post",
@@ -648,6 +668,180 @@ ICON_CLASS_SYNONYMS = {
     "compass course": [
         "compass course", "orienteering", "compass", "navigation course",
         "orienteering course", "map and compass",
+    ],
+
+    # --- classes added by the regenerated dataset -------------------------
+    "accessible picnic area": [
+        "accessible picnic area", "accessible picnic site", "ada picnic area",
+        "wheelchair accessible picnic area", "barrier free picnic area",
+        "handicap picnic area",
+    ],
+    "accessible restroom": [
+        "accessible restrooms", "accessible restroom", "ada restroom",
+        "wheelchair accessible restroom", "handicap restroom",
+        "accessible toilet", "barrier free restroom",
+    ],
+    "accessible trail": [
+        "accessible trail", "ada trail", "wheelchair accessible trail",
+        "all persons trail", "barrier free trail", "accessible path",
+        "universal access trail", "all abilities trail",
+    ],
+    "airport": [
+        "airports", "airport", "airfield", "airstrip", "landing strip",
+        "aerodrome", "air travel",
+    ],
+    "baseball field": [
+        "baseball field", "baseball", "baseball diamond", "ball diamond",
+        "baseball park", "batting field",
+    ],
+    "softball field": [
+        "softball field", "softball", "softball diamond", "softball park",
+    ],
+    "soccer": [
+        "soccer", "soccer field", "soccer pitch", "football pitch", "futbol",
+        "soccer fields",
+    ],
+    "playing field": [
+        "play fields", "playing field", "playfield", "ball field",
+        "sports field", "sports fields", "athletic field",
+        "multi purpose field", "playing fields",
+    ],
+    "tennis": [
+        "tennis court", "tennis courts", "tennis", "racquet courts",
+        "tennis complex",
+    ],
+    "environmental campsite": [
+        "environmental campsites", "environmental campsite",
+        "campground environmental", "environmental site", "environmental camp",
+    ],
+    "primitive group camping": [
+        "primitive group camping", "group primitive camping",
+        "primitive group campsite", "primitive group site",
+    ],
+    "college or university": [
+        "college or university", "college", "university", "campus",
+        "college campus", "university campus",
+    ],
+    "coulter": [
+        "coulter", "coulter site", "coulter area",
+    ],
+    "cross slope exceeds 8%": [
+        "croos slope exceeds 8%", "cross slope exceeds 8%",
+        "cross slope exceeds 8 percent", "steep cross slope",
+        "cross slope warning",
+    ],
+    "grade exceeds 20%": [
+        "grade exceeds 20%", "grade exceeds 20 percent", "steep grade",
+        "steep slope warning", "grade warning",
+    ],
+    "rocks over 5 high": [
+        "rocks over 5 high", "rocks over 5 inches high", "rock obstacle",
+        "rocky surface warning", "rocks in trail",
+    ],
+    "road crossing": [
+        "road crossing", "designated crossings", "designated crossing",
+        "street crossing", "crosswalk", "trail crossing",
+        "pedestrian crossing", "highway crossing",
+    ],
+    "firewood": [
+        "firewood sales", "firewood", "firewood for sale", "wood sales",
+        "campfire wood", "bundled firewood",
+    ],
+    "full shade": [
+        "full shade", "fully shaded", "deep shade", "heavy shade",
+        "dense shade", "complete shade",
+    ],
+    "gas well": [
+        "gas well", "natural gas well", "gas wellhead", "well head", "gas pad",
+    ],
+    "farm": [
+        "farm complex", "farm", "farmyard", "working farm", "farmland",
+        "agricultural area", "farm area",
+    ],
+    "hummingbird garden": [
+        "hummingbird garden", "hummingbird", "hummingbirds",
+        "hummingbird habitat",
+    ],
+    "ice rink": [
+        "kasabuski rink", "ice rink", "skating rink", "ice skating", "rink",
+        "hockey rink", "ice arena",
+    ],
+    "kennel": [
+        "kennels", "kennel", "dog kennel", "boarding kennel", "dog boarding",
+        "pet boarding",
+    ],
+    "lean to": [
+        "leanto", "lean to", "lean-to", "adirondack shelter", "trail shelter",
+        "three sided shelter", "lean tos",
+    ],
+    "library": [
+        "library", "public library", "reading room", "book lending",
+    ],
+    "light": [
+        "light", "lights", "lighting", "lamp", "lamp post", "street light",
+        "area lighting",
+    ],
+    "wetland": [
+        "wetland", "wetlands", "marsh", "marsh area", "marshland", "swamp",
+        "bog", "wet meadow", "fen",
+    ],
+    "mile marker": [
+        "mile marker", "mile markers", "mileage markers", "mileage marker",
+        "milepost", "mile post", "distance marker",
+    ],
+    "trail name": [
+        "trail name", "trail names", "trail name sign", "trail marker",
+        "trail blaze", "blaze", "named trail sign",
+    ],
+    "multi use trail": [
+        "multi use trail", "multi-use trail", "multiuse trail",
+        "shared use trail", "shared-use trail", "mixed use trail",
+        "multi purpose trail",
+    ],
+    "nest platform": [
+        "nest platform", "nesting platform", "osprey nest", "osprey platform",
+        "nest box", "bird nest platform", "eagle nest",
+    ],
+    "non potable water": [
+        "non potable water", "nonpotable water", "not drinking water",
+        "non drinking water", "unsafe water", "water not for drinking",
+    ],
+    "palm glove locations": [
+        "palm glove locations", "palm glove location", "palm glove",
+        "palm gloves",
+    ],
+    "cross country skiing": [
+        "ski touring center", "cross country skiing", "cross country ski",
+        "nordic skiing", "ski touring", "xc skiing", "nordic center",
+        "ski center",
+    ],
+    "sledding": [
+        "sledding hill", "sledding", "sled hill", "tobogganing",
+        "toboggan run", "sledding area",
+    ],
+    "spring": [
+        "spring", "springs", "spring overlook", "natural spring",
+        "mineral spring", "freshwater spring", "spring source",
+    ],
+    "train ride": [
+        "train rides", "train ride", "train", "miniature train",
+        "scenic railroad", "railroad", "tourist train", "excursion train",
+    ],
+    "tree cluster": [
+        "tree cluster", "tree clusters", "trees", "grove", "wooded area",
+        "woods", "forest", "tree stand",
+    ],
+    "village center": [
+        "village centers", "village center", "village", "town center",
+        "hamlet", "settlement",
+    ],
+    "water tower": [
+        "water tower", "water tank", "elevated water tank", "standpipe",
+        "water storage tower",
+    ],
+    "watersports": [
+        "wet monkey watersports", "watersports", "water sports",
+        "watersport rentals", "water sports rentals", "water sports center",
     ],
 }
 
@@ -904,4 +1098,150 @@ RELATED_CONCEPTS = {
     "wildlife viewing": ["birdwatching", "observation area", "nature trail",
                          "interpretive center", "butterfly garden", "aquarium"],
     "compass course": ["geocaching", "hiking", "trailhead", "outdoor classroom"],
+
+    # --- neighbours for the newly added groups ----------------------------
+    "accessible picnic area": [
+        "accessible", "picnic area", "group picnic area", "picnic shelter",
+        "accessible parking",
+    ],
+    "accessible restroom": [
+        "accessible", "restroom", "bathhouse", "shower",
+    ],
+    "accessible trail": [
+        "accessible", "hiking", "nature trail", "trailhead", "multi use trail",
+    ],
+    "airport": [
+        "parking", "information", "bus stop", "marina",
+    ],
+    "baseball field": [
+        "softball field", "playing field", "soccer", "recreation area",
+        "basketball",
+    ],
+    "softball field": [
+        "baseball field", "playing field", "recreation area",
+    ],
+    "soccer": [
+        "playing field", "baseball field", "recreation area", "volleyball",
+    ],
+    "playing field": [
+        "baseball field", "softball field", "soccer", "recreation area",
+        "playground", "volleyball", "basketball",
+    ],
+    "tennis": [
+        "basketball", "volleyball", "recreation area", "playing field",
+    ],
+    "environmental campsite": [
+        "primitive camping", "campground", "hike and bike campground",
+        "youth camping",
+    ],
+    "primitive group camping": [
+        "primitive camping", "group campground", "youth camping", "campground",
+    ],
+    "college or university": [
+        "outdoor classroom", "interpretive center", "library", "building",
+    ],
+    "coulter": [
+        "point of interest", "historic site", "building",
+    ],
+    "cross slope exceeds 8%": [
+        "grade exceeds 20%", "rocks over 5 high", "accessible trail",
+        "accessible", "hiking",
+    ],
+    "grade exceeds 20%": [
+        "cross slope exceeds 8%", "rocks over 5 high", "accessible trail",
+        "hiking", "stairs",
+    ],
+    "rocks over 5 high": [
+        "cross slope exceeds 8%", "grade exceeds 20%", "accessible trail",
+        "hiking",
+    ],
+    "road crossing": [
+        "trailhead", "hiking", "biking", "multi use trail", "parking",
+    ],
+    "firewood": [
+        "campfire", "campground", "camp host", "gift shop",
+    ],
+    "full shade": [
+        "partial shade", "picnic shelter", "tree cluster", "campground",
+    ],
+    "gas well": [
+        "maintenance", "point of interest", "building",
+    ],
+    "farm": [
+        "barn", "corral", "historic site", "interpretive exhibit",
+    ],
+    "hummingbird garden": [
+        "butterfly garden", "flower garden", "birdwatching",
+        "wildlife viewing",
+    ],
+    "ice rink": [
+        "recreation area", "sledding", "cross country skiing",
+        "special event venue",
+    ],
+    "kennel": [
+        "dog park", "dogs allowed on leash", "pets overnight", "corral",
+    ],
+    "lean to": [
+        "primitive camping", "campground", "picnic shelter",
+        "hike and bike campground", "trailhead",
+    ],
+    "library": [
+        "visitor center", "information", "interpretive center",
+        "college or university", "museum",
+    ],
+    "light": [
+        "parking", "restroom", "campground", "building",
+    ],
+    "wetland": [
+        "birdwatching", "wildlife viewing", "nature trail", "observation area",
+        "spring",
+    ],
+    "mile marker": [
+        "trail name", "trailhead", "hiking", "junction", "multi use trail",
+    ],
+    "trail name": [
+        "mile marker", "trailhead", "hiking", "junction", "multi use trail",
+        "information",
+    ],
+    "multi use trail": [
+        "hiking", "biking", "horse trail", "nature trail", "trailhead",
+        "accessible trail",
+    ],
+    "nest platform": [
+        "birdwatching", "wildlife viewing", "observation area", "wetland",
+    ],
+    "non potable water": [
+        "drinking water", "restroom", "shower", "dump station",
+    ],
+    "palm glove locations": [
+        "point of interest", "information",
+    ],
+    "cross country skiing": [
+        "snowmobile", "sledding", "hiking", "trailhead", "ice rink",
+    ],
+    "sledding": [
+        "cross country skiing", "snowmobile", "ice rink", "recreation area",
+    ],
+    "spring": [
+        "drinking water", "non potable water", "wetland", "observation area",
+        "waterfall",
+    ],
+    "train ride": [
+        "boat tours", "special event venue", "point of interest",
+        "visitor center",
+    ],
+    "tree cluster": [
+        "full shade", "partial shade", "nature trail", "picnic area",
+    ],
+    "village center": [
+        "point of interest", "information", "historic site",
+        "park headquarters",
+    ],
+    "water tower": [
+        "drinking water", "radio tower", "observation tower", "maintenance",
+    ],
+    "watersports": [
+        "boat rentals", "paddling", "swimming", "surfing", "windsurfing",
+        "tubing",
+    ],
 }
