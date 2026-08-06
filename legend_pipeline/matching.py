@@ -248,19 +248,27 @@ def _text_key(text: str) -> str:
 
 
 def _is_truncation_of(partial: str, full: str) -> bool:
-    """True when ``partial`` looks like ``full`` with characters missing.
+    """True when ``partial`` is ``full`` with characters lost from the START.
 
     Guards the repair below: we only ever replace a label with a *longer*
-    reading that contains it, so a wrong row or a misread can never be
+    reading that ENDS with it, so a wrong row or a misread can never be
     substituted in.  "arking area" / "ing area" / "area" are all accepted
     against "parking area"; "scenic view" is not.
+
+    The label sits to the RIGHT of its icon, so a mask that eats into it always
+    eats the beginning — never the end.  Anything the unmasked pass appends
+    AFTER the masked reading therefore belongs to something else: the next
+    column's text ("Reservation Headquarters" + "Little McCool") or an icon
+    glyph read as a word ("Trash/Recycle bin" + "HAE").  Testing ``endswith``
+    rather than "contains" rejects both while still accepting every real
+    truncation.
     """
     a, b = _text_key(partial), _text_key(full)
     if not a or not b or a == b:
         return False
     if sum(ch.isalpha() for ch in b) <= sum(ch.isalpha() for ch in a):
         return False
-    return a in b
+    return b.endswith(a)
 
 
 def repair_truncated_labels(
@@ -280,17 +288,24 @@ def repair_truncated_labels(
     """
     if not config.repair_truncated_labels or not unmasked_texts:
         return matches
+    separators = _column_separators(unmasked_texts, config)
     for idx, merged in matches.items():
         if merged is None or idx >= len(icons):
             continue
         icon = icons[idx]
         height = max(merged.bbox[3] - merged.bbox[1], 1)
         slack = config.max_word_gap_factor * height
+        # Never rebuild the row past the label's own column: `slack` alone lets
+        # the row reach into the next column, and because the row is rebuilt
+        # against the *union* box of what matching produced, one such token
+        # makes that box two lines tall and pulls in the next line's tokens too.
+        x_limit = min(merged.bbox[2] + slack,
+                      _column_limit(merged.bbox[0], separators))
         row = [
             t for t in unmasked_texts
             if _vertical_overlap_ratio(merged.bbox, t.bbox) >= 0.5
             and t.bbox[2] > icon.bbox[0]          # not another column's label
-            and t.bbox[0] < merged.bbox[2] + slack
+            and t.bbox[0] < x_limit
         ]
         if not row:
             continue
@@ -301,6 +316,73 @@ def repair_truncated_labels(
                         idx, merged.text, candidate.text)
             matches[idx] = candidate
     return matches
+
+
+def _column_separators(
+    texts: List[OcrText],
+    config: PipelineConfig,
+) -> List[Tuple[int, int]]:
+    """The x-ranges that NO text token crosses — the legend's column boundaries.
+
+    A multi-column legend leaves a clear vertical corridor between its columns:
+    every token of the left column ends before it and every token of the right
+    column starts after it.  Locating those corridors is what lets a label be
+    cut off at its own column's edge even when the next column has no icon to
+    act as a boundary — a plain "TRAILS: / M-M / Lost Boulder / ..." list.  A
+    word-gap threshold cannot do that job: on a real map the gap across to the
+    next column (67px) came out SMALLER than the legal gap between a label's own
+    words (74px), so "Reservation Headquarters" swallowed "Little McCool".
+
+    A corridor counts only when it is at least ``text_column_gap_factor``
+    text-heights wide *and* has text on both sides, so ordinary word spacing and
+    the empty margin past the longest label are never mistaken for a column
+    break.  A single-column legend has no such corridor, so the gate is inert
+    there and nothing changes.
+
+    Returns (start, end) pairs sorted left to right.
+    """
+    if config.text_column_gap_factor <= 0 or len(texts) < 2:
+        return []
+    heights = [t.bbox[3] - t.bbox[1] for t in texts if t.bbox[3] > t.bbox[1]]
+    if not heights:
+        return []
+    min_width = config.text_column_gap_factor * float(np.median(heights))
+    spans = sorted((int(t.bbox[0]), int(t.bbox[2])) for t in texts)
+    separators: List[Tuple[int, int]] = []
+    reach = spans[0][1]                  # rightmost edge of everything so far.
+    for x1, x2 in spans[1:]:
+        # Nothing starts before x1 and reaches past `reach`, so [reach, x1) is
+        # empty across the WHOLE legend — a genuine corridor, not a word gap.
+        if x1 - reach >= min_width:
+            separators.append((reach, x1))
+        reach = max(reach, x2)
+    if separators:
+        LOGGER.info("Legend has %d text column separator(s): %s",
+                    len(separators), separators)
+    return separators
+
+
+def _column_limit(x: float, separators: Sequence[Tuple[int, int]]) -> float:
+    """Left edge of the first column corridor at or after ``x`` (inf if none).
+
+    Text at or beyond this x belongs to the next column, so it can never be part
+    of a label that starts at ``x``.  Pass the LABEL's left edge, not the icon's:
+    a corridor between the icon column and the text column would otherwise cut
+    the label off before its first word.
+    """
+    for start, _end in separators:
+        if start >= x:
+            return float(start)
+    return float("inf")
+
+
+def _crosses_column_separator(
+    x_from: float,
+    x_to: float,
+    separators: Sequence[Tuple[int, int]],
+) -> bool:
+    """True if stepping from ``x_from`` to ``x_to`` jumps a whole column corridor."""
+    return any(start >= x_from and end <= x_to for start, end in separators)
 
 
 def _vertical_overlap_ratio(a: Sequence[int], b: Sequence[int]) -> float:
@@ -332,18 +414,29 @@ def _same_line_tokens(
     return [t for t in candidates if abs(t.center[1] - anchor_cy) <= tol]
 
 
-def _contiguous_tokens(tokens: List[OcrText], max_gap: float) -> List[OcrText]:
+def _contiguous_tokens(
+    tokens: List[OcrText],
+    max_gap: float,
+    separators: Sequence[Tuple[int, int]] = (),
+) -> List[OcrText]:
     """Keep only the run of horizontally-adjacent tokens (one label's words).
 
     Starting from the leftmost token, walk right and stop at the first big
     horizontal gap — that gap marks the start of a *different* label (e.g. the
     next column), so words far from each other are never merged together.
+
+    The walk also stops the moment it would step over a column separator, no
+    matter how small that step is.  A gap threshold alone is not enough: the
+    jump to the next column can be narrower than the space between a label's own
+    words, and only the corridor says which side of the legend a token is on.
     """
     if not tokens:
         return tokens
     ordered = sorted(tokens, key=lambda t: t.bbox[0])
     run = [ordered[0]]
     for t in ordered[1:]:
+        if _crosses_column_separator(run[-1].bbox[2], t.bbox[0], separators):
+            break                              # next column -> separate label.
         gap = t.bbox[0] - run[-1].bbox[2]     # negative when boxes overlap.
         if gap <= max_gap:
             run.append(t)
@@ -407,6 +500,10 @@ def match_icons_to_text(
         return matches
 
     min_ov = config.row_vertical_overlap
+    # Column corridors: where the legend's columns are split by whitespace.  The
+    # next-icon gate below only finds a boundary when the next column HAS an
+    # icon; these cover the text-only columns it misses.
+    separators = _column_separators(texts, config)
     # Estimate the legend's row spacing from the distinct text-row centres, so
     # "same row" is judged relative to the actual layout — not a box-size guess.
     centers = sorted({round(t.center[1]) for t in texts})
@@ -424,6 +521,8 @@ def match_icons_to_text(
 
         # Column boundary: left edge of the nearest OTHER icon sharing this row
         # and lying to the right.  Text at/after this x is the next column's.
+        # (A text-only next column has no such icon; the whitespace corridors
+        # applied during grouping below are what catch that case.)
         x_limit = float("inf")
         for j, other in enumerate(icons):
             if j == idx:
@@ -480,7 +579,7 @@ def match_icons_to_text(
         line_heights = [t.bbox[3] - t.bbox[1] for t in line if t.bbox[3] > t.bbox[1]]
         line_h = float(np.median(line_heights)) if line_heights else 20.0
         max_word_gap = config.max_word_gap_factor * line_h
-        group = _contiguous_tokens(line, max_word_gap)
+        group = _contiguous_tokens(line, max_word_gap, separators)
 
         # The label must START near the icon; if even its first word is far to
         # the right, this text belongs to something else (too far), so skip.

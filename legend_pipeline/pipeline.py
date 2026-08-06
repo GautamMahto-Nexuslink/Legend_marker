@@ -448,8 +448,14 @@ class LegendMarkerPipeline:
         # Step 3: spatially match icon -> text, then restore any label the mask
         # read only partially ("Parking Area" -> "arking Area").
         icon_text = match_icons_to_text(icons, texts, self.config)
+        # Pass 1 read the UNMASKED legend, so it still contains every icon glyph
+        # read as a word ("HAE" for the hike-and-bike symbol).  Strip those the
+        # same way pass 2 is stripped, or the repair happily appends the glyph
+        # to a perfectly good label ("Trash/Recycle bin" -> "...bin HAE").
         icon_text = repair_truncated_labels(
-            icon_text, icons, texts_pass1, self.config)
+            icon_text, icons,
+            filter_text_on_icons(texts_pass1, icons, self.config),
+            self.config)
 
         # Step 4: signatures keyed by OCR name.  We keep ONLY icons that have a
         # nearby text label; those without one are skipped entirely (no hash).

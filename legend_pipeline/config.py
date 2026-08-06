@@ -121,6 +121,14 @@ class PipelineConfig:
     # gap is at most this multiple of the text height — i.e. words that belong
     # together.  A larger gap means a separate label (e.g. the next column).
     max_word_gap_factor: float = 2.0
+    # A multi-column legend leaves a vertical corridor between its columns that
+    # no text crosses.  A corridor at least this many text-heights wide is
+    # treated as a column boundary, and no label may reach past it.  This is the
+    # only gate that works when the next column has no icon of its own (a plain
+    # "TRAILS:" list): there the inter-column gap can be SMALLER than the legal
+    # gap between a label's own words, so max_word_gap_factor cannot separate
+    # them.  0 disables the corridor gate.
+    text_column_gap_factor: float = 1.0
     # We prefer text to the RIGHT of the icon (typical legend layout) but also
     # allow left / below as fall-backs with a penalty.
     prefer_right_of_icon: bool = True
